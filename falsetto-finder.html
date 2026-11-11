@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>หาเสียงหลบ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#f3f5fa;--card:#fff;--ink:#14203c;--mute:#5a6684;--line:#dde3ee;--chest:#1b72dd;--mid:#cc8200;--fal:#d11f7c;--btn:#14203c;--btnt:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1120;--card:#151e35;--ink:#eef2ff;--mute:#9ba7c8;--line:#25304d;--chest:#4da3ff;--mid:#ffb938;--fal:#ff5fae;--btn:#eef2ff;--btnt:#0b1120}}
+:root[data-theme="dark"]{--bg:#0b1120;--card:#151e35;--ink:#eef2ff;--mute:#9ba7c8;--line:#25304d;--chest:#4da3ff;--mid:#ffb938;--fal:#ff5fae;--btn:#eef2ff;--btnt:#0b1120}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 'Noto Sans Thai',system-ui,'Sarabun',sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:23px;margin:4px 0 2px;font-weight:800}
+.sub{color:var(--mute);font-size:14px;margin:0 0 14px}
+.tabs{display:flex;gap:6px;background:var(--line);padding:4px;border-radius:12px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:var(--mute);font-family:inherit;font-weight:600;font-size:15px;padding:9px 6px;border-radius:9px}
+.tabs button[aria-selected="true"]{background:var(--card);color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.btn{width:100%;padding:14px;border:0;border-radius:14px;background:var(--btn);color:var(--btnt);font-family:inherit;font-weight:800;font-size:17px;margin-bottom:12px}
+.big{display:flex;align-items:baseline;gap:12px}
+#note{font-size:64px;font-weight:800;line-height:1.1;min-width:2.4ch}
+#hz,.mut{color:var(--mute);font-size:14px}
+#state{font-weight:800;font-size:19px;margin:2px 0 6px}
+.tune{height:6px;background:var(--line);border-radius:3px;position:relative;margin:10px 0 4px}
+.tune::after{content:"";position:absolute;left:50%;top:-4px;width:2px;height:14px;background:var(--mute)}
+.tune i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:var(--ink);left:50%;transform:translateX(-50%)}
+.gauge{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--chest),var(--mid),var(--fal));position:relative;margin:14px 0 4px}
+.gauge i{position:absolute;top:-4px;width:6px;height:18px;border-radius:3px;background:var(--ink);left:0;transform:translateX(-50%)}
+.gl{display:flex;justify-content:space-between;color:var(--mute);font-size:12px}
+canvas{width:100%;height:280px;display:block;border-radius:12px;background:var(--bg)}
+.leg{display:flex;gap:14px;font-size:13px;color:var(--mute);margin-top:8px;flex-wrap:wrap}
+.leg b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row:last-of-type{border:0}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;width:0;background:var(--fal)}
+#err{display:none;border-color:var(--fal);color:var(--fal);font-size:14px}
+details{border-top:1px solid var(--line);padding:10px 0}
+details:first-of-type{border:0}
+summary{font-weight:600;cursor:pointer}
+details p{margin:6px 0 0;font-size:15px}
+.k{color:var(--mute)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>หาเสียงหลบ 🎤</h1>
+<p class="sub">สำหรับคนที่ร้องเพลงไม่เป็น เริ่มจากศูนย์ได้เลย</p>
+<div class="tabs" role="tablist">
+<button role="tab" aria-selected="true" data-t="mic">กราฟเสียง</button>
+<button role="tab" aria-selected="false" data-t="learn">วิธีหาเสียงหลบ</button>
+</div>
+
+<section id="mic">
+<button class="btn" id="go">เปิดไมค์</button>
+<div class="card" id="err"></div>
+<div class="card">
+<div class="big"><div id="note">–</div><div id="hz">กดเปิดไมค์ แล้วร้อง “อู” ยาวๆ</div></div>
+<div class="tune"><i id="tdot"></i></div>
+<div class="gl"><span>ต่ำกว่าโน้ต</span><span>ตรงโน้ต</span><span>สูงกว่าโน้ต</span></div>
+<div id="state" style="margin-top:12px">รอเสียงของคุณ…</div>
+<div class="gauge"><i id="gp"></i></div>
+<div class="gl"><span>เสียงปกติ</span><span>รอยต่อ</span><span>เสียงหลบ</span></div>
+</div>
+<div class="card">
+<canvas id="cv"></canvas>
+<div class="leg"><span><b style="background:var(--chest)"></b>เสียงปกติ</span><span><b style="background:var(--mid)"></b>รอยต่อ</span><span><b style="background:var(--fal)"></b>เสียงหลบ</span><span>เส้นยิ่งสูง = เสียงยิ่งสูง</span></div>
+</div>
+<div class="card">
+<div class="row"><span>ช่วงเสียงที่ร้องได้ตอนนี้</span><b id="rng">–</b></div>
+<div class="row"><span>จุดพลิกเสียงล่าสุด</span><b id="flip">–</b></div>
+<div style="margin-top:10px">ค้างเสียงหลบให้ครบ 3 วินาที <span class="k">(ผ่านแล้ว <b id="cnt">0</b> ครั้ง)</span></div>
+<div class="bar"><i id="hb"></i></div>
+</div>
+<p class="mut">ทิปให้แม่น: อยู่ที่เงียบ ถือมือถือห่างปากประมาณหนึ่งคืบ ร้องเสียง “อู” ยาวๆ สีที่ขึ้นเป็นการประมาณจากเสียงของคุณ ไม่ได้บอกว่าถูกหรือผิด</p>
+</section>
+
+<section id="learn" hidden>
+<div class="card"><b>เสียงหลบคืออะไร?</b><p style="margin:6px 0 0;font-size:15px">คือเสียงสูงที่เบา โปร่ง มีลมปนนิดๆ เหมือนเสียงเด็กหรือผีในการ์ตูน ต่างจากเสียงปกติที่หนักแน่นและสั่นที่อกกับคอ ไม่ต้องออกแรง ยิ่งเบายิ่งหาเจอง่าย</p></div>
+<div class="card">
+<details open><summary>1. ทำเสียงผีหลอก</summary><p>ห่อปากเป็นวงกลม ทำเสียง “ฮู้วววว~” เบามากๆ ไล่ขึ้นสูงเหมือนไซเรน <span class="k">ใช่เมื่อ: เสียงเบาโปร่ง คอไม่ตึง และกราฟขึ้นสีชมพู</span></p></details>
+<details><summary>2. ถอนหายใจไล่ลง</summary><p>หาวแล้วถอนหายใจ “ฮ้าาาา~” เริ่มจากเสียงสูงสุดที่ทำได้ แล้วปล่อยให้ไหลลงช้าๆ <span class="k">ช่วงต้นที่เบาและมีลมคือเสียงหลบ</span></p></details>
+<details><summary>3. ครางเหมือนลูกหมาอ้อน</summary><p>ทำเสียงอ้อนขอ “งื้ออออ~” หรือ “อี๋ออออ~” เบาๆ ปากปิดหรือเปิดนิดเดียวก็ได้</p></details>
+<details><summary>4. พูดเสียงเด็กการ์ตูน</summary><p>พูดว่า “ไม่เอาาา” ด้วยเสียงเล็กแหลมแบบการ์ตูน แล้วลากสระให้ยาวขึ้นเรื่อยๆ จนเป็นเสียงร้อง</p></details>
+<details><summary>5. ไล่จากเสียงปกติขึ้นไป</summary><p>ร้อง “อู” เสียงปกติต่ำๆ แล้วไล่ขึ้นทีละนิด พอเสียงจะแตกหรือขาด อย่าฝืนดัน ให้ปล่อยให้มันพลิกเป็นเสียงเบาๆ จุดที่แตกนั่นแหละคือรอยต่อ ดูจุดพลิกเสียงได้ในหน้ากราฟ</p></details>
+</div>
+<div class="card mut">ไม่ต้องเกร็งคอหรือตะโกน ถ้าเจ็บคอให้หยุดทันที ซ้อมรอบละ 5 ถึง 10 นาที แล้วพักจิบน้ำ</div>
+<button class="btn" id="tomic">ไปลองกับไมค์</button>
+</section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const NM=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const nm=m=>{const r=Math.round(m);return NM[((r%12)+12)%12]+(Math.floor(r/12)-1)};
+const LO=40,HI=88,SPAN=8000;
+let ctx,an,stream,TB,FB,run=false,last=0,lastT=0,pts=[],sm=null,state='none',gap=0,hold=0,done=false,cnt=0,lc=0,lcm=0,minM=null,maxM=null;
+const cv=$('#cv'),g=cv.getContext('2d');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function size(){const d=devicePixelRatio||1;cv.width=cv.clientWidth*d;cv.height=cv.clientHeight*d;g.setTransform(d,0,0,d,0,0)}
+function pitch(b,sr){
+ const N=2048,minL=Math.floor(sr/1100),maxL=Math.floor(sr/70),W=N-maxL;
+ let e=0;for(let i=0;i<W;i++)e+=b[i]*b[i];
+ if(Math.sqrt(e/W)<0.01)return null;
+ const c=new Float32Array(maxL+2);let best=0;
+ for(let L=minL;L<=maxL;L++){let s=0;for(let i=0;i<W;i++)s+=b[i]*b[i+L];c[L]=s;if(s>best)best=s}
+ if(best/e<0.5)return null;
+ let L=minL;while(L<maxL&&c[L]>c[L+1])L++;
+ for(;L<maxL;L++)if(c[L]>=.9*best&&c[L]>=c[L-1]&&c[L]>=c[L+1]){
+  const a=c[L-1],m=c[L],z=c[L+1],d=a-2*m+z;
+  return sr/(L+(d?.5*(a-z)/d:0));
+ }
+ return null;
+}
+const LAB={chest:['เสียงปกติ (เสียงอก)','--chest'],mid:['รอยต่อ กำลังพลิก','--mid'],fal:['เสียงหลบ ✔','--fal']};
+function reset(){$('#note').textContent='–';$('#hz').textContent='ฟังอยู่… ลองร้อง “อู” ดู';$('#state').textContent='รอเสียงของคุณ…';$('#state').style.color='';$('#tdot').style.left='50%';hold=0;done=false;$('#hb').style.width='0'}
+function analyze(now){
+ an.getFloatTimeDomainData(TB);an.getFloatFrequencyData(FB);
+ const dt=Math.min(now-lastT,100);lastT=now;
+ const f=pitch(TB,ctx.sampleRate);
+ if(!f){gap+=dt;if(gap>300&&state!=='none'){state='none';sm=null;reset()}return}
+ gap=0;
+ const bh=ctx.sampleRate/an.fftSize;
+ const pk=q=>{const k=Math.round(q/bh),w=Math.max(1,Math.round(q*.03/bh));let m=-200;for(let i=k-w;i<=k+w;i++)if(FB[i]>m)m=FB[i];return m};
+ const d=pk(f)-pk(2*f);
+ sm=sm===null?d:sm*.75+d*.25;
+ const sc=Math.min(1,Math.max(0,(sm+2)/16));
+ const m=69+12*Math.log2(f/440);
+ const ns=sc>.62?'fal':sc<.4?'chest':'mid';
+ if(ns==='chest'){lc=now;lcm=m}
+ else if(ns==='fal'&&state!=='fal'&&lc&&now-lc<1500){$('#flip').textContent=nm((lcm+m)/2)}
+ state=ns;
+ pts.push({t:now,m,ns});while(pts.length&&now-pts[0].t>SPAN)pts.shift();
+ minM=minM===null?m:Math.min(minM,m);maxM=maxM===null?m:Math.max(maxM,m);
+ if(ns==='fal'){hold+=dt;if(hold>=3000&&!done){done=true;cnt++;$('#cnt').textContent=cnt}}
+ else if(ns==='chest'){hold=0;done=false}
+ const c=(m-Math.round(m))*100;
+ $('#note').textContent=nm(m);
+ $('#hz').textContent=Math.round(f)+' Hz · '+(Math.abs(c)<12?'ตรงโน้ต':c>0?'สูงไปนิด':'ต่ำไปนิด');
+ $('#tdot').style.left=(50+c)+'%';
+ $('#state').textContent=LAB[ns][0];$('#state').style.color='var('+LAB[ns][1]+')';
+ $('#gp').style.left=(sc*100)+'%';
+ $('#rng').textContent=nm(minM)+' – '+nm(maxM);
+ $('#hb').style.width=Math.min(100,hold/30)+'%';
+}
+function draw(now){
+ const w=cv.clientWidth,h=cv.clientHeight;g.clearRect(0,0,w,h);
+ const y=m=>h-(m-LO)/(HI-LO)*h,x=t=>w-(now-t)/SPAN*w;
+ g.font='11px system-ui,sans-serif';g.lineWidth=1;g.strokeStyle=css('--line');
+ for(let m=LO;m<=HI;m++){const k=m%12;if(k!==0&&k!==7)continue;g.beginPath();g.moveTo(0,y(m));g.lineTo(w,y(m));g.stroke();if(k===0){g.fillStyle=css('--mute');g.fillText('C'+(m/12-1),4,y(m)-3)}}
+ const C={chest:css('--chest'),mid:css('--mid'),fal:css('--fal')};
+ g.lineWidth=4;g.lineCap='round';
+ for(let i=1;i<pts.length;i++){if(pts[i].t-pts[i-1].t>150)continue;g.strokeStyle=C[pts[i].ns];g.beginPath();g.moveTo(x(pts[i-1].t),y(pts[i-1].m));g.lineTo(x(pts[i].t),y(pts[i].m));g.stroke()}
+ const p=pts[pts.length-1];
+ if(p&&now-p.t<300){g.fillStyle=C[p.ns];g.beginPath();g.arc(x(p.t),y(p.m),7,0,7);g.fill()}
+}
+function loop(now){
+ if(!run)return;
+ if(now-last>32){last=now;analyze(now)}
+ draw(now);requestAnimationFrame(loop);
+}
+async function start(){
+ $('#err').style.display='none';
+ try{
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  ctx.resume();
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw{name:'NoMedia'};
+  const tm=setTimeout(()=>{const E=$('#err');E.textContent='ผ่านไป 5 วินาทีแล้วยังไม่มีหน้าต่างขออนุญาตไมค์ แปลว่าหน้านี้ถูกฝังอยู่ในกรอบที่บล็อกไมค์ ('+(window.top!==window.self?'อยู่ในกรอบ':'ไม่ได้อยู่ในกรอบ')+') ให้เปิดเวอร์ชันที่โฮสต์บนเว็บของคุณเองแทน';E.style.display='block'},5000);
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}})}finally{clearTimeout(tm)}
+  $('#err').style.display='none';
+  await ctx.resume();
+  an=ctx.createAnalyser();an.fftSize=4096;an.smoothingTimeConstant=0;
+  ctx.createMediaStreamSource(stream).connect(an);
+  TB=new Float32Array(an.fftSize);FB=new Float32Array(an.frequencyBinCount);
+ }catch(e){
+  const n=e&&e.name,E=$('#err');
+  E.textContent=n==='NotFoundError'?'ไม่พบไมโครโฟนในเครื่อง':(n==='NotAllowedError'||n==='SecurityError'||n==='NoMedia')?'iPhone ยังไม่ให้ใช้ไมค์ วิธีแก้: เปิดลิงก์นี้ใน Safari (ถ้าอยู่ในแอป Claude ให้คัดลอกลิงก์ไปเปิดใน Safari) แล้วกดปุ่ม aA ในแถบที่อยู่ เลือก การตั้งค่าเว็บไซต์ > ไมโครโฟน > อนุญาต จากนั้นรีเฟรชหน้าแล้วกดเปิดไมค์ใหม่':'เปิดไมค์ไม่ได้ ('+n+') ลองรีเฟรชหน้าแล้วกดใหม่';
+  E.style.display='block';ctx&&ctx.close();return}
+ run=true;pts=[];sm=null;state='none';size();reset();
+ $('#go').textContent='หยุด';requestAnimationFrame(t=>{lastT=t;loop(t)});
+}
+function stop(){run=false;stream&&stream.getTracks().forEach(t=>t.stop());ctx&&ctx.close();$('#go').textContent='เปิดไมค์'}
+$('#go').onclick=()=>run?stop():start();
+function tab(n){
+ document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===n));
+ $('#mic').hidden=n!=='mic';$('#learn').hidden=n!=='learn';if(n==='mic')size();
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
+$('#tomic').onclick=()=>{tab('mic');scrollTo(0,0)};
+addEventListener('resize',size);size();
+</script>
+</body>
+</html>
