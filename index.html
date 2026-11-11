@@ -124,6 +124,7 @@ label{display:block;font-size:14px;color:var(--mute)}
 <button class='btn' id='dgo'>เริ่มฝึก</button>
 <div class='card' id='stage' hidden>
 <div class='big'><div id='tgt' style='font-size:56px;font-weight:800;line-height:1.1'>–</div><div><div id='rel' class='mut'></div><div id='cue' style='font-weight:800'></div></div></div>
+<canvas id='dc' style='height:230px'></canvas>
 <div class='mt'><u></u><i id='dot'></i></div>
 <div class='gl'><span>ต่ำไป</span><span>คุณร้อง: <b id='me'>–</b></span><span>สูงไป</span></div>
 <div class='bar'><i id='dbar'></i></div>
@@ -202,7 +203,7 @@ function draw(now){
 function loop(now){
  if(!run)return;
  if(now-last>32){last=now;analyze(now)}
- drillTime(now);draw(now);requestAnimationFrame(loop);
+ drillTime(now);draw(now);dDraw(now);requestAnimationFrame(loop);
 }
 async function start(){
  $('#err').style.display='none';
@@ -248,7 +249,7 @@ function build(v){
 function chips(){$('#chips').innerHTML=D.st.map((s,i)=>`<span class='ch ${i===D.i?'on':i<D.i?(s.done?'ok':'miss'):''}'>${nm(s.m)}${s.reg?(s.reg==='fal'?' หลบ':' ปกติ'):''}</span>`).join('')}
 function nextStep(){
  const s=D.st[D.i];if(!s)return finish();
- D.t0=performance.now();D.ok0=0;D.mute=D.tn?D.t0+TONE:0;
+ D.t0=performance.now();s.t0=D.t0;if(D.i>0)D.st[D.i-1].t1=D.t0;D.ok0=0;D.mute=D.tn?D.t0+TONE:0;
  if(D.mute)tone(s.m,600);
  const d=s.m-base;
  $('#tgt').textContent=nm(s.m);
@@ -320,6 +321,43 @@ $('#demo').onclick=async()=>{
  if(!run)return;
  const sp=+$('#spd').value;build('b').forEach((s,i)=>setTimeout(()=>tone(s.m,sp*.8),i*sp));
 };
+const dc=$('#dc'),g2=dc.getContext('2d');
+function dDraw(now){
+ if(!D||!dc.clientWidth)return;
+ const cs=D.st[D.i];if(!cs)return;
+ const d=devicePixelRatio||1,w=dc.clientWidth,h=dc.clientHeight,PA=5000,W=10000;
+ if(dc.width!==Math.round(w*d)||dc.height!==Math.round(h*d)){dc.width=Math.round(w*d);dc.height=Math.round(h*d)}
+ g2.setTransform(d,0,0,d,0,0);g2.clearRect(0,0,w,h);
+ let lo=1e9,hi=-1e9;
+ D.st.forEach(s=>(s.fn?[base,base+12]:[s.m]).forEach(v=>{lo=Math.min(lo,v);hi=Math.max(hi,v)}));
+ lo-=3;hi+=3;if(hi-lo<12){const c=(hi+lo)/2;lo=c-6;hi=c+6}
+ const y=m=>h-(m-lo)/(hi-lo)*h,x=t=>(t-now+PA)/W*w,u=h/(hi-lo);
+ const C={chest:css('--chest'),mid:css('--mid'),fal:css('--fal')},ink=css('--ink');
+ g2.font='10px system-ui,sans-serif';g2.lineWidth=1;g2.strokeStyle=css('--line');g2.fillStyle=css('--mute');
+ for(let m=Math.ceil(lo);m<=hi;m++){if([0,2,4,5,7,9,11].includes(((m%12)+12)%12)){g2.beginPath();g2.moveTo(0,y(m));g2.lineTo(w,y(m));g2.stroke();g2.fillText(nm(m),3,y(m)-2)}}
+ let a=D.t0+cs.dur;
+ D.st.forEach((s,i)=>{
+  const th=(s.tol||TOL)*u;
+  if(s.fn){
+   g2.globalAlpha=.35;g2.strokeStyle=C.mid;g2.lineWidth=th*2;g2.lineCap='round';g2.beginPath();let on=false;
+   for(let e=Math.max(0,now-D.t0-PA);e<=Math.min(s.dur,now-D.t0+W-PA);e+=100){const X=x(D.t0+e),Y=y(s.fn(e));on?g2.lineTo(X,Y):g2.moveTo(X,Y);on=true}
+   g2.stroke();g2.globalAlpha=1;return;
+  }
+  let t0,t1;
+  if(i<D.i){t0=s.t0;t1=s.t1||s.t0+s.dur}
+  else if(i===D.i){t0=D.t0;t1=t0+s.dur}
+  else{if(cs.adv)return;t0=a;t1=a+s.dur;a=t1}
+  g2.globalAlpha=s.done?.5:.2;g2.fillStyle=s.reg?C[s.reg]:ink;
+  g2.fillRect(x(t0),y(s.m)-th,x(t1)-x(t0),th*2);
+  g2.globalAlpha=1;g2.fillStyle=ink;
+  g2.fillText(nm(s.m)+(s.reg?(s.reg==='fal'?' หลบ':' ปกติ'):''),Math.max(4,x(t0)+4),y(s.m)+3);
+ });
+ g2.globalAlpha=.5;g2.strokeStyle=ink;g2.lineWidth=1;g2.setLineDash([4,4]);g2.beginPath();g2.moveTo(x(now),0);g2.lineTo(x(now),h);g2.stroke();g2.setLineDash([]);g2.globalAlpha=1;
+ g2.lineWidth=4;g2.lineCap='round';
+ for(let i=1;i<pts.length;i++){const p=pts[i],q=pts[i-1];if(p.t-q.t>150||p.t<now-PA)continue;g2.strokeStyle=C[p.ns];g2.beginPath();g2.moveTo(x(q.t),y(q.m));g2.lineTo(x(p.t),y(p.m));g2.stroke()}
+ const p=pts[pts.length-1];
+ if(p&&now-p.t<300){g2.fillStyle=C[p.ns];g2.beginPath();g2.arc(x(p.t),y(p.m),6,0,7);g2.fill()}
+}
 addEventListener('resize',size);size();
 </script>
 </body>
