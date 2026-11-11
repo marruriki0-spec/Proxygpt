@@ -71,6 +71,7 @@ label{display:block;font-size:14px;color:var(--mute)}
 <section id="mic">
 <button class="btn" id="go">เปิดไมค์</button>
 <div class="card" id="err"></div>
+<div class='card'><canvas id='tb' style='height:320px'></canvas></div>
 <div class="card">
 <div class="big"><div id="note">–</div><div id="hz">กดเปิดไมค์ แล้วร้อง “อู” ยาวๆ</div></div>
 <div class="tune"><i id="tdot"></i></div>
@@ -179,7 +180,7 @@ function analyze(now){
  minM=minM===null?m:Math.min(minM,m);maxM=maxM===null?m:Math.max(maxM,m);
  if(ns==='fal'){hold+=dt;if(hold>=3000&&!done){done=true;cnt++;$('#cnt').textContent=cnt}}
  else if(ns==='chest'){hold=0;done=false}
- drillTick(now,m,ns);
+ drillTick(now,m,ns);tv.m=m;tv.ns=ns;tv.t=now;
  const c=(m-Math.round(m))*100;
  $('#note').textContent=nm(m);
  $('#hz').textContent=Math.round(f)+' Hz · '+(Math.abs(c)<12?'ตรงโน้ต':c>0?'สูงไปนิด':'ต่ำไปนิด');
@@ -203,7 +204,7 @@ function draw(now){
 function loop(now){
  if(!run)return;
  if(now-last>32){last=now;analyze(now)}
- drillTime(now);draw(now);dDraw(now);requestAnimationFrame(loop);
+ drillTime(now);draw(now);dDraw(now);tDraw(now);requestAnimationFrame(loop);
 }
 async function start(){
  $('#err').style.display='none';
@@ -229,7 +230,7 @@ function stop(){run=false;stream&&stream.getTracks().forEach(t=>t.stop());ctx&&c
 $('#go').onclick=()=>run?stop():start();
 function tab(n){
  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===n));
- $('#drill').hidden=n!=='drill';$('#mic').hidden=n!=='mic';$('#learn').hidden=n!=='learn';if(n==='mic')size();
+ $('#drill').hidden=n!=='drill';$('#mic').hidden=n!=='mic';$('#learn').hidden=n!=='learn';if(n==='mic'){size();tDraw(performance.now())}
 }
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
 $('#tomic').onclick=()=>{tab('mic');scrollTo(0,0)};
@@ -358,7 +359,33 @@ function dDraw(now){
  const p=pts[pts.length-1];
  if(p&&now-p.t<300){g2.fillStyle=C[p.ns];g2.beginPath();g2.arc(x(p.t),y(p.m),6,0,7);g2.fill()}
 }
-addEventListener('resize',size);size();
+const tc=$('#tb'),g3=tc.getContext('2d'),tv={m:null,cur:null,ns:'mid',t:0};
+function tDraw(now){
+ if(!tc.clientWidth)return;
+ const d=devicePixelRatio||1,w=tc.clientWidth,h=tc.clientHeight;
+ if(tc.width!==Math.round(w*d)||tc.height!==Math.round(h*d)){tc.width=Math.round(w*d);tc.height=Math.round(h*d)}
+ g3.setTransform(d,0,0,d,0,0);g3.clearRect(0,0,w,h);
+ const top=28,bot=h-28,X=84,TW=70,y=m=>bot-(m-LO)/(HI-LO)*(bot-top);
+ const live=tv.m!==null&&now-tv.t<350;
+ if(live)tv.cur=tv.cur===null?tv.m:tv.cur+(tv.m-tv.cur)*.3;
+ const C={chest:css('--chest'),mid:css('--mid'),fal:css('--fal')},ink=css('--ink'),mu=css('--mute');
+ const rr=(x,yy,ww,hh,r)=>{g3.beginPath();g3.moveTo(x+r,yy);g3.arcTo(x+ww,yy,x+ww,yy+hh,r);g3.arcTo(x+ww,yy+hh,x,yy+hh,r);g3.arcTo(x,yy+hh,x,yy,r);g3.arcTo(x,yy,x+ww,yy,r);g3.closePath()};
+ g3.fillStyle=css('--line');rr(X,top-12,TW,bot-top+24,TW/2);g3.fill();
+ const Y=tv.cur===null?0:Math.min(bot+10,Math.max(top-10,y(tv.cur)));
+ if(tv.cur!==null){g3.save();rr(X,top-12,TW,bot-top+24,TW/2);g3.clip();g3.globalAlpha=live?.3:.12;g3.fillStyle=C[tv.ns];g3.fillRect(X,Y,TW,h-Y);g3.restore()}
+ g3.font='11px system-ui,sans-serif';g3.textAlign='right';g3.fillStyle=mu;g3.strokeStyle=mu;g3.lineWidth=1;
+ for(let m=LO;m<=HI;m++){const k=m%12;if(![0,2,4,5,7,9,11].includes(k))continue;const L=k===0||k===7;g3.beginPath();g3.moveTo(X-(L?12:7),y(m));g3.lineTo(X-2,y(m));g3.stroke();if(L)g3.fillText(nm(m),X-16,y(m)+4)}
+ g3.textAlign='left';
+ if(minM!==null){[[maxM,'สูงสุด'],[minM,'ต่ำสุด']].forEach(([v,t])=>{const yy=y(v);g3.fillStyle=mu;g3.beginPath();g3.moveTo(X+TW+2,yy);g3.lineTo(X+TW+9,yy-4);g3.lineTo(X+TW+9,yy+4);g3.fill();g3.fillText(t,X+TW+12,yy+4)})}
+ if(tv.cur!==null){
+  g3.globalAlpha=live?1:.35;
+  g3.fillStyle=C[tv.ns];g3.beginPath();g3.arc(X+TW/2,Y,22,0,7);g3.fill();g3.lineWidth=4;g3.strokeStyle=css('--card');g3.stroke();
+  g3.fillStyle=ink;g3.font='bold 34px system-ui,sans-serif';g3.fillText(nm(tv.m),X+TW+16,Y+12);
+  g3.globalAlpha=1;
+ }else{g3.fillStyle=mu;g3.font='14px system-ui,sans-serif';g3.fillText('กดเปิดไมค์แล้วร้อง “อู”',X+TW+14,h/2)}
+ g3.fillStyle=mu;g3.font='12px system-ui,sans-serif';g3.textAlign='center';g3.fillText('▲ สูง',X+TW/2,14);g3.fillText('▼ ต่ำ',X+TW/2,h-8);g3.textAlign='left';
+}
+addEventListener('resize',size);size();tDraw(0);
 </script>
 </body>
 </html>
