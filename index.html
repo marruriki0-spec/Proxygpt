@@ -1,150 +1,198 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#090d18">
-<title>VOICE LIFT — ฝึกร้องเสียงหลบ</title>
+<meta name="color-scheme" content="light dark">
+<title>หาเสียงหลบ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800&display=swap">
 <style>
-:root{--bg:#090d18;--panel:#111827;--panel2:#0d1422;--line:#243149;--text:#f4f7ff;--muted:#93a1b8;--cyan:#57d7ff;--violet:#a78bfa;--green:#57e3ad;--orange:#ffbd69}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#1b2850 0%,var(--bg) 52%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:22px 14px 36px}
-main{max-width:820px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.brand{font-weight:900;letter-spacing:2px;font-size:15px}.brand span{color:var(--cyan)}.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:6px 9px;border-radius:30px}
-h1{font-size:clamp(27px,6vw,42px);line-height:1.12;margin:8px 0}.sub{color:var(--muted);font-size:14px;line-height:1.65;margin:0 0 20px}
-.panel{background:linear-gradient(145deg,rgba(20,30,49,.96),rgba(13,20,34,.96));border:1px solid var(--line);border-radius:20px;padding:17px;margin:13px 0;box-shadow:0 12px 35px #0003}
-.controls{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:13px;padding:13px 18px;font-weight:800;font-size:14px;cursor:pointer}.primary{background:linear-gradient(100deg,#5bdcff,#9b8cff);color:#07101c;flex:1}.secondary{background:#202c42;color:var(--text);border:1px solid #35445e}.status{font-size:12px;color:var(--muted);margin-top:11px;min-height:18px}
-.metrics{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:9px}.metric{background:#0b1220;border:1px solid #243149;border-radius:15px;padding:13px;min-width:0}.metric small{display:block;color:var(--muted);font-size:11px;margin-bottom:8px}.big{font-size:clamp(24px,6vw,36px);font-weight:900;letter-spacing:-1px}.unit{font-size:12px;color:var(--muted);font-weight:600}.note{color:var(--cyan)}.hint{font-size:11px;color:var(--muted);margin-top:5px}
-canvas{display:block;width:100%;height:210px;background:#080e19;border:1px solid #243149;border-radius:14px}
-.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:9px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--cyan)}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.section-title{font-size:14px;font-weight:800;margin:0 0 12px}.meter{height:11px;border-radius:20px;background:#26334a;overflow:hidden;margin:12px 0 7px}.fill{height:100%;width:0;background:linear-gradient(90deg,#57d7ff,#a78bfa);border-radius:20px;transition:width .12s}.range-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.step{background:#0b1220;border:1px solid #243149;border-radius:14px;padding:12px}.step b{font-size:12px;color:var(--cyan)}.step p{font-size:12px;color:var(--muted);line-height:1.5;margin:7px 0 0}
-select{background:#0b1220;color:var(--text);border:1px solid #35445e;padding:10px;border-radius:10px;font-size:13px}
-.tip{font-size:12px;line-height:1.7;color:var(--muted)}.tip strong{color:var(--text)}.footer{text-align:center;color:#65738b;font-size:10px;margin-top:20px}
-@media(max-width:540px){.metrics{grid-template-columns:1fr 1fr}.metric:first-child{grid-column:span 2}.steps{grid-template-columns:1fr}.panel{padding:14px}.big{font-size:30px}}
+:root{--bg:#f3f5fa;--card:#fff;--ink:#14203c;--mute:#5a6684;--line:#dde3ee;--chest:#1b72dd;--mid:#cc8200;--fal:#d11f7c;--btn:#14203c;--btnt:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1120;--card:#151e35;--ink:#eef2ff;--mute:#9ba7c8;--line:#25304d;--chest:#4da3ff;--mid:#ffb938;--fal:#ff5fae;--btn:#eef2ff;--btnt:#0b1120}}
+:root[data-theme="dark"]{--bg:#0b1120;--card:#151e35;--ink:#eef2ff;--mute:#9ba7c8;--line:#25304d;--chest:#4da3ff;--mid:#ffb938;--fal:#ff5fae;--btn:#eef2ff;--btnt:#0b1120}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 'Noto Sans Thai',system-ui,'Sarabun',sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:23px;margin:4px 0 2px;font-weight:800}
+.sub{color:var(--mute);font-size:14px;margin:0 0 14px}
+.tabs{display:flex;gap:6px;background:var(--line);padding:4px;border-radius:12px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:var(--mute);font-family:inherit;font-weight:600;font-size:15px;padding:9px 6px;border-radius:9px}
+.tabs button[aria-selected="true"]{background:var(--card);color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.btn{width:100%;padding:14px;border:0;border-radius:14px;background:var(--btn);color:var(--btnt);font-family:inherit;font-weight:800;font-size:17px;margin-bottom:12px}
+.big{display:flex;align-items:baseline;gap:12px}
+#note{font-size:64px;font-weight:800;line-height:1.1;min-width:2.4ch}
+#hz,.mut{color:var(--mute);font-size:14px}
+#state{font-weight:800;font-size:19px;margin:2px 0 6px}
+.tune{height:6px;background:var(--line);border-radius:3px;position:relative;margin:10px 0 4px}
+.tune::after{content:"";position:absolute;left:50%;top:-4px;width:2px;height:14px;background:var(--mute)}
+.tune i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:var(--ink);left:50%;transform:translateX(-50%)}
+.gauge{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--chest),var(--mid),var(--fal));position:relative;margin:14px 0 4px}
+.gauge i{position:absolute;top:-4px;width:6px;height:18px;border-radius:3px;background:var(--ink);left:0;transform:translateX(-50%)}
+.gl{display:flex;justify-content:space-between;color:var(--mute);font-size:12px}
+canvas{width:100%;height:280px;display:block;border-radius:12px;background:var(--bg)}
+.leg{display:flex;gap:14px;font-size:13px;color:var(--mute);margin-top:8px;flex-wrap:wrap}
+.leg b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row:last-of-type{border:0}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;width:0;background:var(--fal)}
+#err{display:none;border-color:var(--fal);color:var(--fal);font-size:14px}
+details{border-top:1px solid var(--line);padding:10px 0}
+details:first-of-type{border:0}
+summary{font-weight:600;cursor:pointer}
+details p{margin:6px 0 0;font-size:15px}
+.k{color:var(--mute)}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <main>
- <div class="top"><div class="brand">VOICE <span>LIFT</span></div><div class="tag">LIVE PITCH COACH</div></div>
- <h1>หาคีย์เสียงตัวเอง<br>แล้วค่อย ๆ ฝึกเสียงหลบ</h1>
- <p class="sub">ร้องหรือฮัมเข้าไมค์ แล้วดูว่าเสียงอยู่โน้ตไหน สูงหรือต่ำแค่ไหนแบบเรียลไทม์ ไม่ต้องรู้ทฤษฎีดนตรีก็ใช้ได้</p>
- <section class="panel">
-  <div class="controls"><button class="btn primary" id="start">เปิดไมค์และเริ่มวัดเสียง</button><button class="btn secondary" id="stop" disabled>หยุด</button></div>
-  <div class="status" id="status">กดเริ่ม แล้วอนุญาตให้เว็บไซต์ใช้ไมโครโฟน</div>
- </section>
- <section class="panel">
-  <div class="metrics">
-   <div class="metric"><small>โน้ตที่กำลังร้อง</small><div class="big note" id="note">—</div><div class="hint" id="noteHint">รอเสียงจากไมค์</div></div>
-   <div class="metric"><small>ความถี่</small><div class="big" id="freq">—</div><div class="unit">Hz</div></div>
-   <div class="metric"><small>ระดับเสียง</small><div class="big" id="level">—</div><div class="unit">dB โดยประมาณ</div></div>
-  </div>
- </section>
- <section class="panel">
-  <div class="row"><h2 class="section-title">กราฟระดับเสียงของคุณ</h2><span class="tag">LIVE</span></div>
-  <canvas id="chart" width="900" height="260"></canvas>
-  <div class="legend"><span><i class="dot"></i>เส้นโน้ตที่ตรวจจับได้</span><span>แกนตั้ง = สูง / ต่ำ</span><span>แกนนอน = เวลา</span></div>
- </section>
- <section class="panel">
-  <div class="row"><h2 class="section-title">ระดับความสูงของเสียงตอนนี้</h2><span id="zone" class="tag">ยังไม่พบโน้ต</span></div>
-  <div class="meter"><div class="fill" id="pitchFill"></div></div>
-  <div class="range-labels"><span>เสียงต่ำ</span><span>เสียงกลาง</span><span>เสียงสูง</span></div>
-  <p class="tip" id="pitchAdvice">ลองฮัมเสียง “อืม” เบา ๆ ให้เสียงนิ่งก่อน แล้วดูตำแหน่งบนกราฟ</p>
- </section>
- <section class="panel">
-  <h2 class="section-title">ลองฝึกเสียงหลบแบบเริ่มต้น</h2>
-  <div class="steps">
-   <div class="step"><b>01 · วอร์มเสียง</b><p>ฮัม “อืม” เบา ๆ 20–30 วินาที อย่าบีบคอหรือดันเสียง</p></div>
-   <div class="step"><b>02 · ไถเสียงขึ้น</b><p>ทำเสียง “อู” จากต่ำไปสูงช้า ๆ เหมือนเสียงไซเรน แล้วดูโน้ตบนกราฟ</p></div>
-   <div class="step"><b>03 · เบาและผ่อน</b><p>เมื่อเสียงเริ่มบางหรือเบาขึ้น ให้ผ่อนลมและคอ อย่าฝืนตะโกนเพื่อไล่โน้ตสูง</p></div>
-  </div>
- </section>
- <section class="panel">
-  <h2 class="section-title">เข้าใจผลที่วัดได้</h2>
-  <p class="tip"><strong>โน้ต</strong> เช่น C4, A4 คือชื่อระดับเสียง ส่วนเลขท้ายบอกช่วงอ็อกเทฟ เลขมากขึ้นโดยทั่วไปหมายถึงเสียงสูงขึ้น<br><strong>Hz</strong> คือความถี่ ยิ่งตัวเลขมากเสียงยิ่งสูง<br><strong>เสียงหลบ (falsetto)</strong> เป็นวิธีใช้กลไกการออกเสียง ไม่ใช่แค่ร้องโน้ตสูง แอปนี้ช่วยดูระดับเสียง แต่ไม่สามารถฟังแล้วฟันธงได้แน่นอนว่าเป็นเสียงหลบหรือเสียงอก</p>
-  <p class="tip"><strong>เป้าหมายฝึก:</strong> เลือกโน้ตที่สูงกว่าระดับสบายของคุณเพียง 1–2 ขั้น แล้วค่อย ๆ ไต่ขึ้น ไม่ต้องแข่งกับตัวเลข ถ้าเจ็บคอ เสียงแหบ หรือแน่นคอ ให้หยุดพัก</p>
- </section>
- <div class="footer">VOICE LIFT · ประมวลผลเสียงในเบราว์เซอร์ ไม่บันทึกหรือส่งเสียงออกไป</div>
+<h1>หาเสียงหลบ 🎤</h1>
+<p class="sub">สำหรับคนที่ร้องเพลงไม่เป็น เริ่มจากศูนย์ได้เลย</p>
+<div class="tabs" role="tablist">
+<button role="tab" aria-selected="true" data-t="mic">กราฟเสียง</button>
+<button role="tab" aria-selected="false" data-t="learn">วิธีหาเสียงหลบ</button>
+</div>
+
+<section id="mic">
+<button class="btn" id="go">เปิดไมค์</button>
+<div class="card" id="err"></div>
+<div class="card">
+<div class="big"><div id="note">–</div><div id="hz">กดเปิดไมค์ แล้วร้อง “อู” ยาวๆ</div></div>
+<div class="tune"><i id="tdot"></i></div>
+<div class="gl"><span>ต่ำกว่าโน้ต</span><span>ตรงโน้ต</span><span>สูงกว่าโน้ต</span></div>
+<div id="state" style="margin-top:12px">รอเสียงของคุณ…</div>
+<div class="gauge"><i id="gp"></i></div>
+<div class="gl"><span>เสียงปกติ</span><span>รอยต่อ</span><span>เสียงหลบ</span></div>
+</div>
+<div class="card">
+<canvas id="cv"></canvas>
+<div class="leg"><span><b style="background:var(--chest)"></b>เสียงปกติ</span><span><b style="background:var(--mid)"></b>รอยต่อ</span><span><b style="background:var(--fal)"></b>เสียงหลบ</span><span>เส้นยิ่งสูง = เสียงยิ่งสูง</span></div>
+</div>
+<div class="card">
+<div class="row"><span>ช่วงเสียงที่ร้องได้ตอนนี้</span><b id="rng">–</b></div>
+<div class="row"><span>จุดพลิกเสียงล่าสุด</span><b id="flip">–</b></div>
+<div style="margin-top:10px">ค้างเสียงหลบให้ครบ 3 วินาที <span class="k">(ผ่านแล้ว <b id="cnt">0</b> ครั้ง)</span></div>
+<div class="bar"><i id="hb"></i></div>
+</div>
+<p class="mut">ทิปให้แม่น: อยู่ที่เงียบ ถือมือถือห่างปากประมาณหนึ่งคืบ ร้องเสียง “อู” ยาวๆ สีที่ขึ้นเป็นการประมาณจากเสียงของคุณ ไม่ได้บอกว่าถูกหรือผิด</p>
+</section>
+
+<section id="learn" hidden>
+<div class="card"><b>เสียงหลบคืออะไร?</b><p style="margin:6px 0 0;font-size:15px">คือเสียงสูงที่เบา โปร่ง มีลมปนนิดๆ เหมือนเสียงเด็กหรือผีในการ์ตูน ต่างจากเสียงปกติที่หนักแน่นและสั่นที่อกกับคอ ไม่ต้องออกแรง ยิ่งเบายิ่งหาเจอง่าย</p></div>
+<div class="card">
+<details open><summary>1. ทำเสียงผีหลอก</summary><p>ห่อปากเป็นวงกลม ทำเสียง “ฮู้วววว~” เบามากๆ ไล่ขึ้นสูงเหมือนไซเรน <span class="k">ใช่เมื่อ: เสียงเบาโปร่ง คอไม่ตึง และกราฟขึ้นสีชมพู</span></p></details>
+<details><summary>2. ถอนหายใจไล่ลง</summary><p>หาวแล้วถอนหายใจ “ฮ้าาาา~” เริ่มจากเสียงสูงสุดที่ทำได้ แล้วปล่อยให้ไหลลงช้าๆ <span class="k">ช่วงต้นที่เบาและมีลมคือเสียงหลบ</span></p></details>
+<details><summary>3. ครางเหมือนลูกหมาอ้อน</summary><p>ทำเสียงอ้อนขอ “งื้ออออ~” หรือ “อี๋ออออ~” เบาๆ ปากปิดหรือเปิดนิดเดียวก็ได้</p></details>
+<details><summary>4. พูดเสียงเด็กการ์ตูน</summary><p>พูดว่า “ไม่เอาาา” ด้วยเสียงเล็กแหลมแบบการ์ตูน แล้วลากสระให้ยาวขึ้นเรื่อยๆ จนเป็นเสียงร้อง</p></details>
+<details><summary>5. ไล่จากเสียงปกติขึ้นไป</summary><p>ร้อง “อู” เสียงปกติต่ำๆ แล้วไล่ขึ้นทีละนิด พอเสียงจะแตกหรือขาด อย่าฝืนดัน ให้ปล่อยให้มันพลิกเป็นเสียงเบาๆ จุดที่แตกนั่นแหละคือรอยต่อ ดูจุดพลิกเสียงได้ในหน้ากราฟ</p></details>
+</div>
+<div class="card mut">ไม่ต้องเกร็งคอหรือตะโกน ถ้าเจ็บคอให้หยุดทันที ซ้อมรอบละ 5 ถึง 10 นาที แล้วพักจิบน้ำ</div>
+<button class="btn" id="tomic">ไปลองกับไมค์</button>
+</section>
 </main>
 <script>
-const $=id=>document.getElementById(id);
-let audioCtx=null, analyser=null, stream=null, raf=null, running=false;
-const canvas=$('chart'),ctx=canvas.getContext('2d');
-const history=Array(100).fill(null);
-const noteNames=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
-function noteFromFreq(f){
- const midi=Math.round(69+12*Math.log2(f/440));
- const name=noteNames[(midi%12+12)%12]+(Math.floor(midi/12)-1);
- const exact=440*Math.pow(2,(midi-69)/12);
- const cents=Math.round(1200*Math.log2(f/exact));
- return {name,midi,cents};
-}
-function detectPitch(buf,sr){
- let rms=0;for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);
- if(rms<0.012)return null;
- let r1=0,r2=buf.length-1,th=0.2;
- for(let i=0;i<buf.length/2;i++){if(Math.abs(buf[i])<th){r1=i;break}}
- for(let i=1;i<buf.length/2;i++){if(Math.abs(buf[buf.length-i])<th){r2=buf.length-i;break}}
- const b=buf.slice(r1,r2),n=b.length;
- const corr=new Float32Array(n);
- for(let lag=0;lag<n;lag++){let sum=0;for(let j=0;j<n-lag;j++)sum+=b[j]*b[j+lag];corr[lag]=sum}
- let d=0;while(d+1<n&&corr[d]>corr[d+1])d++;
- let max=-1,period=-1;
- for(let i=d;i<n;i++){if(corr[i]>max){max=corr[i];period=i}}
- if(period<2)return null;
- let better=period;
- if(period>0&&period<n-1){const x1=corr[period-1],x2=corr[period],x3=corr[period+1];const a=(x1+x3-2*x2)/2,bv=(x3-x1)/2;if(a)better=period-bv/(2*a)}
- const freq=sr/better;
- if(freq<65||freq>1100)return null;
- return {freq,rms};
-}
-function draw(){
- const w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);
- ctx.strokeStyle='#1d2a40';ctx.lineWidth=1;
- for(let i=0;i<=4;i++){let y=15+i*(h-30)/4;ctx.beginPath();ctx.moveTo(48,y);ctx.lineTo(w-12,y);ctx.stroke()}
- ctx.fillStyle='#8291aa';ctx.font='14px sans-serif';
- ['สูง','กลาง','ต่ำ'].forEach((t,i)=>ctx.fillText(t,8,27+i*(h-48)/2));
- ctx.strokeStyle='#57d7ff';ctx.lineWidth=3;ctx.beginPath();let started=false;
- history.forEach((m,i)=>{if(m===null){started=false;return}let y=h-18-((m-30)/(90-30))*(h-36);let x=48+i*(w-62)/(history.length-1);if(!started){ctx.moveTo(x,y);started=true}else ctx.lineTo(x,y)});
- ctx.stroke();
-}
-function update(){
- if(!running)return;
- const data=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(data);
- const result=detectPitch(data,audioCtx.sampleRate);
- let rms=0;for(let x of data)rms+=x*x;rms=Math.sqrt(rms/data.length);
- const db=Math.max(-90,20*Math.log10(Math.max(rms,0.00001)));
- $('level').textContent=Math.round(db);
- if(result){
-  const n=noteFromFreq(result.freq);
-  $('note').textContent=n.name;
-  $('freq').textContent=Math.round(result.freq);
-  $('noteHint').textContent=(n.cents>=0?'+':'')+n.cents+' cents จากโน้ตตรง';
-  history.push(n.midi);history.shift();
-  const norm=Math.max(0,Math.min(100,(n.midi-36)/(84-36)*100));
-  $('pitchFill').style.width=norm+'%';
-  let z=n.midi<48?'เสียงค่อนข้างต่ำ':n.midi<60?'เสียงกลางค่อนไปต่ำ':n.midi<72?'เสียงกลางค่อนไปสูง':'เสียงค่อนข้างสูง';
-  $('zone').textContent=z;
-  $('pitchAdvice').textContent=n.midi<60?'ลองไถเสียงขึ้นทีละนิดอย่างสบาย ๆ อย่าเร่งหรือบีบคอ':n.midi<72?'ระดับนี้ลองทำเสียง “อู” เบา ๆ ให้เสียงนิ่ง แล้วค่อยไต่ขึ้น': 'คุณกำลังอยู่ในย่านเสียงสูง ลองผ่อนแรงและใช้เสียงเบา ไม่ต้องดันคอ';
- }else{
-  $('note').textContent='—';$('freq').textContent='—';$('noteHint').textContent='ยังจับโน้ตไม่ได้ ลองฮัมให้ชัดและนิ่ง';history.push(null);history.shift();
+const $=s=>document.querySelector(s);
+const NM=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const nm=m=>{const r=Math.round(m);return NM[((r%12)+12)%12]+(Math.floor(r/12)-1)};
+const LO=40,HI=88,SPAN=8000;
+let ctx,an,stream,TB,FB,run=false,last=0,lastT=0,pts=[],sm=null,state='none',gap=0,hold=0,done=false,cnt=0,lc=0,lcm=0,minM=null,maxM=null;
+const cv=$('#cv'),g=cv.getContext('2d');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function size(){const d=devicePixelRatio||1;cv.width=cv.clientWidth*d;cv.height=cv.clientHeight*d;g.setTransform(d,0,0,d,0,0)}
+function pitch(b,sr){
+ const N=2048,minL=Math.floor(sr/1100),maxL=Math.floor(sr/70),W=N-maxL;
+ let e=0;for(let i=0;i<W;i++)e+=b[i]*b[i];
+ if(Math.sqrt(e/W)<0.01)return null;
+ const c=new Float32Array(maxL+2);let best=0;
+ for(let L=minL;L<=maxL;L++){let s=0;for(let i=0;i<W;i++)s+=b[i]*b[i+L];c[L]=s;if(s>best)best=s}
+ if(best/e<0.5)return null;
+ let L=minL;while(L<maxL&&c[L]>c[L+1])L++;
+ for(;L<maxL;L++)if(c[L]>=.9*best&&c[L]>=c[L-1]&&c[L]>=c[L+1]){
+  const a=c[L-1],m=c[L],z=c[L+1],d=a-2*m+z;
+  return sr/(L+(d?.5*(a-z)/d:0));
  }
- draw();raf=requestAnimationFrame(update);
+ return null;
+}
+const LAB={chest:['เสียงปกติ (เสียงอก)','--chest'],mid:['รอยต่อ กำลังพลิก','--mid'],fal:['เสียงหลบ ✔','--fal']};
+function reset(){$('#note').textContent='–';$('#hz').textContent='ฟังอยู่… ลองร้อง “อู” ดู';$('#state').textContent='รอเสียงของคุณ…';$('#state').style.color='';$('#tdot').style.left='50%';hold=0;done=false;$('#hb').style.width='0'}
+function analyze(now){
+ an.getFloatTimeDomainData(TB);an.getFloatFrequencyData(FB);
+ const dt=Math.min(now-lastT,100);lastT=now;
+ const f=pitch(TB,ctx.sampleRate);
+ if(!f){gap+=dt;if(gap>300&&state!=='none'){state='none';sm=null;reset()}return}
+ gap=0;
+ const bh=ctx.sampleRate/an.fftSize;
+ const pk=q=>{const k=Math.round(q/bh),w=Math.max(1,Math.round(q*.03/bh));let m=-200;for(let i=k-w;i<=k+w;i++)if(FB[i]>m)m=FB[i];return m};
+ const d=pk(f)-pk(2*f);
+ sm=sm===null?d:sm*.75+d*.25;
+ const sc=Math.min(1,Math.max(0,(sm+2)/16));
+ const m=69+12*Math.log2(f/440);
+ const ns=sc>.62?'fal':sc<.4?'chest':'mid';
+ if(ns==='chest'){lc=now;lcm=m}
+ else if(ns==='fal'&&state!=='fal'&&lc&&now-lc<1500){$('#flip').textContent=nm((lcm+m)/2)}
+ state=ns;
+ pts.push({t:now,m,ns});while(pts.length&&now-pts[0].t>SPAN)pts.shift();
+ minM=minM===null?m:Math.min(minM,m);maxM=maxM===null?m:Math.max(maxM,m);
+ if(ns==='fal'){hold+=dt;if(hold>=3000&&!done){done=true;cnt++;$('#cnt').textContent=cnt}}
+ else if(ns==='chest'){hold=0;done=false}
+ const c=(m-Math.round(m))*100;
+ $('#note').textContent=nm(m);
+ $('#hz').textContent=Math.round(f)+' Hz · '+(Math.abs(c)<12?'ตรงโน้ต':c>0?'สูงไปนิด':'ต่ำไปนิด');
+ $('#tdot').style.left=(50+c)+'%';
+ $('#state').textContent=LAB[ns][0];$('#state').style.color='var('+LAB[ns][1]+')';
+ $('#gp').style.left=(sc*100)+'%';
+ $('#rng').textContent=nm(minM)+' – '+nm(maxM);
+ $('#hb').style.width=Math.min(100,hold/30)+'%';
+}
+function draw(now){
+ const w=cv.clientWidth,h=cv.clientHeight;g.clearRect(0,0,w,h);
+ const y=m=>h-(m-LO)/(HI-LO)*h,x=t=>w-(now-t)/SPAN*w;
+ g.font='11px system-ui,sans-serif';g.lineWidth=1;g.strokeStyle=css('--line');
+ for(let m=LO;m<=HI;m++){const k=m%12;if(k!==0&&k!==7)continue;g.beginPath();g.moveTo(0,y(m));g.lineTo(w,y(m));g.stroke();if(k===0){g.fillStyle=css('--mute');g.fillText('C'+(m/12-1),4,y(m)-3)}}
+ const C={chest:css('--chest'),mid:css('--mid'),fal:css('--fal')};
+ g.lineWidth=4;g.lineCap='round';
+ for(let i=1;i<pts.length;i++){if(pts[i].t-pts[i-1].t>150)continue;g.strokeStyle=C[pts[i].ns];g.beginPath();g.moveTo(x(pts[i-1].t),y(pts[i-1].m));g.lineTo(x(pts[i].t),y(pts[i].m));g.stroke()}
+ const p=pts[pts.length-1];
+ if(p&&now-p.t<300){g.fillStyle=C[p.ns];g.beginPath();g.arc(x(p.t),y(p.m),7,0,7);g.fill()}
+}
+function loop(now){
+ if(!run)return;
+ if(now-last>32){last=now;analyze(now)}
+ draw(now);requestAnimationFrame(loop);
 }
 async function start(){
+ $('#err').style.display='none';
  try{
-  if(!navigator.mediaDevices?.getUserMedia)throw new Error('เบราว์เซอร์นี้ไม่รองรับไมโครโฟน กรุณาเปิดผ่าน Safari/Chrome บน HTTPS');
-  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
-  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  await audioCtx.resume();
-  const src=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;
-  src.connect(analyser);running=true;$('start').disabled=true;$('stop').disabled=false;$('status').textContent='กำลังฟังเสียงคุณอยู่ — ลองฮัมหรือร้องโน้ตยาว ๆ';
-  update();
- }catch(e){$('status').textContent='เปิดไมค์ไม่สำเร็จ: '+e.message+'. ตรวจสอบสิทธิ์ไมโครโฟนและลองอีกครั้ง';}
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  ctx.resume();
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw{name:'NoMedia'};
+  const tm=setTimeout(()=>{const E=$('#err');E.textContent='ผ่านไป 5 วินาทีแล้วยังไม่มีหน้าต่างขออนุญาตไมค์ แปลว่าหน้านี้ถูกฝังอยู่ในกรอบที่บล็อกไมค์ ('+(window.top!==window.self?'อยู่ในกรอบ':'ไม่ได้อยู่ในกรอบ')+') ให้เปิดเวอร์ชันที่โฮสต์บนเว็บของคุณเองแทน';E.style.display='block'},5000);
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}})}finally{clearTimeout(tm)}
+  $('#err').style.display='none';
+  await ctx.resume();
+  an=ctx.createAnalyser();an.fftSize=4096;an.smoothingTimeConstant=0;
+  ctx.createMediaStreamSource(stream).connect(an);
+  TB=new Float32Array(an.fftSize);FB=new Float32Array(an.frequencyBinCount);
+ }catch(e){
+  const n=e&&e.name,E=$('#err');
+  E.textContent=n==='NotFoundError'?'ไม่พบไมโครโฟนในเครื่อง':(n==='NotAllowedError'||n==='SecurityError'||n==='NoMedia')?'iPhone ยังไม่ให้ใช้ไมค์ วิธีแก้: เปิดลิงก์นี้ใน Safari (ถ้าอยู่ในแอป Claude ให้คัดลอกลิงก์ไปเปิดใน Safari) แล้วกดปุ่ม aA ในแถบที่อยู่ เลือก การตั้งค่าเว็บไซต์ > ไมโครโฟน > อนุญาต จากนั้นรีเฟรชหน้าแล้วกดเปิดไมค์ใหม่':'เปิดไมค์ไม่ได้ ('+n+') ลองรีเฟรชหน้าแล้วกดใหม่';
+  E.style.display='block';ctx&&ctx.close();return}
+ run=true;pts=[];sm=null;state='none';size();reset();
+ $('#go').textContent='หยุด';requestAnimationFrame(t=>{lastT=t;loop(t)});
 }
-function stop(){
- running=false;if(raf)cancelAnimationFrame(raf);if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)audioCtx.close();
- stream=null;audioCtx=null;$('start').disabled=false;$('stop').disabled=true;$('status').textContent='หยุดวัดเสียงแล้ว';
+function stop(){run=false;stream&&stream.getTracks().forEach(t=>t.stop());ctx&&ctx.close();$('#go').textContent='เปิดไมค์'}
+$('#go').onclick=()=>run?stop():start();
+function tab(n){
+ document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===n));
+ $('#mic').hidden=n!=='mic';$('#learn').hidden=n!=='learn';if(n==='mic')size();
 }
-$('start').addEventListener('click',start);$('stop').addEventListener('click',stop);draw();
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
+$('#tomic').onclick=()=>{tab('mic');scrollTo(0,0)};
+addEventListener('resize',size);size();
 </script>
 </body>
 </html>
