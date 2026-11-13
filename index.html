@@ -479,6 +479,7 @@ $('#sdemo').onclick=async()=>{
 const fc=$('#fc'),g4=fc.getContext('2d');
 let fp=[],fr={lo:48,hi:72},fmn=null,fmx=null,fLast=0;
 function fPush(now,m){fp.push({t:now,m});fmn=fmn===null?m:Math.min(fmn,m);fmx=fmx===null?m:Math.max(fmx,m)}
+const hc=t=>`hsl(${Math.round(220-220*Math.min(1,Math.max(0,t)))},85%,55%)`;
 function fDraw(now){
  if(!fc.clientWidth)return;
  const d=Math.min(2,devicePixelRatio||1),w=fc.clientWidth,h=fc.clientHeight;
@@ -488,17 +489,22 @@ function fDraw(now){
  let lo=48,hi=72;
  if(fp.length){lo=Math.min(...fp.map(p=>p.m))-3;hi=Math.max(...fp.map(p=>p.m))+3;if(hi-lo<14){const c=(hi+lo)/2;lo=c-7;hi=c+7}}
  fr.lo+=(lo-fr.lo)*.1;fr.hi+=(hi-fr.hi)*.1;
- const L=fr.lo,H=fr.hi,pad=30,y=m=>h-pad-(m-L)/(H-L)*(h-2*pad),x=t=>(w-16)-(now-t)/12000*(w-16);
+ const L=fr.lo,H=fr.hi,pad=30,y=m=>h-pad-(m-L)/(H-L)*(h-2*pad),x=t=>(w-34)-(now-t)/12000*(w-34),tt=m=>(m-L)/(H-L);
+ const bg=g4.createLinearGradient(0,0,0,h);[0,.25,.5,.75,1].forEach(q=>bg.addColorStop(q,hc(1-q)));
+ g4.globalAlpha=.13;g4.fillStyle=bg;g4.fillRect(0,0,w,h);g4.globalAlpha=1;g4.fillStyle=bg;g4.fillRect(w-14,0,10,h);
  g4.font='11px system-ui,sans-serif';g4.textAlign='left';g4.lineWidth=1;g4.strokeStyle=css('--line');g4.fillStyle=css('--mute');
- for(let m=Math.ceil(L);m<=H;m++){const k=((m%12)+12)%12;if(![0,2,4,5,7,9,11].includes(k))continue;if(H-L>30&&k!==0&&k!==7)continue;g4.beginPath();g4.moveTo(0,y(m));g4.lineTo(w,y(m));g4.stroke();g4.fillText(nm(m),4,y(m)-2)}
- g4.font='bold 13px system-ui,sans-serif';g4.textAlign='right';g4.fillText('▲ สูง',w-8,18);g4.fillText('▼ ต่ำ',w-8,h-10);
- g4.lineWidth=5;g4.lineCap='round';g4.lineJoin='round';g4.strokeStyle=css('--chest');
- g4.beginPath();let on=false;
- for(let i=0;i<fp.length;i++){const p=fp[i];if(i>0&&p.t-fp[i-1].t>200)on=false;on?g4.lineTo(x(p.t),y(p.m)):g4.moveTo(x(p.t),y(p.m));on=true}
- g4.stroke();
+ for(let m=Math.ceil(L);m<=H;m++){const k=((m%12)+12)%12;if(![0,2,4,5,7,9,11].includes(k))continue;if(H-L>30&&k!==0&&k!==7)continue;g4.beginPath();g4.moveTo(0,y(m));g4.lineTo(w-16,y(m));g4.stroke();g4.fillText(nm(m),4,y(m)-2)}
+ g4.font='bold 13px system-ui,sans-serif';g4.textAlign='right';g4.fillText('\u25b2 \u0e2a\u0e39\u0e07',w-20,18);g4.fillText('\u25bc \u0e15\u0e48\u0e33',w-20,h-10);
+ g4.lineWidth=6;g4.lineCap='round';
+ for(let i=1;i<fp.length;i++){const a=fp[i-1],b=fp[i];if(b.t-a.t>200)continue;g4.strokeStyle=hc(tt(b.m));g4.beginPath();g4.moveTo(x(a.t),y(a.m));g4.lineTo(x(b.t),y(b.m));g4.stroke()}
  const p=fp[fp.length-1];
- if(p&&now-p.t<300){g4.fillStyle=css('--ink');g4.beginPath();g4.arc(x(p.t),y(p.m),8,0,7);g4.fill();g4.textAlign='right';g4.font='bold 34px system-ui,sans-serif';g4.fillText(nm(p.m),w-30,y(p.m)<80?y(p.m)+44:y(p.m)-14)}
- if(now-fLast>400){fLast=now;if(fmn!==null)$('#fst').textContent='ตอนนี้ร้องได้ตั้งแต่ '+nm(fmn)+' ถึง '+nm(fmx)}
+ if(p&&now-p.t<300){
+  const t=tt(p.m),c=hc(t),old=fp.find(q=>p.t-q.t<=450),dm=old?p.m-old.m:0;
+  g4.fillStyle=c;g4.strokeStyle=css('--card');g4.lineWidth=4;g4.beginPath();g4.arc(x(p.t),y(p.m),10,0,7);g4.fill();g4.stroke();
+  g4.textAlign='center';g4.font='bold 44px system-ui,sans-serif';g4.fillStyle=c;g4.fillText(nm(p.m),w/2,52);
+  g4.font='bold 18px system-ui,sans-serif';g4.fillText((t>.66?'\u0e2a\u0e39\u0e07':t<.34?'\u0e15\u0e48\u0e33':'\u0e01\u0e25\u0e32\u0e07')+(dm>.8?' \u25b2':dm<-.8?' \u25bc':''),w/2,78);
+ }
+ if(now-fLast>400){fLast=now;if(fmn!==null)$('#fst').textContent='\u0e15\u0e2d\u0e19\u0e19\u0e35\u0e49\u0e23\u0e49\u0e2d\u0e07\u0e44\u0e14\u0e49\u0e15\u0e31\u0e49\u0e07\u0e41\u0e15\u0e48 '+nm(fmn)+' \u0e16\u0e36\u0e07 '+nm(fmx)}
 }
 $('#fgo').onclick=async()=>{
  if(run){stop();$('#fgo').textContent='เริ่มร้อง';return}
