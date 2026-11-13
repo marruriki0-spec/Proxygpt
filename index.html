@@ -64,6 +64,7 @@ label{display:block;font-size:14px;color:var(--mute)}
 <p class="sub">ฝึกวันละ 5 นาที วัดจากเสียงจริงของคุณ</p>
 <div class="tabs" role="tablist">
 <button role="tab" aria-selected="true" data-t="daily">วันนี้</button>
+<button role="tab" aria-selected="false" data-t="free">ร้องสบายๆ</button>
 <button role="tab" aria-selected="false" data-t="drill">ฝึกเอง</button>
 <button role="tab" aria-selected="false" data-t="mic">ดูเสียงสด</button>
 <button role="tab" aria-selected="false" data-t="guide">คู่มือ</button>
@@ -81,6 +82,11 @@ label{display:block;font-size:14px;color:var(--mute)}
 </div>
 <div id='dslot'></div>
 <div class='card' id='dsum' hidden></div>
+</section>
+<section id='free' hidden>
+<button class='btn' id='fgo'>เริ่มร้อง</button>
+<div class='card'><canvas id='fc' style='height:56vh;min-height:340px'></canvas><div class='mut' id='fst' style='margin-top:8px'>กดเริ่มร้อง แล้วร้องตามสบาย เส้นยิ่งสูง เสียงยิ่งสูง</div></div>
+<button class='btn s' id='fclr'>ล้างกราฟ</button>
 </section>
 <section id="mic" hidden>
 <button class="btn" id="go">เปิดไมค์</button>
@@ -171,7 +177,7 @@ function analyze(now){
  const m=69+12*Math.log2(f/440);
  pts.push({t:now,m,ns:'chest'});while(pts.length&&now-pts[0].t>SPAN)pts.shift();
  minM=minM===null?m:Math.min(minM,m);maxM=maxM===null?m:Math.max(maxM,m);
- drillTick(now,m,'chest');tv.m=m;tv.ns='chest';tv.t=now;
+ drillTick(now,m,'chest');if(curTab==='free')fPush(now,m);tv.m=m;tv.ns='chest';tv.t=now;
  if(curTab==='mic'){const c=(m-Math.round(m))*100;$('#note').textContent=nm(m);$('#hz').textContent=Math.round(f)+' Hz · '+(Math.abs(c)<12?'ตรงโน้ต':c>0?'สูงไปนิด':'ต่ำไปนิด');$('#tdot').style.left=(50+c)+'%'}
 }
 function draw(now){
@@ -188,7 +194,7 @@ function draw(now){
 function loop(now){
  if(!run)return;
  if(now-last>40){last=now;analyze(now)}
- drillTime(now);if(curTab==='mic'){draw(now);tDraw(now)}if(D)dDraw(now);requestAnimationFrame(loop);
+ drillTime(now);if(curTab==='mic'){draw(now);tDraw(now)}if(D)dDraw(now);if(curTab==='free')fDraw(now);requestAnimationFrame(loop);
 }
 async function start(){
  $('#err').style.display='none';
@@ -214,7 +220,7 @@ function stop(){run=false;stream&&stream.getTracks().forEach(t=>t.stop());ctx&&c
 $('#go').onclick=()=>run?stop():start();
 function tab(n){curTab=n;
  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===n));
- $('#daily').hidden=n!=='daily';$('#drill').hidden=n!=='drill';$('#mic').hidden=n!=='mic';$('#guide').hidden=n!=='guide';if(n==='mic'){size();tDraw(performance.now())}
+ $('#daily').hidden=n!=='daily';$('#drill').hidden=n!=='drill';$('#mic').hidden=n!=='mic';$('#guide').hidden=n!=='guide';$('#free').hidden=n!=='free';if(n==='free'){$('#fgo').textContent=run?'หยุด':'เริ่มร้อง';fDraw(performance.now())}if(n==='mic'){size();tDraw(performance.now())}
 }
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
 
@@ -470,6 +476,37 @@ $('#sdemo').onclick=async()=>{
  if(!run)return;
  let t=0;build('s').filter(s=>s.song).forEach(s=>{const m=s.m,d=s.dur;setTimeout(()=>tone(m,d*.9),t);t+=d});
 };
+const fc=$('#fc'),g4=fc.getContext('2d');
+let fp=[],fr={lo:48,hi:72},fmn=null,fmx=null,fLast=0;
+function fPush(now,m){fp.push({t:now,m});fmn=fmn===null?m:Math.min(fmn,m);fmx=fmx===null?m:Math.max(fmx,m)}
+function fDraw(now){
+ if(!fc.clientWidth)return;
+ const d=Math.min(2,devicePixelRatio||1),w=fc.clientWidth,h=fc.clientHeight;
+ if(fc.width!==Math.round(w*d)||fc.height!==Math.round(h*d)){fc.width=Math.round(w*d);fc.height=Math.round(h*d)}
+ g4.setTransform(d,0,0,d,0,0);g4.clearRect(0,0,w,h);
+ while(fp.length&&now-fp[0].t>12000)fp.shift();
+ let lo=48,hi=72;
+ if(fp.length){lo=Math.min(...fp.map(p=>p.m))-3;hi=Math.max(...fp.map(p=>p.m))+3;if(hi-lo<14){const c=(hi+lo)/2;lo=c-7;hi=c+7}}
+ fr.lo+=(lo-fr.lo)*.1;fr.hi+=(hi-fr.hi)*.1;
+ const L=fr.lo,H=fr.hi,pad=30,y=m=>h-pad-(m-L)/(H-L)*(h-2*pad),x=t=>(w-16)-(now-t)/12000*(w-16);
+ g4.font='11px system-ui,sans-serif';g4.textAlign='left';g4.lineWidth=1;g4.strokeStyle=css('--line');g4.fillStyle=css('--mute');
+ for(let m=Math.ceil(L);m<=H;m++){const k=((m%12)+12)%12;if(![0,2,4,5,7,9,11].includes(k))continue;if(H-L>30&&k!==0&&k!==7)continue;g4.beginPath();g4.moveTo(0,y(m));g4.lineTo(w,y(m));g4.stroke();g4.fillText(nm(m),4,y(m)-2)}
+ g4.font='bold 13px system-ui,sans-serif';g4.textAlign='right';g4.fillText('▲ สูง',w-8,18);g4.fillText('▼ ต่ำ',w-8,h-10);
+ g4.lineWidth=5;g4.lineCap='round';g4.lineJoin='round';g4.strokeStyle=css('--chest');
+ g4.beginPath();let on=false;
+ for(let i=0;i<fp.length;i++){const p=fp[i];if(i>0&&p.t-fp[i-1].t>200)on=false;on?g4.lineTo(x(p.t),y(p.m)):g4.moveTo(x(p.t),y(p.m));on=true}
+ g4.stroke();
+ const p=fp[fp.length-1];
+ if(p&&now-p.t<300){g4.fillStyle=css('--ink');g4.beginPath();g4.arc(x(p.t),y(p.m),8,0,7);g4.fill();g4.textAlign='right';g4.font='bold 34px system-ui,sans-serif';g4.fillText(nm(p.m),w-30,y(p.m)<80?y(p.m)+44:y(p.m)-14)}
+ if(now-fLast>400){fLast=now;if(fmn!==null)$('#fst').textContent='ตอนนี้ร้องได้ตั้งแต่ '+nm(fmn)+' ถึง '+nm(fmx)}
+}
+$('#fgo').onclick=async()=>{
+ if(run){stop();$('#fgo').textContent='เริ่มร้อง';return}
+ await start();
+ $('#fgo').textContent=run?'หยุด':'เริ่มร้อง';
+ if(!run)$('#fst').textContent='เปิดไมค์ไม่ได้ ลองตรวจสิทธิ์ไมค์ของเบราว์เซอร์';
+};
+$('#fclr').onclick=()=>{fp=[];fmn=fmx=null;$('#fst').textContent='ล้างแล้ว ร้องต่อได้เลย'};
 lvl=+(lsg('lv')||1);
 {const b=lsg('bs');if(b!==null){base=+b;$('#bn').textContent=nm(base)+' (วัดแล้ว)'}}
 meta();pChips();sUp();
