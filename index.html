@@ -2,521 +2,756 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
-<title>ซ้อมร้องเพลง</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>High Note Coach - โค้ชฝึกขึ้นเสียงสูง & เสียงหลบ</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f5fa;--card:#fff;--ink:#14203c;--mute:#5a6684;--line:#dde3ee;--chest:#1b72dd;--mid:#cc8200;--fal:#d11f7c;--btn:#14203c;--btnt:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1120;--card:#151e35;--ink:#eef2ff;--mute:#9ba7c8;--line:#25304d;--chest:#4da3ff;--mid:#ffb938;--fal:#ff5fae;--btn:#eef2ff;--btnt:#0b1120}}
-:root[data-theme="dark"]{--bg:#0b1120;--card:#151e35;--ink:#eef2ff;--mute:#9ba7c8;--line:#25304d;--chest:#4da3ff;--mid:#ffb938;--fal:#ff5fae;--btn:#eef2ff;--btnt:#0b1120}
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 'Noto Sans Thai',system-ui,'Sarabun',sans-serif}
-main{max-width:640px;margin:0 auto;padding:16px}
-h1{font-size:23px;margin:4px 0 2px;font-weight:800}
-.sub{color:var(--mute);font-size:14px;margin:0 0 14px}
-.tabs{display:flex;overflow-x:auto;gap:6px;background:var(--line);padding:4px;border-radius:12px;margin-bottom:14px}
-.tabs button{flex:1;border:0;background:none;color:var(--mute);font-family:inherit;font-weight:600;font-size:13.5px;padding:9px 10px;border-radius:9px;white-space:nowrap;flex:1 0 auto}
-.tabs button[aria-selected="true"]{background:var(--card);color:var(--ink)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
-.btn{width:100%;padding:14px;border:0;border-radius:14px;background:var(--btn);color:var(--btnt);font-family:inherit;font-weight:800;font-size:17px;margin-bottom:12px}
-.big{display:flex;align-items:baseline;gap:12px}
-#note{font-size:64px;font-weight:800;line-height:1.1;min-width:2.4ch}
-#hz,.mut{color:var(--mute);font-size:14px}
-#state{font-weight:800;font-size:19px;margin:2px 0 6px}
-.tune{height:6px;background:var(--line);border-radius:3px;position:relative;margin:10px 0 4px}
-.tune::after{content:"";position:absolute;left:50%;top:-4px;width:2px;height:14px;background:var(--mute)}
-.tune i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:var(--ink);left:50%;transform:translateX(-50%)}
-.gauge{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--chest),var(--mid),var(--fal));position:relative;margin:14px 0 4px}
-.gauge i{position:absolute;top:-4px;width:6px;height:18px;border-radius:3px;background:var(--ink);left:0;transform:translateX(-50%)}
-.gl{display:flex;justify-content:space-between;color:var(--mute);font-size:12px}
-canvas{width:100%;height:280px;display:block;border-radius:12px;background:var(--bg)}
-.leg{display:flex;gap:14px;font-size:13px;color:var(--mute);margin-top:8px;flex-wrap:wrap}
-.leg b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
-.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
-.row:last-of-type{border:0}
-.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 4px}
-.bar i{display:block;height:100%;width:0;background:var(--fal)}
-#err{display:none;border-color:var(--fal);color:var(--fal);font-size:14px}
-details{border-top:1px solid var(--line);padding:10px 0}
-details:first-of-type{border:0}
-summary{font-weight:600;cursor:pointer}
-details p{margin:6px 0 0;font-size:15px}
-.k{color:var(--mute)}
-select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:15px;margin:4px 0 10px}
-label{display:block;font-size:14px;color:var(--mute)}
-.btn.s{background:var(--line);color:var(--ink);font-size:15px;padding:11px;font-weight:600}
-.ch{display:inline-block;padding:4px 9px;border-radius:9px;background:var(--line);font-size:13px;margin:2px;color:var(--mute)}
-.ch.on{background:var(--btn);color:var(--btnt)}
-.ch.ok{background:var(--chest);color:var(--bg)}
-.ch.miss{background:var(--fal);color:var(--bg)}
-.mt{height:12px;background:var(--line);border-radius:6px;position:relative;margin:16px 0 8px}
-.mt u{position:absolute;left:40%;width:20%;top:0;bottom:0;background:var(--chest);opacity:.35;border-radius:6px}
-.mt i{position:absolute;top:-3px;width:18px;height:18px;border-radius:50%;background:var(--ink);transform:translateX(-50%);left:50%}
-[hidden]{display:none!important}
+:root {
+  --bg: #090d16;
+  --panel: #131b2e;
+  --border: #233152;
+  --text: #f0f4ff;
+  --mute: #8a9bc2;
+  --chest: #00d2ff;     /* สีฟ้า: เสียงอก */
+  --mix: #ffb703;       /* สีเหลืองทอง: เสียงมิกซ์/รอยต่อ */
+  --fal: #ff2a85;       /* สีชมพูบานเย็น: เสียงหลบ (Falsetto) */
+  --strain: #ff3b30;    /* สีแดง: ตะเบ็ง/เค้นคอ */
+  --ok: #10b981;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Prompt', system-ui, sans-serif;
+  line-height: 1.5;
+  padding: env(safe-area-inset-top, 12px) 12px env(safe-area-inset-bottom, 24px);
+  max-width: 680px;
+  margin: 0 auto;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px 14px;
+}
+h1 { font-size: 21px; font-weight: 800; letter-spacing: -0.3px; }
+.badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--border);
+  color: var(--mute);
+  font-weight: 600;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.btn-row { display: flex; gap: 8px; margin-bottom: 12px; }
+button {
+  font-family: inherit;
+  border: none;
+  border-radius: 14px;
+  padding: 13px 16px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+button:active { transform: scale(0.98); }
+.btn-main {
+  flex: 2;
+  background: linear-gradient(135deg, #00d2ff, #ff2a85);
+  color: #fff;
+}
+.btn-sub {
+  flex: 1;
+  background: var(--border);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+.hud {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.note-box {
+  background: rgba(0,0,0,0.35);
+  border-radius: 14px;
+  text-align: center;
+  padding: 10px 6px;
+  border: 2px solid var(--border);
+}
+#note { font-size: 46px; font-weight: 800; line-height: 1; }
+#hz { font-size: 12px; color: var(--mute); margin-top: 4px; }
+.coach-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#reg-pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 3px 12px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 800;
+  background: var(--border);
+  color: #fff;
+}
+#coach-tip {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  min-height: 2.8em;
+}
+.meters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+.m-col {
+  background: rgba(0,0,0,0.25);
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+.m-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--mute);
+  margin-bottom: 5px;
+}
+.bar-bg {
+  height: 8px;
+  background: #090d16;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.08s;
+}
+.modes {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+.modes button {
+  flex: 1 0 auto;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255,255,255,0.05);
+  color: var(--mute);
+  border: 1px solid transparent;
+  border-radius: 11px;
+}
+.modes button.active {
+  background: rgba(255, 42, 133, 0.18);
+  border-color: var(--fal);
+  color: #fff;
+}
+canvas {
+  width: 100%;
+  display: block;
+  background: #060911;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+#pitch-cv { height: 290px; }
+#spec-cv { height: 110px; margin-top: 10px; }
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--mute);
+  margin-top: 8px;
+}
+.legend span { display: flex; align-items: center; gap: 5px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--mute);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.stats-row b { color: var(--text); }
+#err {
+  display: none;
+  background: rgba(255,59,48,0.15);
+  border: 1px solid var(--strain);
+  color: #ffb3ae;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
 </style>
 </head>
 <body>
-<main>
-<h1>ซ้อมร้องเพลง 🎤</h1>
-<p class="sub">ฝึกวันละ 5 นาที วัดจากเสียงจริงของคุณ</p>
-<div class="tabs" role="tablist">
-<button role="tab" aria-selected="true" data-t="daily">วันนี้</button>
-<button role="tab" aria-selected="false" data-t="free">ร้องสบายๆ</button>
-<button role="tab" aria-selected="false" data-t="drill">ฝึกเอง</button>
-<button role="tab" aria-selected="false" data-t="mic">ดูเสียงสด</button>
-<button role="tab" aria-selected="false" data-t="guide">คู่มือ</button>
+
+<header>
+  <h1>🚀 โค้ชปลดล็อกเสียงสูง</h1>
+  <span class="badge" id="base-lbl">โน้ตพูด: C3 (มาตรฐาน)</span>
+</header>
+
+<div id="err"></div>
+
+<div class="btn-row">
+  <button class="btn-main" id="btn-mic">🎤 เปิดไมค์เริ่มฝึก</button>
+  <button class="btn-sub" id="btn-cal">🎯 วัดเสียงพูด (3 วิ)</button>
+  <button class="btn-sub" id="btn-clr">ล้างกราฟ</button>
 </div>
 
-<section id='daily'>
-<div class='card'>
-<b style='font-size:18px'>ซ้อมร้องเพลง 5 นาที</b>
-<div class='mut' id='dmeta'></div>
-<div id='dsteps' style='margin:8px 0'></div>
-<div id='dtxt' style='margin:8px 0;font-size:15px'>ใส่หูฟังจะแม่นที่สุด กดปุ่มด้านล่าง แล้วทำตามที่หน้าจอบอกทีละด่าน ไม่ต้องกดอะไรเพิ่ม</div>
-<label style='display:flex;gap:8px;align-items:center'><input type='checkbox' id='drec' checked>อัดเสียงไว้ฟังตอนจบ</label>
-<label style='display:flex;gap:8px;align-items:center'><input type='checkbox' id='recal'>วัดโน้ตกลางใหม่</label>
-<button class='btn' id='dstart' style='margin:10px 0 0'>เริ่มซ้อมวันนี้</button>
+<!-- โหมดแบบฝึกหัด -->
+<div class="modes" id="mode-tabs">
+  <button class="active" data-m="free">1. ร้องอิสระ (ดูกราฟ)</button>
+  <button data-m="siren">2. ลิฟต์ไซเรน (เชื่อมเสียงอก➔หลบ)</button>
+  <button data-m="flip">3. สลับอก ↔ หลบ (ฝึกพลิกเสียง)</button>
+  <button data-m="hold">4. ค้างโน้ตสูง (ห้ามตะเบ็ง)</button>
 </div>
-<div id='dslot'></div>
-<div class='card' id='dsum' hidden></div>
-</section>
-<section id='free' hidden>
-<button class='btn' id='fgo'>เริ่มร้อง</button>
-<div class='card'><canvas id='fc' style='height:56vh;min-height:340px'></canvas><div class='mut' id='fst' style='margin-top:8px'>กดเริ่มร้อง แล้วร้องตามสบาย เส้นยิ่งสูง เสียงยิ่งสูง</div></div>
-<button class='btn s' id='fclr'>ล้างกราฟ</button>
-</section>
-<section id="mic" hidden>
-<button class="btn" id="go">เปิดไมค์</button>
-<div class="card" id="err"></div>
-<div class='card'><canvas id='tb' style='height:320px'></canvas></div>
-<div class='card'><button class='btn s' id='rec' style='margin:0'>● อัดเสียง</button><audio id='pl' controls hidden style='width:100%;margin-top:10px'></audio><div class='mut' style='margin-top:6px'>อัดแล้วกดเล่น จะได้ฟังเสียงเหมือนที่คนอื่นได้ยิน</div></div>
-<div class="card">
-<div class="big"><div id="note">–</div><div id="hz">กดเปิดไมค์ แล้วร้อง “อู” ยาวๆ</div></div>
-<div class="tune"><i id="tdot"></i></div>
-<div class="gl"><span>ต่ำกว่าโน้ต</span><span>ตรงโน้ต</span><span>สูงกว่าโน้ต</span></div>
-</div>
-<div class="card">
-<canvas id="cv"></canvas>
-</div>
-<p class="mut">ทิป: อยู่ที่เงียบ ถือมือถือห่างปากประมาณหนึ่งคืบ ร้องเสียง “อู” ยาวๆ จะวัดได้แม่นที่สุด</p>
-</section>
 
-<section id='guide' hidden>
-<div class='card'><b>คู่มือซ้อมร้องเพลง</b>
-<details open><summary>ยืนและหายใจ</summary><p>ยืนเท้ากว้างเท่าไหล่ ไหล่ผ่อน คางขนานพื้น วางมือบนท้อง หายใจเข้านับ 4 ให้ท้องพอง แล้วปล่อยลมช้าๆ เป็นเสียง “ซ์ซซ” นับ 10 ถึง 15 ทำ 5 รอบ</p></details>
-<details><summary>วอร์มอัพ 3 นาที</summary><p>ฮัมปากปิดเบาๆ ไล่ขึ้นลง แล้วทำริมฝีปากสั่น “บรร~” จากนั้นไซเรน “อู” และจบด้วยการหาวผ่อนกราม ไม่ต้องร้องดัง</p></details>
-<details><summary>ดูแลคอ</summary><p>ดื่มน้ำเปล่าให้พอ นอนให้พอ เลี่ยงตะโกนและกระแอมแรงๆ ถ้าแหบเกิน 2 สัปดาห์ให้พบแพทย์</p></details>
-<details><summary>ขึ้นเสียงสูงแล้วแตก</summary><p>อย่าดันเสียงขึ้นไป ให้ลดแรงและร้องเบาลง แล้วปล่อยให้เสียงพลิกเป็นเสียงเบาๆ (เสียงหลบ) ได้ ไม่ต้องกลัว ใช้เฉพาะตอนขึ้นสูง</p></details>
-<details><summary>อัดเสียงให้ฟังดี</summary><p>ห้องเงียบ ปากห่างไมค์หนึ่งคืบ ยอดเสียงราว -12 ถึง -6 dB อัดแบบแห้ง 3 ถึง 5 เทค ใน FL Studio ใช้ EQ ตัดต่ำ แล้ว Auto-Tune, คอมเพรสเซอร์เบาๆ และรีเวิร์บกับดีเลย์</p></details>
-</div></section>
-<section id='drill' hidden>
-<div class='card'>
-<div class='row'><span>โน้ตกลางของคุณ</span><b id='bn'>ยังไม่ได้วัด</b></div>
-<button class='btn s' id='cal'>วัดโน้ตกลาง (ร้อง “อู” สบายๆ 3 วินาที)</button>
-<label>โหมดฝึก<select id='md'><optgroup label='ร้องตามเพลง'><option value='s' selected>ร้องตามเพลง โน้ตเลื่อนมาตามจังหวะ</option></optgroup><optgroup label='ฝึกเปลี่ยนโน้ต'><option value='a'>ตามโน้ตเป้าหมาย</option><option value='b'>ซ้อมลำดับโน้ต / ยกคีย์</option></optgroup><optgroup label='ฝึกเสียงสูง'><option value='d'>ไล่ขึ้นทีละนิด หาโน้ตสูงสุด</option><option value='e'>ค้างโน้ตสูงให้นิ่ง</option><option value='f'>ไซเรนวอร์มอัพ ไล่ขึ้นลง</option></optgroup><optgroup label='ลมหายใจ และจังหวะ'><option value='g'>ลมหายใจ ค้างเสียงยาว</option><option value='h'>ร้องตามจังหวะ</option></optgroup></select></label>
-<div id='mdesc' class='mut' style='margin:-4px 0 10px'></div>
-<div id='sgo'><label>เพลง<select id='sg'></select></label><label>คีย์ (ขยับโน้ตทั้งเพลง)<select id='sky'><option value='-3'>ต่ำลง 3 ครึ่งเสียง</option><option value='0' selected>ปกติ</option><option value='2'>สูงขึ้น 2 ครึ่งเสียง</option><option value='4'>สูงขึ้น 4 ครึ่งเสียง</option><option value='6'>สูงขึ้น 6 ครึ่งเสียง</option></select></label><label style='display:flex;gap:8px;align-items:center'><input type='checkbox' id='sk'>ยกคีย์ขึ้น 2 ครึ่งเสียงตอนครึ่งหลังของเพลง</label><div id='scw' hidden><label>พิมพ์โน้ตเป็นตัวเลข (0 คือโน้ตแรก, 2 คือสูงขึ้น 2 ครึ่งเสียง, :2 คือยาว 2 จังหวะ)<textarea id='scx' rows='4' placeholder='ตัวอย่าง: 0 2 4 7:2 4 2 0:2'></textarea></label></div>
-<div id='sinfo' class='mut' style='margin:6px 0'></div><button class='btn s' id='sdemo' style='margin:0 0 10px'>ฟังตัวอย่าง</button></div>
-<div id='ho'><label>โน้ตที่จะค้าง<select id='ht'><option value='5'>สูงกว่าโน้ตกลาง 5 ครึ่งเสียง</option><option value='7' selected>สูงกว่าโน้ตกลาง 7 ครึ่งเสียง</option><option value='9'>สูงกว่าโน้ตกลาง 9 ครึ่งเสียง</option><option value='12'>สูงกว่าโน้ตกลาง 12 ครึ่งเสียง</option></select></label></div>
-<div id='ao'><label>ระยะกระโดดระหว่างโน้ต<select id='jmp'><option value='2'>ใกล้ (2 ครึ่งเสียง)</option><option value='5' selected>กลาง (5 ครึ่งเสียง)</option><option value='9'>ไกล (9 ครึ่งเสียง)</option><option value='12'>ไกลมาก (12 ครึ่งเสียง)</option></select></label></div>
-<div id='bo'><label>ลำดับโน้ต<select id='pat'><option value='a'>ต่ำ – สูง – ต่ำ</option><option value='b'>ไล่บันไดขึ้น</option><option value='c'>กระโดดสลับ</option><option value='d'>ทำนองสั้น (เหมาะกับยกคีย์)</option></select></label><label style='display:flex;gap:8px;align-items:center'><input type='checkbox' id='key'>ยกคีย์ขึ้น 2 ครึ่งเสียงทุกรอบ</label><button class='btn s' id='demo' style='margin:8px 0 0'>ฟังตัวอย่าง</button></div>
-<div id='so'><label>ความเร็ว<select id='spd'><option value='2200'>ช้า</option><option value='1600' selected>กลาง</option><option value='1100'>เร็ว</option></select></label></div>
-<label style='display:flex;gap:8px;align-items:center'><input type='checkbox' id='tn' checked>เปิดเสียงนำ (ใส่หูฟังจะแม่นกว่า)</label>
+<!-- หน้าจอโค้ชแบบเรียลไทม์ -->
+<div class="card">
+  <div class="hud">
+    <div class="note-box" id="note-box">
+      <div id="note">–</div>
+      <div id="hz">รอเสียงร้อง...</div>
+    </div>
+    <div class="coach-box">
+      <span id="reg-pill">พร้อมวิเคราะห์</span>
+      <div id="coach-tip">กด <b>"เปิดไมค์เริ่มฝึก"</b> แล้วร้องคำว่า <b>"อู"</b> หรือ <b>"ฮู"</b> เบาๆ ลากขึ้นที่สูง</div>
+    </div>
+  </div>
+
+  <div class="meters">
+    <div class="m-col">
+      <div class="m-head"><span>แรงดัน/ความดัง (ยิ่งสูงต้องยิ่งเบา)</span><b id="vol-txt">0%</b></div>
+      <div class="bar-bg"><div class="bar-fill" id="vol-bar" style="background:var(--chest)"></div></div>
+    </div>
+    <div class="m-col">
+      <div class="m-head"><span>ความใสเสียงหลบ (Head/Falsetto)</span><b id="fal-txt">0%</b></div>
+      <div class="bar-bg"><div class="bar-fill" id="fal-bar" style="background:var(--fal)"></div></div>
+    </div>
+  </div>
 </div>
-<button class='btn' id='dgo'>เริ่มฝึก</button>
-<div class='card' id='stage' hidden>
-<div class='big'><div id='tgt' style='font-size:56px;font-weight:800;line-height:1.1'>–</div><div><div id='rel' class='mut'></div><div id='cue' style='font-weight:800'></div></div></div>
-<canvas id='dc' style='height:230px'></canvas>
-<div class='mt'><u></u><i id='dot'></i></div>
-<div class='gl'><span>ต่ำไป</span><span>คุณร้อง: <b id='me'>–</b></span><span>สูงไป</span></div>
-<div class='bar'><i id='dbar'></i></div>
-<div id='chips' style='margin-top:8px'></div>
+
+<!-- กราฟหลัก -->
+<div class="card">
+  <canvas id="pitch-cv"></canvas>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--chest)"></i>เสียงอก (Chest)</span>
+    <span><i class="dot" style="background:var(--mix)"></i>เสียงมิกซ์/รอยต่อ (Mix)</span>
+    <span><i class="dot" style="background:var(--fal)"></i>เสียงหลบ/เฮดวอยซ์ (ขึ้นสูงสบาย)</span>
+    <span><i class="dot" style="background:var(--strain)"></i>ตะเบ็ง/เค้นคอ (ลดความดังลง!)</span>
+  </div>
+
+  <canvas id="spec-cv"></canvas>
+  <div class="stats-row">
+    <span>โน้ตต่ำสุด: <b id="st-min">–</b></span>
+    <span>จุดพลิกเสียง (Passaggio): <b id="st-flip">G3</b></span>
+    <span>สถิติโน้ตสูงสุด: <b id="st-max">–</b></span>
+  </div>
 </div>
-<div class='card' id='dmsg' hidden></div>
-</section>
-</main>
+
+<!-- เคล็ดลับการร้องเสียงสูง -->
+<div class="card" style="font-size:13.5px; color:var(--mute);">
+  <b style="color:var(--text); display:block; margin-bottom:4px;">💡 กฎเหล็ก 3 ข้อ ทำไมคนทั่วไปขึ้นเสียงสูงไม่ได้:</b>
+  1. <b>ยิ่งสูง ห้ามยิ่งดัง:</b> พอถึงเส้นประสีชมพู (จุดพลิกเสียง) ให้ลดความดังลงครึ่งหนึ่งทันที ถ้าร้องดังเส้นจะเป็นสีแดง (ตะเบ็งคอ)<br>
+  2. <b>ใช้สระ "อู" หรือ "ฮู" (เหมือนนกฮูก):</b> รูปปากแคบช่วยให้เส้นเสียงปรับเข้าโหมดเสียงหลบ (สีชมพู) ได้เองอัตโนมัติ<br>
+  3. <b>ความรู้สึกเหมือน "ถอนหายใจทิ้ง" หรือ "หาว":</b> ปล่อยเสียงให้ลอยขึ้นไปที่หว่างคิ้ว ไม่ต้องเกร็งกราม
+</div>
+
 <script>
-const $=s=>document.querySelector(s);
-const NM=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
-const nm=m=>{const r=Math.round(m);return NM[((r%12)+12)%12]+(Math.floor(r/12)-1)};
-const LO=40,HI=88,SPAN=8000;
-let ctx,an,stream,TB,FB,run=false,last=0,lastT=0,pts=[],sm=null,state='none',gap=0,hold=0,done=false,cnt=0,lc=0,lcm=0,minM=null,maxM=null;
-const cv=$('#cv'),g=cv.getContext('2d');
-let D=null,base=null,cal=null,flipMidi=null,hiBest=null,OV={},curTab='daily',P=null,lvl=1,mr=null,chunks=[];
-const _cc={};const css=n=>_cc[n]||(_cc[n]=getComputedStyle(document.documentElement).getPropertyValue(n).trim());
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{for(const k in _cc)delete _cc[k]});
-function size(){const d=Math.min(2,devicePixelRatio||1);cv.width=cv.clientWidth*d;cv.height=cv.clientHeight*d;g.setTransform(d,0,0,d,0,0)}
-function pitch(b,sr){
- const f=Math.max(1,Math.round(sr/16000)),n=Math.min(1024,Math.floor(b.length/f)),x=new Float32Array(n),r=sr/f;
- for(let i=0;i<n;i++){let t=0;for(let k=0;k<f;k++)t+=b[i*f+k];x[i]=t/f}
- const minL=Math.floor(r/1100),maxL=Math.floor(r/70),W=n-maxL;
- let e=0;for(let i=0;i<W;i++)e+=x[i]*x[i];
- if(Math.sqrt(e/W)<0.01)return null;
- const c=new Float32Array(maxL+2);let best=0;
- for(let L=minL;L<=maxL;L++){let t=0;for(let i=0;i<W;i++)t+=x[i]*x[i+L];c[L]=t;if(t>best)best=t}
- if(best/e<0.5)return null;
- let L=minL;while(L<maxL&&c[L]>c[L+1])L++;
- for(;L<maxL;L++)if(c[L]>=.9*best&&c[L]>=c[L-1]&&c[L]>=c[L+1]){
-  const a=c[L-1],m=c[L],z=c[L+1],d=a-2*m+z;
-  return r/(L+(d?.5*(a-z)/d:0));
- }
- return null;
-}
-const LAB={chest:['เสียงปกติ (เสียงอก)','--chest'],mid:['รอยต่อ กำลังพลิก','--mid'],fal:['เสียงหลบ ✔','--fal']};
-function reset(){$('#note').textContent='–';$('#hz').textContent='ร้อง “อู” ยาวๆ ดูได้เลย';$('#tdot').style.left='50%';tv.m=null}
-function analyze(now){
- an.getFloatTimeDomainData(TB);
- const dt=Math.min(now-lastT,100);lastT=now;
- const f=pitch(TB,ctx.sampleRate);
- if(!f){D&&(D.ok0=0);gap+=dt;if(gap>300&&state!=='none'){state='none';reset()}return}
- if(gap>150&&D&&D.on)D.on.push(now);
- gap=0;state='on';
- const m=69+12*Math.log2(f/440);
- pts.push({t:now,m,ns:'chest'});while(pts.length&&now-pts[0].t>SPAN)pts.shift();
- minM=minM===null?m:Math.min(minM,m);maxM=maxM===null?m:Math.max(maxM,m);
- drillTick(now,m,'chest');if(curTab==='free')fPush(now,m);tv.m=m;tv.ns='chest';tv.t=now;
- if(curTab==='mic'){const c=(m-Math.round(m))*100;$('#note').textContent=nm(m);$('#hz').textContent=Math.round(f)+' Hz · '+(Math.abs(c)<12?'ตรงโน้ต':c>0?'สูงไปนิด':'ต่ำไปนิด');$('#tdot').style.left=(50+c)+'%'}
-}
-function draw(now){
- const w=cv.clientWidth,h=cv.clientHeight;g.clearRect(0,0,w,h);
- const y=m=>h-(m-LO)/(HI-LO)*h,x=t=>w-(now-t)/SPAN*w;
- g.font='11px system-ui,sans-serif';g.lineWidth=1;g.strokeStyle=css('--line');
- for(let m=LO;m<=HI;m++){const k=m%12;if(k!==0&&k!==7)continue;g.beginPath();g.moveTo(0,y(m));g.lineTo(w,y(m));g.stroke();if(k===0){g.fillStyle=css('--mute');g.fillText('C'+(m/12-1),4,y(m)-3)}}
- const C={chest:css('--chest'),mid:css('--mid'),fal:css('--fal')};
- g.lineWidth=4;g.lineCap='round';
- for(let i=1;i<pts.length;i++){if(pts[i].t-pts[i-1].t>150)continue;g.strokeStyle=C[pts[i].ns];g.beginPath();g.moveTo(x(pts[i-1].t),y(pts[i-1].m));g.lineTo(x(pts[i].t),y(pts[i].m));g.stroke()}
- const p=pts[pts.length-1];
- if(p&&now-p.t<300){g.fillStyle=C[p.ns];g.beginPath();g.arc(x(p.t),y(p.m),7,0,7);g.fill()}
-}
-function loop(now){
- if(!run)return;
- if(now-last>40){last=now;analyze(now)}
- drillTime(now);if(curTab==='mic'){draw(now);tDraw(now)}if(D)dDraw(now);if(curTab==='free')fDraw(now);requestAnimationFrame(loop);
-}
-async function start(){
- $('#err').style.display='none';
- try{
-  ctx=new (window.AudioContext||window.webkitAudioContext)();
-  ctx.resume();
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw{name:'NoMedia'};
-  const tm=setTimeout(()=>{const E=$('#err');E.textContent='ผ่านไป 5 วินาทีแล้วยังไม่มีหน้าต่างขออนุญาตไมค์ แปลว่าหน้านี้ถูกฝังอยู่ในกรอบที่บล็อกไมค์ ('+(window.top!==window.self?'อยู่ในกรอบ':'ไม่ได้อยู่ในกรอบ')+') ให้เปิดเวอร์ชันที่โฮสต์บนเว็บของคุณเองแทน';E.style.display='block'},5000);
-  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}})}finally{clearTimeout(tm)}
-  $('#err').style.display='none';
-  await ctx.resume();
-  an=ctx.createAnalyser();an.fftSize=4096;an.smoothingTimeConstant=0;
-  ctx.createMediaStreamSource(stream).connect(an);
-  TB=new Float32Array(an.fftSize);FB=new Float32Array(an.frequencyBinCount);
- }catch(e){
-  const n=e&&e.name,E=$('#err');
-  E.textContent=n==='NotFoundError'?'ไม่พบไมโครโฟนในเครื่อง':(n==='NotAllowedError'||n==='SecurityError'||n==='NoMedia')?'iPhone ยังไม่ให้ใช้ไมค์ วิธีแก้: เปิดลิงก์นี้ใน Safari (ถ้าอยู่ในแอป Claude ให้คัดลอกลิงก์ไปเปิดใน Safari) แล้วกดปุ่ม aA ในแถบที่อยู่ เลือก การตั้งค่าเว็บไซต์ > ไมโครโฟน > อนุญาต จากนั้นรีเฟรชหน้าแล้วกดเปิดไมค์ใหม่':'เปิดไมค์ไม่ได้ ('+n+') ลองรีเฟรชหน้าแล้วกดใหม่';
-  E.style.display='block';ctx&&ctx.close();return}
- run=true;pts=[];sm=null;state='none';size();reset();
- $('#go').textContent='หยุด';requestAnimationFrame(t=>{lastT=t;loop(t)});
-}
-function stop(){run=false;stream&&stream.getTracks().forEach(t=>t.stop());ctx&&ctx.close();$('#go').textContent='เปิดไมค์'}
-$('#go').onclick=()=>run?stop():start();
-function tab(n){curTab=n;
- document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===n));
- $('#daily').hidden=n!=='daily';$('#drill').hidden=n!=='drill';$('#mic').hidden=n!=='mic';$('#guide').hidden=n!=='guide';$('#free').hidden=n!=='free';if(n==='free'){$('#fgo').textContent=run?'หยุด':'เริ่มร้อง';fDraw(performance.now())}if(n==='mic'){size();tDraw(performance.now())}
-}
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
+const $ = s => document.querySelector(s);
+const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const midiToName = m => {
+  const r = Math.round(m);
+  return NOTES[((r % 12) + 12) % 12] + (Math.floor(r / 12) - 1);
+};
 
-function tone(m,ms){if(!ctx)return;const t=ctx.currentTime,o=ctx.createOscillator(),k=ctx.createGain();o.type='triangle';o.frequency.value=440*Math.pow(2,(m-69)/12);k.gain.setValueAtTime(0,t);k.gain.linearRampToValueAtTime(.3,t+.04);k.gain.linearRampToValueAtTime(0,t+ms/1000);o.connect(k).connect(ctx.destination);o.start(t);o.stop(t+ms/1000+.05)}
-const PAT={a:[0,7,0],b:[0,2,4,5,7],c:[0,9,-3,12,0],d:[0,2,4,2,0]},TOL=.8,TONE=750;
-const MD={a:'ฟังเสียงนำ แล้วร้องตามให้ตรงโน้ต ฝึกกระโดดโน้ตสูงต่ำ',b:'ร้องโน้ตตามลำดับ ติ๊ก “ยกคีย์” เพื่อฝึกตามให้ทันตอนเพลงเปลี่ยนคีย์',d:'ไล่โน้ตขึ้นทีละนิด ดูว่าโน้ตสูงสุดของคุณคือโน้ตไหน',e:'ค้างโน้ตสูงเดียว 6 วินาที ให้นิ่ง ไม่สั่น ไม่แตก',f:'ร้อง “อู” เบาๆ ไล่ขึ้นลงตามเส้น วอร์มอัพช่วงเสียงสูง',s:'โน้ตเลื่อนมาตามจังหวะ ร้องตามให้ทัน ปรับคีย์ได้ และยกคีย์กลางเพลงได้',g:'ค้างเสียง “อา” ให้นานที่สุด ฝึกลมหายใจ',h:'ร้อง “ตา” สั้นๆ ตามจังหวะที่กะพริบ'};
-function modeUI(){const v=$('#md').value;$('#ao').hidden=v!=='a';$('#bo').hidden=v!=='b';$('#so').hidden=v!=='b'&&v!=='s';$('#sgo').hidden=v!=='s';$('#ho').hidden=v!=='e';$('#mdesc').textContent=MD[v]}
-function build(v){
- const sp=+$('#spd').value,j=OV.j||+$('#jmp').value,st=[];
- if(v==='a'){let m=base;for(let i=0;i<(OV.n||10);i++){const d=Math.random()<.5?-1:1;let n=m+d*j;if(n<base-5||n>base+14)n=m-d*j;if(n<base-5||n>base+14)n=base;m=n;st.push({m,dur:7000,adv:true})}}
- else if(v==='b'){const r=$('#key').checked?3:2;for(let i=0;i<r;i++)PAT[$('#pat').value].forEach(x=>st.push({m:base+x+i*2,dur:sp}))}
- else if(v==='c'){const F=Math.round(flipMidi||base+7);for(let i=0;i<8;i++){const f=i%2;st.push({m:F+(f?2:-2),reg:f?'fal':'chest',dur:sp+700})}}
- else if(v==='d'){for(let i=0;i<20;i++)st.push({m:base+i,dur:6000,adv:true})}
- else if(v==='e'){st.push({m:base+(OV.h||+$('#ht').value),dur:6750,tol:.5,sust:true})}
- else if(v==='f'){st.push({m:base,dur:16000,tol:1.5,sust:true,fn:el=>base+12*(1-Math.abs(2*el/16000-1))})}
- else if(v==='s'){const so=gs()||SONGS[0],bt=({2200:900,1600:700,1100:550})[sp]||700,ky=+$('#sky').value,up=$('#sk').checked,n=so.n.length;
-  st.push({m:base+ky+so.n[0][0],dur:4*bt,beat:bt,skip:true});
-  so.n.forEach(([o,b],i)=>st.push({m:base+ky+o+(up&&i>=n/2?2:0),dur:b*bt,song:true,tol:1}))}
- else if(v==='g'){st.push({m:base,dur:25000,breath:true})}
- else{st.push({m:base,dur:9500,beat:750})}
- return st;
+let actx, analyser, stream, timeBuf, freqBuf;
+let running = false;
+let mode = 'free';
+let baseMidi = 50; // D3 default comfortable speaking/chest note
+let minMidi = null, maxMidi = null;
+let calMode = false, calSamples = [], calStart = 0;
+
+const SPAN = 9000; // 9 วินาทีบนกราฟ
+let history = [];  // {t, m, reg, rms, purity}
+let smoothM = null, smoothPurity = 0.5, smoothRms = 0;
+let lastVoiceT = 0;
+let harmonics = [0,0,0,0,0,0];
+
+const pCv = $('#pitch-cv'), pCtx = pCv.getContext('2d');
+const sCv = $('#spec-cv'), sCtx = sCv.getContext('2d');
+
+function resizeCanvases() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  [ [pCv, pCtx], [sCv, sCtx] ].forEach(([c, ctx]) => {
+    const w = c.clientWidth, h = c.clientHeight;
+    if (w && h) {
+      c.width = w * dpr;
+      c.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+  });
 }
-function chips(){$('#chips').innerHTML=D.st.map((s,i)=>`<span class='ch ${i===D.i?'on':i<D.i?(s.done?'ok':'miss'):''}'>${nm(s.m)}${s.reg?(s.reg==='fal'?' หลบ':' ปกติ'):''}</span>`).join('')}
-function nextStep(){
- const s=D.st[D.i];if(!s)return finish();
- D.t0=performance.now();s.t0=D.t0;if(D.i>0)D.st[D.i-1].t1=D.t0;D.ok0=0;D.mute=D.tn?D.t0+TONE:0;
- if(D.mute)tone(s.m,600);
- const d=s.m-base;
- $('#tgt').textContent=nm(s.m);
- $('#rel').textContent=d===0?'เท่าโน้ตกลางของคุณ':(d>0?'↑ สูงขึ้น ':'↓ ต่ำลง ')+Math.abs(d)+' ครึ่งเสียง';
- const q=$('#cue');q.textContent=s.reg?(s.reg==='fal'?'ร้องเสียงหลบ':'ร้องเสียงปกติ'):'';q.style.color=s.reg?'var('+LAB[s.reg][1]+')':'';
- if(s.breath){$('#tgt').textContent='อา~';$('#rel').textContent='หายใจเข้าลึกๆ แล้วร้องค้างยาวๆ'}
- if(s.beat){$('#tgt').textContent='พร้อม';$('#rel').textContent='จะนับ 1 2 3 4 แล้วร้อง “ตา”'}
- chips();
-}
-function drillTick(now,m,ns){
- if(cal)cal.a.push(m);
- if(!D)return;
- const dt=Math.min(now-(D.lt||now),100);D.lt=now;const s=D.st[D.i];if(!s||now<D.mute)return;
- const T=s.fn?s.fn(now-D.t0):s.m,tol=s.tol||TOL;
- if(D.mode>'c'){if(D.pm!==null&&now-D.pt<150&&Math.abs(m-D.pm)>5)D.cr++;D.pm=m;D.pt=now}
- if(s.breath){if(!D.v0)D.v0=now;D.vl=now;$('#rel').textContent=((now-D.v0)/1000).toFixed(1)+' วินาที'}
- if(s.fn){$('#tgt').textContent=nm(T);$('#rel').textContent=s.fn(now-D.t0+200)>T?'↑ ไล่ขึ้น':'↓ ไล่ลง'}
- $('#me').textContent=nm(m);
- $('#dot').style.left=Math.min(98,Math.max(2,50+(m-T)*12.5))+'%';
- const ok=Math.abs(m-T)<=tol&&(!s.reg||s.reg===ns);
- if(s.skip){}else if(s.song){if(ok)s.okT=(s.okT||0)+dt;if(s.okT>=s.dur*.5&&!s.done){s.done=true}}
- else if(s.sust){if(ok)D.okT+=dt;if(Math.abs(m-T)<3)D.vals.push(m-T)}
- else if(ok){
-  if(!D.ok0)D.ok0=now;
-  if(!s.done&&now-D.ok0>=300){s.done=true;s.rt=Math.max(0,D.ok0-(D.mute||D.t0))/1000;D.doneAt=now;chips()}
- }else D.ok0=0;
- $('#dot').style.background=(s.done||(s.sust&&ok))?'var(--chest)':'var(--ink)';
-}
-function drillTime(now){
- if(cal&&now-cal.t0>3000){const a=cal.a.sort((x,y)=>x-y);cal=null;
-  if(a.length<15)$('#bn').textContent='ไม่ได้ยินเสียง ลองใหม่';
-  else{base=Math.round(a[a.length>>1]);lss('bs',base);sUp();$('#bn').textContent=nm(base)+' (วัดแล้ว)'}}
- if(!D)return;
- const s=D.st[D.i],el=now-D.t0;
- if(!s)return;
- $('#dbar').style.width=Math.min(100,el/s.dur*100)+'%';
- if(s.breath&&D.v0&&now-D.vl>600)return finish();
- if(s.beat){const k=Math.floor(el/s.beat);if(k!==D.bk&&k<12){D.bk=k;$('#tgt').textContent=k<4?String(k+1):'ตา!';$('#rel').textContent=k<4?'นับตามจังหวะ':'ร้อง “ตา” สั้นๆ ตอนนี้';$('#cue').textContent='●';setTimeout(()=>{$('#cue').textContent=''},250)}}
- if(el>s.dur||(s.adv&&s.done&&now-D.doneAt>600)){if(D.climb&&!s.done)return finish();D.i++;nextStep()}
-}
-function finishHi(){
- const v=D.mode,M=$('#dmsg'),c=D.cr;let t='';
- if(v==='d'){const k=D.st.filter(s=>s.done).length;
-  if(k){const top=D.st[k-1].m;t=`<b>โน้ตสูงสุดรอบนี้: ${nm(top)}</b> (สูงกว่าโน้ตกลาง ${top-base} ครึ่งเสียง)`+(hiBest&&top>hiBest?'<br>🎉 สูงกว่าครั้งก่อน':'');hiBest=Math.max(hiBest||0,top)}
-  else t='<b>ยังไม่ผ่านโน้ตแรก</b> ลองวัดโน้ตกลางใหม่'}
- else{const w=v==='e'?6000:16000,p=Math.min(100,Math.round(D.okT/w*100)),sd=D.vals.length?Math.sqrt(D.vals.reduce((a,x)=>a+x*x,0)/D.vals.length):0;
-  t=`<b>${v==='e'?'ค้างโน้ตนิ่ง':'ตามเส้นไซเรนได้'} ${p}%</b><br>เบี่ยงเฉลี่ย ±${sd.toFixed(1)} ครึ่งเสียง`;D.st[0].done=p>=(v==='e'?70:60)}
- const cb=D.cb,sc0=v==='d'?D.st.filter(s=>s.done).length/20:Math.min(1,D.okT/(v==='e'?6000:16000));chips();D=null;$('#cue').textContent='';$('#dgo').textContent='เริ่มฝึก';
- M.hidden=false;cb&&setTimeout(()=>cb(sc0),0);
- M.innerHTML=t+`<br>เสียงแตก/กระโดดผิดปกติ ${c} ครั้ง<br><span class='k'>${c>2?'ตอนจะแตก ให้ลดแรงลง ร้องเบาๆ แล้วปล่อยให้เสียงพลิกเป็นเสียงหลบ อย่าฝืนดัน':'ดีมาก ทำซ้ำอีกรอบ หรือเพิ่มความสูงดู'}</span>`;
-}
-function finish(){
- if(D.mode>'f')return finishX();if(D.mode>'c')return finishHi();
- const h=D.st.filter(s=>s.done),n=D.st.length,cb=D.cb;
- const rt=h.length?(h.reduce((a,s)=>a+s.rt,0)/h.length).toFixed(1):'–';
- chips();D=null;$('#cue').textContent='';$('#dgo').textContent='เริ่มฝึก';
- const M=$('#dmsg');M.hidden=false;cb&&setTimeout(()=>cb(h.length/n),0);
- M.innerHTML='<b>ผลรอบนี้: ตามทัน '+h.length+' จาก '+n+' โน้ต</b><br>เวลาเฉลี่ยที่ร้องเข้าโน้ต '+rt+' วินาที<br><span class="k">'+(h.length<n/2?'ลองลดระยะกระโดด หรือเลือกความเร็วช้าลง แล้วซ้ำอีกรอบ':'ดีมาก ลองเพิ่มระยะกระโดดหรือเร่งความเร็วดู')+'</span>';
-}
-$('#md').onchange=modeUI;modeUI();
-$('#cal').onclick=async()=>{if(!run)await start();if(!run)return;cal={t0:performance.now(),a:[]};$('#bn').textContent='กำลังฟัง… ร้อง “อู” สบายๆ'};
-$('#dgo').onclick=async()=>{
- if(D){D=null;$('#dgo').textContent='เริ่มฝึก';$('#stage').hidden=true;return}
- const M=$('#dmsg');M.hidden=true;
- if(base===null){M.hidden=false;M.textContent='วัดโน้ตกลางของคุณก่อน กดปุ่ม “วัดโน้ตกลาง” ด้านบน';return}
- if($('#md').value==='s'&&!gs()){M.hidden=false;M.textContent='รูปแบบโน้ตไม่ถูกต้อง ลองดูตัวอย่างในช่องพิมพ์โน้ต';return}
- if(!run)await start();
- if(!run)return;
- const v=$('#md').value;
- OV={};$('#dgo').after($('#stage'));launch(v);$('#dgo').textContent='หยุดฝึก';
-};
-$('#demo').onclick=async()=>{
- if(base===null){$('#bn').textContent='วัดโน้ตกลางก่อนนะ';return}
- if(!run)await start();
- if(!run)return;
- const sp=+$('#spd').value;build('b').forEach((s,i)=>setTimeout(()=>tone(s.m,sp*.8),i*sp));
-};
-const dc=$('#dc'),g2=dc.getContext('2d');
-function dDraw(now){
- if(!D||!dc.clientWidth)return;
- const cs=D.st[D.i];if(!cs)return;
- const d=Math.min(2,devicePixelRatio||1),w=dc.clientWidth,h=dc.clientHeight,PA=5000,W=10000;
- if(dc.width!==Math.round(w*d)||dc.height!==Math.round(h*d)){dc.width=Math.round(w*d);dc.height=Math.round(h*d)}
- g2.setTransform(d,0,0,d,0,0);g2.clearRect(0,0,w,h);
- let lo=1e9,hi=-1e9;
- D.st.forEach(s=>(s.fn?[base,base+12]:[s.m]).forEach(v=>{lo=Math.min(lo,v);hi=Math.max(hi,v)}));
- lo-=3;hi+=3;if(hi-lo<12){const c=(hi+lo)/2;lo=c-6;hi=c+6}
- const y=m=>h-(m-lo)/(hi-lo)*h,x=t=>(t-now+PA)/W*w,u=h/(hi-lo);
- const C={chest:css('--chest'),mid:css('--mid'),fal:css('--fal')},ink=css('--ink');
- g2.font='10px system-ui,sans-serif';g2.lineWidth=1;g2.strokeStyle=css('--line');g2.fillStyle=css('--mute');
- for(let m=Math.ceil(lo);m<=hi;m++){if([0,2,4,5,7,9,11].includes(((m%12)+12)%12)){g2.beginPath();g2.moveTo(0,y(m));g2.lineTo(w,y(m));g2.stroke();g2.fillText(nm(m),3,y(m)-2)}}
- let a=D.t0+cs.dur;
- D.st.forEach((s,i)=>{
-  if(s.skip)return;
-  const th=(s.tol||TOL)*u;
-  if(s.fn){
-   g2.globalAlpha=.35;g2.strokeStyle=C.mid;g2.lineWidth=th*2;g2.lineCap='round';g2.beginPath();let on=false;
-   for(let e=Math.max(0,now-D.t0-PA);e<=Math.min(s.dur,now-D.t0+W-PA);e+=100){const X=x(D.t0+e),Y=y(s.fn(e));on?g2.lineTo(X,Y):g2.moveTo(X,Y);on=true}
-   g2.stroke();g2.globalAlpha=1;return;
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+
+// ตรวจจับความถี่เสียงร้องด้วย Autocorrelation
+function detectPitch(buf, sr) {
+  const step = Math.max(1, Math.round(sr / 16000));
+  const N = Math.min(1024, Math.floor(buf.length / step));
+  const x = new Float32Array(N);
+  const effSr = sr / step;
+  for (let i = 0; i < N; i++) {
+    let s = 0;
+    for (let k = 0; k < step; k++) s += buf[i * step + k];
+    x[i] = s / step;
   }
-  let t0,t1;
-  if(i<D.i){t0=s.t0;t1=s.t1||s.t0+s.dur}
-  else if(i===D.i){t0=D.t0;t1=t0+s.dur}
-  else{if(cs.adv)return;t0=a;t1=a+s.dur;a=t1}
-  g2.globalAlpha=s.done?.5:.2;g2.fillStyle=s.reg?C[s.reg]:ink;
-  g2.fillRect(x(t0),y(s.m)-th,x(t1)-x(t0),th*2);
-  g2.globalAlpha=1;g2.fillStyle=ink;
-  g2.fillText(nm(s.m)+(s.reg?(s.reg==='fal'?' หลบ':' ปกติ'):''),Math.max(4,x(t0)+4),y(s.m)+3);
- });
- g2.globalAlpha=.5;g2.strokeStyle=ink;g2.lineWidth=1;g2.setLineDash([4,4]);g2.beginPath();g2.moveTo(x(now),0);g2.lineTo(x(now),h);g2.stroke();g2.setLineDash([]);g2.globalAlpha=1;
- g2.lineWidth=4;g2.lineCap='round';
- for(let i=1;i<pts.length;i++){const p=pts[i],q=pts[i-1];if(p.t-q.t>150||p.t<now-PA)continue;g2.strokeStyle=C[p.ns];g2.beginPath();g2.moveTo(x(q.t),y(q.m));g2.lineTo(x(p.t),y(p.m));g2.stroke()}
- const p=pts[pts.length-1];
- if(p&&now-p.t<300){g2.fillStyle=C[p.ns];g2.beginPath();g2.arc(x(p.t),y(p.m),6,0,7);g2.fill()}
+  const minLag = Math.floor(effSr / 1100);
+  const maxLag = Math.floor(effSr / 75);
+  const W = N - maxLag;
+  let energy = 0;
+  for (let i = 0; i < W; i++) energy += x[i] * x[i];
+  const rms = Math.sqrt(energy / W);
+  if (rms < 0.008) return null;
+
+  const corr = new Float32Array(maxLag + 2);
+  let best = 0;
+  for (let L = minLag; L <= maxLag; L++) {
+    let sum = 0;
+    for (let i = 0; i < W; i++) sum += x[i] * x[i + L];
+    corr[L] = sum;
+    if (sum > best) best = sum;
+  }
+  if (best / energy < 0.48) return null;
+
+  let L = minLag;
+  while (L < maxLag && corr[L] > corr[L + 1]) L++;
+  for (; L < maxLag; L++) {
+    if (corr[L] >= 0.88 * best && corr[L] >= corr[L - 1] && corr[L] >= corr[L + 1]) {
+      const a = corr[L - 1], m = corr[L], z = corr[L + 1];
+      const denom = a - 2 * m + z;
+      const shift = denom ? 0.5 * (a - z) / denom : 0;
+      return { freq: effSr / (L + shift), rms };
+    }
+  }
+  return null;
 }
-const tc=$('#tb'),g3=tc.getContext('2d'),tv={m:null,cur:null,ns:'mid',t:0};
-function tDraw(now){
- if(!tc.clientWidth)return;
- const d=Math.min(2,devicePixelRatio||1),w=tc.clientWidth,h=tc.clientHeight;
- if(tc.width!==Math.round(w*d)||tc.height!==Math.round(h*d)){tc.width=Math.round(w*d);tc.height=Math.round(h*d)}
- g3.setTransform(d,0,0,d,0,0);g3.clearRect(0,0,w,h);
- const top=28,bot=h-28,X=84,TW=70,y=m=>bot-(m-LO)/(HI-LO)*(bot-top);
- const live=tv.m!==null&&now-tv.t<350;
- if(live)tv.cur=tv.cur===null?tv.m:tv.cur+(tv.m-tv.cur)*.3;
- const C={chest:css('--chest'),mid:css('--mid'),fal:css('--fal')},ink=css('--ink'),mu=css('--mute');
- const rr=(x,yy,ww,hh,r)=>{g3.beginPath();g3.moveTo(x+r,yy);g3.arcTo(x+ww,yy,x+ww,yy+hh,r);g3.arcTo(x+ww,yy+hh,x,yy+hh,r);g3.arcTo(x,yy+hh,x,yy,r);g3.arcTo(x,yy,x+ww,yy,r);g3.closePath()};
- g3.fillStyle=css('--line');rr(X,top-12,TW,bot-top+24,TW/2);g3.fill();
- const Y=tv.cur===null?0:Math.min(bot+10,Math.max(top-10,y(tv.cur)));
- if(tv.cur!==null){g3.save();rr(X,top-12,TW,bot-top+24,TW/2);g3.clip();g3.globalAlpha=live?.3:.12;g3.fillStyle=C[tv.ns];g3.fillRect(X,Y,TW,h-Y);g3.restore()}
- g3.font='11px system-ui,sans-serif';g3.textAlign='right';g3.fillStyle=mu;g3.strokeStyle=mu;g3.lineWidth=1;
- for(let m=LO;m<=HI;m++){const k=m%12;if(![0,2,4,5,7,9,11].includes(k))continue;const L=k===0||k===7;g3.beginPath();g3.moveTo(X-(L?12:7),y(m));g3.lineTo(X-2,y(m));g3.stroke();if(L)g3.fillText(nm(m),X-16,y(m)+4)}
- g3.textAlign='left';
- if(minM!==null){[[maxM,'สูงสุด'],[minM,'ต่ำสุด']].forEach(([v,t])=>{const yy=y(v);g3.fillStyle=mu;g3.beginPath();g3.moveTo(X+TW+2,yy);g3.lineTo(X+TW+9,yy-4);g3.lineTo(X+TW+9,yy+4);g3.fill();g3.fillText(t,X+TW+12,yy+4)})}
- if(tv.cur!==null){
-  g3.globalAlpha=live?1:.35;
-  g3.fillStyle=C[tv.ns];g3.beginPath();g3.arc(X+TW/2,Y,22,0,7);g3.fill();g3.lineWidth=4;g3.strokeStyle=css('--card');g3.stroke();
-  g3.fillStyle=ink;g3.font='bold 34px system-ui,sans-serif';g3.fillText(nm(tv.m),X+TW+16,Y+12);
-  g3.globalAlpha=1;
- }else{g3.fillStyle=mu;g3.font='14px system-ui,sans-serif';g3.fillText('กดเปิดไมค์แล้วร้อง “อู”',X+TW+14,h/2)}
- g3.fillStyle=mu;g3.font='12px system-ui,sans-serif';g3.textAlign='center';g3.fillText('▲ สูง',X+TW/2,14);g3.fillText('▼ ต่ำ',X+TW/2,h-8);g3.textAlign='left';
+
+// วิเคราะห์เรจิสเตอร์: เสียงอก / เสียงมิกซ์ / เสียงหลบ / ตะเบ็งคอ
+function classifyVoice(freq, midi, rms) {
+  analyser.getFloatFrequencyData(freqBuf);
+  const binHz = actx.sampleRate / analyser.fftSize;
+  const amps = [];
+  for (let k = 1; k <= 6; k++) {
+    const idx = Math.round((k * freq) / binHz);
+    if (idx > 0 && idx < freqBuf.length - 1) {
+      const db = Math.max(freqBuf[idx - 1], freqBuf[idx], freqBuf[idx + 1]);
+      amps.push(Math.pow(10, db / 20));
+    } else {
+      amps.push(1e-6);
+    }
+  }
+  const maxA = Math.max(...amps, 1e-5);
+  harmonics = amps.map(a => Math.min(1, a / maxA));
+
+  // เสียงหลบ (Falsetto/Head) จะมี H1 เด่นมาก และ H3-H6 ต่ำ
+  const h1 = amps[0] || 1e-6;
+  const h2 = amps[1] || 1e-6;
+  const overtones = amps[2] + amps[3] + amps[4] + amps[5];
+  const rawPurity = h1 / (h1 + h2 * 0.75 + overtones * 1.35);
+
+  smoothPurity = smoothPurity * 0.65 + rawPurity * 0.35;
+  smoothRms = smoothRms * 0.6 + rms * 0.4;
+
+  const flipPoint = baseMidi + 7; // จุดเปลี่ยนเรจิสเตอร์ (+7 ครึ่งเสียงจากโน้ตพูด)
+  const relPitch = midi - baseMidi;
+
+  let reg = 'chest';
+  // ถ้าขึ้นโน้ตสูงเกินจุดพลิกเสียง แต่ดันความดังสูงมากและฮาร์มอนิกแหลม = ตะเบ็งคอ (Strain)
+  if (relPitch >= 6 && smoothRms > 0.14 && smoothPurity < 0.46) {
+    reg = 'strain';
+  } else if (relPitch >= 6 && smoothPurity >= 0.48) {
+    reg = 'fal';
+  } else if (smoothPurity >= 0.62 && relPitch >= 3) {
+    reg = 'fal';
+  } else if (relPitch >= 4) {
+    reg = 'mix';
+  } else {
+    reg = 'chest';
+  }
+
+  return { reg, purity: smoothPurity, vol: Math.min(1, smoothRms / 0.22) };
 }
-const lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lss=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
-function launch(v,cb){
- D={st:build(v),i:0,mode:v,tn:$('#tn').checked&&'bfghs'.indexOf(v)<0,climb:v==='d',okT:0,vals:[],cr:0,lt:0,pm:null,pt:0,on:[],cb};
- $('#chips').style.display=v==='s'?'none':'';$('#stage').hidden=false;$('#dmsg').hidden=true;nextStep();
+
+// โค้ชแนะนำตามสิ่งที่ตรวจจับได้จริง
+function updateCoachHUD(midi, freq, reg, purity, vol) {
+  const colors = {
+    chest: 'var(--chest)',
+    mix: 'var(--mix)',
+    fal: 'var(--fal)',
+    strain: 'var(--strain)'
+  };
+  const labels = {
+    chest: 'เสียงอก (Chest Voice)',
+    mix: 'เสียงมิกซ์ / รอยต่อ (Mix)',
+    fal: '✨ เสียงหลบ / เฮดวอยซ์ (สำเร็จ!)',
+    strain: '⚠️ กำลังตะเบ็งคอ! (ลดความดังลง)'
+  };
+
+  $('#note').textContent = midiToName(midi);
+  $('#note').style.color = colors[reg];
+  $('#note-box').style.borderColor = colors[reg];
+  $('#hz').textContent = Math.round(freq) + ' Hz';
+
+  const pill = $('#reg-pill');
+  pill.textContent = labels[reg];
+  pill.style.background = colors[reg];
+  pill.style.color = reg === 'mix' ? '#090d16' : '#fff';
+
+  const volPct = Math.round(vol * 100);
+  const falPct = Math.round(Math.min(1, Math.max(0, (purity - 0.25) / 0.55)) * 100);
+  $('#vol-txt').textContent = volPct + '%';
+  $('#vol-bar').style.width = volPct + '%';
+  $('#vol-bar').style.background = reg === 'strain' ? 'var(--strain)' : 'var(--chest)';
+
+  $('#fal-txt').textContent = falPct + '%';
+  $('#fal-bar').style.width = falPct + '%';
+
+  const tip = $('#coach-tip');
+  const flip = baseMidi + 7;
+  if (reg === 'strain') {
+    tip.innerHTML = 'คุณกำลัง<b>ดันเสียงอกให้ดังเกินไป!</b> ผ่อนลมลงครึ่งหนึ่ง แล้วเปลี่ยนเป็นคำว่า <b>"ฮู"</b> เบาๆ';
+  } else if (reg === 'fal') {
+    tip.innerHTML = '<b>เยี่ยมมาก! นี่แหละเสียงหลบ/เฮดวอยซ์</b> รักษาความเบาสบายนี้ไว้ คุณจะไต่ขึ้นสูงได้อีกโดยไม่เจ็บคอ';
+  } else if (midi >= flip - 2 && midi <= flip + 2) {
+    tip.innerHTML = 'ถึง<b>โซนรอยต่อ (' + midiToName(flip) + ')</b> แล้ว! อย่าเพิ่มความดัง ค่อยๆ ผ่อนเสียงให้บางลงเป็นเสียงหลบ';
+  } else {
+    tip.innerHTML = 'เสียงอกมั่นคงดี ลองลากเสียง <b>"อู~"</b> ไต่ระดับความสูงขึ้นไปหาเส้นประสีชมพูด้านบน';
+  }
 }
-function finishX(){
- const v=D.mode,s=D.st[0],M=$('#dmsg');let sc0,t;
- if(v==='g'){const sec=D.v0?(D.vl-D.v0)/1000:0;sc0=Math.min(1,sec/12);t=`<b>ค้างเสียงได้ ${sec.toFixed(1)} วินาที</b><br><span class='k'>เป้าหมาย 12 วินาที หายใจเข้าลึกๆ แล้วปล่อยลมเบาๆ สม่ำเสมอ</span>`}
- else if(v==='s'){const ns=D.st.filter(x=>x.song),h=ns.filter(x=>x.done).length,md=ns.map(x=>x.m).sort((p,q)=>p-q)[ns.length>>1];
-  const rate=a=>a.length?Math.round(a.filter(x=>x.done).length/a.length*100):0,hi=ns.filter(x=>x.m>md),lo=ns.filter(x=>x.m<=md);
-  sc0=h/ns.length;
-  t=`<b>ร้องตรง ${h} จาก ${ns.length} โน้ต (${Math.round(sc0*100)}%)</b><br>โน้ตสูง ${rate(hi)}% · โน้ตต่ำ ${rate(lo)}%`+($('#sk').checked?` · หลังยกคีย์ ${rate(ns.slice(ns.length>>1))}%`:'')+`<br><span class='k'>${rate(hi)<rate(lo)-15?'โน้ตสูงยังพลาดบ่อย ลองลดคีย์ลงหรือเลือกจังหวะช้าลงก่อน':'ดีมาก ลองเร่งจังหวะหรือยกคีย์ขึ้น'}</span>`}
- else{let hit=0;for(let k=4;k<12;k++)if(D.on.some(o=>Math.abs(o-(D.t0+k*s.beat))<=250))hit++;sc0=hit/8;t=`<b>ตรงจังหวะ ${hit} จาก 8</b><br><span class='k'>ร้อง “ตา” สั้นๆ แล้วหยุดเสียงก่อนจังหวะถัดไป จะนับได้ชัดขึ้น</span>`}
- const cb=D.cb;chips();D=null;$('#cue').textContent='';$('#dgo').textContent='เริ่มฝึก';M.hidden=false;M.innerHTML=t;cb&&setTimeout(()=>cb(sc0),0);
+
+// เป้าหมายของแต่ละโหมดฝึก
+function getTargetMidi(now) {
+  if (mode === 'siren') {
+    // ไซเรนขึ้น-ลง 10 วินาทีต่อรอบ (จาก baseMidi ขึ้นไป +14 ครึ่งเสียง)
+    const phase = (now % 10000) / 10000;
+    const tri = 1 - Math.abs(2 * phase - 1); // 0 -> 1 -> 0
+    return baseMidi + tri * 14;
+  }
+  if (mode === 'flip') {
+    // สลับ เสียงอก (base+2) กับ เสียงหลบ (base+10) ทุก 2.5 วินาที
+    const step = Math.floor(now / 2500) % 2;
+    return step === 0 ? baseMidi + 2 : baseMidi + 10;
+  }
+  if (mode === 'hold') {
+    // ค้างโน้ตสูงเหนือจุดพลิกเสียง (base+9)
+    return baseMidi + 9;
+  }
+  return null;
 }
-function recStart(){try{chunks=[];mr=new MediaRecorder(stream);mr.ondataavailable=e=>e.data.size&&chunks.push(e.data);mr.start();return true}catch(e){mr=null;return false}}
-function recStop(f){if(!mr||mr.state!=='recording')return f(null);mr.onstop=()=>f(URL.createObjectURL(new Blob(chunks,{type:mr.mimeType||'audio/mp4'})));mr.stop()}
-$('#rec').onclick=async()=>{
- if(mr&&mr.state==='recording'){recStop(u=>{if(u){$('#pl').src=u;$('#pl').hidden=false}$('#rec').textContent='● อัดเสียงใหม่'});return}
- if(!run)await start();
- if(!run)return;
- $('#rec').textContent=recStart()?'■ หยุดอัด':'เครื่องนี้อัดเสียงไม่ได้'
+
+function drawPitchGraph(now) {
+  const w = pCv.clientWidth, h = pCv.clientHeight;
+  if (!w) return;
+  pCtx.clearRect(0, 0, w, h);
+
+  const lo = baseMidi - 5;
+  const hi = baseMidi + 19; // กว้าง 2 อ็อกเทฟ
+  const yOf = m => h - 22 - ((m - lo) / (hi - lo)) * (h - 44);
+  const xOf = t => (w - 48) - ((now - t) / SPAN) * (w - 48);
+
+  const flipM = baseMidi + 7;
+  const yFlip = yOf(flipM);
+
+  // พื้นหลังโซนเสียงหลบ (ด้านบนเส้นประ)
+  const grad = pCtx.createLinearGradient(0, 0, 0, yFlip);
+  grad.addColorStop(0, 'rgba(255, 42, 133, 0.16)');
+  grad.addColorStop(1, 'rgba(255, 42, 133, 0.02)');
+  pCtx.fillStyle = grad;
+  pCtx.fillRect(0, 0, w, yFlip);
+
+  // เส้นกริดโน้ต
+  pCtx.font = '11px Prompt, sans-serif';
+  pCtx.lineWidth = 1;
+  for (let m = Math.ceil(lo); m <= Math.floor(hi); m++) {
+    const k = ((m % 12) + 12) % 12;
+    if (![0, 2, 4, 5, 7, 9, 11].includes(k)) continue;
+    const yy = yOf(m);
+    pCtx.strokeStyle = k === 0 ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.05)';
+    pCtx.beginPath();
+    pCtx.moveTo(0, yy);
+    pCtx.lineTo(w - 42, yy);
+    pCtx.stroke();
+
+    pCtx.fillStyle = '#6e80a8';
+    pCtx.textAlign = 'right';
+    pCtx.fillText(midiToName(m), w - 6, yy + 4);
+  }
+
+  // เส้นแบ่งจุดพลิกเสียง (Passaggio / Falsetto Zone)
+  pCtx.save();
+  pCtx.setLineDash([6, 5]);
+  pCtx.strokeStyle = '#ff2a85';
+  pCtx.lineWidth = 1.5;
+  pCtx.beginPath();
+  pCtx.moveTo(0, yFlip);
+  pCtx.lineTo(w - 42, yFlip);
+  pCtx.stroke();
+  pCtx.fillStyle = '#ff6ea9';
+  pCtx.textAlign = 'left';
+  pCtx.font = 'bold 11px Prompt, sans-serif';
+  pCtx.fillText('▲ โซนเสียงหลบ / เสียงสูง (' + midiToName(flipM) + ' ขึ้นไป: ผ่อนลมเบาลง)', 8, yFlip - 6);
+  pCtx.restore();
+
+  // วาดเส้นไกด์เป้าหมายตามโหมดฝึก
+  if (mode !== 'free') {
+    pCtx.save();
+    pCtx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+    pCtx.lineWidth = 16;
+    pCtx.lineCap = 'round';
+    pCtx.lineJoin = 'round';
+    pCtx.beginPath();
+    let started = false;
+    for (let dt = -SPAN; dt <= 0; dt += 120) {
+      const tm = now + dt;
+      const tgt = getTargetMidi(tm);
+      if (tgt !== null) {
+        const xx = xOf(tm), yy = yOf(tgt);
+        if (!started) { pCtx.moveTo(xx, yy); started = true; }
+        else pCtx.lineTo(xx, yy);
+      }
+    }
+    pCtx.stroke();
+
+    // ป้ายบอกเป้าหมายปัจจุบัน
+    const curTgt = getTargetMidi(now);
+    if (curTgt !== null) {
+      const ty = yOf(curTgt);
+      pCtx.fillStyle = '#ffffff';
+      pCtx.font = 'bold 12px Prompt, sans-serif';
+      const lbl = curTgt >= flipM ? 'เป้า: ' + midiToName(curTgt) + ' (เสียงหลบ)' : 'เป้า: ' + midiToName(curTgt) + ' (เสียงอก)';
+      pCtx.fillText(lbl, 10, Math.max(16, ty - 12));
+    }
+    pCtx.restore();
+  }
+
+  // วาดเส้นเสียงร้องจริงแยกตามสีเรจิสเตอร์
+  const colMap = {
+    chest: '#00d2ff',
+    mix: '#ffb703',
+    fal: '#ff2a85',
+    strain: '#ff3b30'
+  };
+  pCtx.lineWidth = 5;
+  pCtx.lineCap = 'round';
+  for (let i = 1; i < history.length; i++) {
+    const a = history[i - 1], b = history[i];
+    if (b.t - a.t > 160) continue;
+    pCtx.strokeStyle = colMap[b.reg] || '#00d2ff';
+    pCtx.beginPath();
+    pCtx.moveTo(xOf(a.t), yOf(a.m));
+    pCtx.lineTo(xOf(b.t), yOf(b.m));
+    pCtx.stroke();
+  }
+
+  // หัวลูกไฟปัจจุบัน
+  const last = history[history.length - 1];
+  if (last && now - last.t < 250) {
+    const cx = xOf(last.t), cy = yOf(last.m);
+    const c = colMap[last.reg];
+    pCtx.fillStyle = c;
+    pCtx.beginPath();
+    pCtx.arc(cx, cy, 8, 0, Math.PI * 2);
+    pCtx.fill();
+    pCtx.lineWidth = 3;
+    pCtx.strokeStyle = '#ffffff';
+    pCtx.stroke();
+  }
+}
+
+function drawSpectrumGraph(now) {
+  const w = sCv.clientWidth, h = sCv.clientHeight;
+  if (!w) return;
+  sCtx.clearRect(0, 0, w, h);
+
+  const live = now - lastVoiceT < 300;
+  const last = history[history.length - 1];
+  const colMap = { chest: '#00d2ff', mix: '#ffb703', fal: '#ff2a85', strain: '#ff3b30' };
+  const activeCol = (live && last) ? colMap[last.reg] : '#3a4b6e';
+
+  sCtx.font = '11px Prompt, sans-serif';
+  sCtx.fillStyle = '#8a9bc2';
+  sCtx.textAlign = 'left';
+  sCtx.fillText('สเปกตรัมเนื้อเสียง (H1 เด่น + H3..H6 ต่ำ = เสียงหลบใสไม่เค้นคอ)', 10, 16);
+
+  const names = ['H1 (หลัก)', 'H2', 'H3', 'H4', 'H5', 'H6 (แหลม)'];
+  const slotW = (w - 20) / 6;
+  const barW = Math.min(44, slotW - 12);
+
+  for (let i = 0; i < 6; i++) {
+    const val = live ? harmonics[i] : 0.06;
+    const bh = Math.max(5, val * (h - 42));
+    const bx = 10 + i * slotW + (slotW - barW) / 2;
+    const by = h - 20 - bh;
+
+    sCtx.fillStyle = activeCol;
+    sCtx.globalAlpha = i === 0 ? 1 : 0.55;
+    sCtx.beginPath();
+    if (sCtx.roundRect) sCtx.roundRect(bx, by, barW, bh, 5);
+    else sCtx.rect(bx, by, barW, bh);
+    sCtx.fill();
+
+    sCtx.globalAlpha = 1;
+    sCtx.fillStyle = '#8a9bc2';
+    sCtx.textAlign = 'center';
+    sCtx.fillText(names[i], bx + barW / 2, h - 5);
+  }
+}
+
+function tick(now) {
+  if (!running) return;
+  analyser.getFloatTimeDomainData(timeBuf);
+  const res = detectPitch(timeBuf, actx.sampleRate);
+
+  if (res && res.freq >= 75 && res.freq <= 1100) {
+    const rawM = 69 + 12 * Math.log2(res.freq / 440);
+    smoothM = smoothM === null ? rawM : smoothM * 0.45 + rawM * 0.55;
+    lastVoiceT = now;
+
+    if (calMode) {
+      calSamples.push(smoothM);
+      if (now - calStart >= 3000) {
+        calMode = false;
+        if (calSamples.length > 10) {
+          calSamples.sort((a, b) => a - b);
+          baseMidi = Math.round(calSamples[Math.floor(calSamples.length * 0.35)]);
+          $('#base-lbl').textContent = 'โน้ตพูด: ' + midiToName(baseMidi);
+          $('#st-flip').textContent = midiToName(baseMidi + 7);
+          $('#coach-tip').innerHTML = 'ตั้งค่าโน้ตฐานที่ <b>' + midiToName(baseMidi) + '</b> แล้ว! จุดพลิกเข้าเสียงหลบของคุณคือ <b>' + midiToName(baseMidi + 7) + '</b>';
+        }
+      }
+    }
+
+    const vt = classifyVoice(res.freq, smoothM, res.rms);
+    history.push({ t: now, m: smoothM, reg: vt.reg });
+    while (history.length && now - history[0].t > SPAN) history.shift();
+
+    if (minMidi === null || smoothM < minMidi) {
+      minMidi = smoothM;
+      $('#st-min').textContent = midiToName(minMidi);
+    }
+    if (maxMidi === null || smoothM > maxMidi) {
+      maxMidi = smoothM;
+      $('#st-max').textContent = midiToName(maxMidi);
+    }
+
+    updateCoachHUD(smoothM, res.freq, vt.reg, vt.purity, vt.vol);
+  } else if (now - lastVoiceT > 350) {
+    smoothM = null;
+    $('#note').textContent = '–';
+    $('#note').style.color = 'var(--text)';
+    $('#note-box').style.borderColor = 'var(--border)';
+    $('#vol-bar').style.width = '0%';
+  }
+
+  drawPitchGraph(now);
+  drawSpectrumGraph(now);
+  requestAnimationFrame(tick);
+}
+
+async function toggleMic() {
+  const errBox = $('#err');
+  errBox.style.display = 'none';
+  if (running) {
+    running = false;
+    stream && stream.getTracks().forEach(t => t.stop());
+    actx && actx.close();
+    $('#btn-mic').textContent = '🎤 เปิดไมค์เริ่มฝึก';
+    return;
+  }
+  try {
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    await actx.resume();
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+    });
+    const src = actx.createMediaStreamSource(stream);
+    analyser = actx.createAnalyser();
+    analyser.fftSize = 4096;
+    analyser.smoothingTimeConstant = 0.1;
+    src.connect(analyser);
+    timeBuf = new Float32Array(analyser.fftSize);
+    freqBuf = new Float32Array(analyser.frequencyBinCount);
+    running = true;
+    resizeCanvases();
+    $('#btn-mic').textContent = '⏹ หยุดไมค์';
+    requestAnimationFrame(tick);
+  } catch (e) {
+    errBox.style.display = 'block';
+    errBox.textContent = 'ไม่สามารถเปิดไมโครโฟนได้ กรุณาเปิดไฟล์นี้ใน Safari หรือ Chrome แล้วกดอนุญาตไมโครโฟน (' + (e.name || e) + ')';
+  }
+}
+
+$('#btn-mic').onclick = toggleMic;
+
+$('#btn-cal').onclick = async () => {
+  if (!running) await toggleMic();
+  if (!running) return;
+  calMode = true;
+  calSamples = [];
+  calStart = performance.now();
+  $('#coach-tip').innerHTML = 'กำลังวัดเสียงพูด... ร้อง <b>"อา~"</b> ด้วยระดับเสียงพูดสบายๆ ค้างไว้ 3 วินาที';
 };
-const STG=[{k:'f',n:'วอร์มอัพ',t:'วอร์มอัพ ไซเรน',d:'ร้อง “อู” เบาๆ ไล่ขึ้นลงตามเส้นหนาในกราฟ'},{k:'a',n:'ตรงโน้ต',t:'ร้องให้ตรงโน้ต',d:'ฟังเสียงนำ แล้วร้องตามให้เข้าโน้ต'},{k:'e',n:'นิ่ง',t:'ค้างเสียงให้นิ่ง',d:'ฟังเสียงนำ แล้วค้างโน้ตเดียวให้นิ่ง 6 วินาที'},{k:'g',n:'ลมหายใจ',t:'ลมหายใจ',d:'หายใจเข้าลึกๆ แล้วร้อง “อา” ค้างยาวๆ ให้นานที่สุด'},{k:'h',n:'จังหวะ',t:'จังหวะ',d:'ดูจุดกะพริบ นับ 1 2 3 4 แล้วร้อง “ตา” สั้นๆ ตามจังหวะ'}];
-const AREA=['ช่วงเสียง','ตรงโน้ต','ความนิ่ง','ลมหายใจ','จังหวะ'];
-const star=s=>s>=.85?'⭐⭐⭐':s>=.65?'⭐⭐':s>=.4?'⭐':'—';
-const lvOV=k=>({a:{j:[2,3,5,7,9][lvl-1],n:6},e:{h:[4,5,6,7,8][lvl-1]}}[k]||{});
-function meta(){$('#dmeta').textContent='ระดับ '+lvl+'/5 · ซ้อมต่อเนื่อง '+(lsg('st')||0)+' วัน'}
-function pChips(){const i=P?P.i:-1;$('#dsteps').innerHTML=STG.map((s,j)=>`<span class='ch ${j===i?'on':j<i?(P.res[j]>=.4?'ok':'miss'):''}'>${s.n}</span>`).join('')}
-function pStep(){
- const s=STG[P.i];if(!s)return pEnd();
- pChips();
- $('#dtxt').innerHTML=`<b>${P.i+1}. ${s.t}</b><br>${s.d}`;
- $('#dslot').appendChild($('#stage'));$('#stage').hidden=false;
- setTimeout(()=>{if(!P)return;OV=lvOV(s.k);launch(s.k,sc=>{if(!P)return;P.res[P.i]=sc;P.i++;pStep()})},1500);
-}
-function pEnd(){
- const r=P.res,avg=r.reduce((a,b)=>a+b,0)/r.length,w=r.indexOf(Math.min(...r));
- const td=new Date().toDateString(),yd=new Date(Date.now()-864e5).toDateString();
- let st=+lsg('st')||0;if(lsg('ld')!==td){st=lsg('ld')===yd?st+1:1;lss('st',st);lss('ld',td)}
- lvl=avg>=.7?Math.min(5,lvl+1):avg<.3?Math.max(1,lvl-1):lvl;lss('lv',lvl);
- let pv=null;try{pv=JSON.parse(lsg('pv')||'null')}catch(e){}lss('pv',JSON.stringify(r));
- pChips();meta();OV={};$('#dstart').textContent='ซ้อมอีกรอบ';$('#dtxt').textContent='';
- const M=$('#dsum');M.hidden=false;
- recStop(u=>{
-  M.innerHTML=`<b>เสร็จแล้ว! 🎉</b> ซ้อมต่อเนื่อง ${st} วัน 🔥 · ระดับ ${lvl}/5`+r.map((x,i)=>`<div class='row'><span>${AREA[i]}</span><b>${star(x)}${pv?(x>pv[i]+.05?' ↑':x<pv[i]-.05?' ↓':''):''}</b></div>`).join('')+`<p class='mut'>ด้านที่ควรเพิ่ม: ${AREA[w]} (ลองฝึกเพิ่มในแท็บ “ฝึกเอง”)</p>`+(u?`<div>ฟังเสียงตัวเองที่เพิ่งร้อง</div><audio controls src='${u}' style='width:100%'></audio>`:'');
-  stop();
- });
- P=null;
-}
-$('#dstart').onclick=async()=>{
- if(P){P=null;D=null;$('#stage').hidden=true;recStop(()=>{});$('#dstart').textContent='เริ่มซ้อมวันนี้';pChips();return}
- $('#dsum').hidden=true;
- if(!run)await start();
- if(!run)return;
- P={i:0,res:[]};$('#dstart').textContent='หยุด';
- if($('#drec').checked)recStart();
- if(base!==null&&!$('#recal').checked){pStep();return}
- $('#dtxt').innerHTML='<b>วัดโน้ตกลาง</b><br>ร้อง “อู” สบายๆ 3 วินาที';
- cal={t0:performance.now(),a:[]};
- const w=setInterval(()=>{
-  if(!P){clearInterval(w);return}
-  if(cal)return;
-  if(base===null){cal={t0:performance.now(),a:[]};return}
-  clearInterval(w);pStep();
- },300);
+
+$('#btn-clr').onclick = () => {
+  history = [];
+  minMidi = null;
+  maxMidi = null;
+  $('#st-min').textContent = '–';
+  $('#st-max').textContent = '–';
+  drawPitchGraph(performance.now());
 };
-const P_=s=>s.split(' ').map(t=>{const[a,b]=t.split(':');return[+a,+(b||1)]});
-const SONGS=[
- {t:'Twinkle Twinkle (ง่ายสุด)',n:P_('0 0 7 7 9 9 7:2 5 5 4 4 2 2 0:2 7 7 5 5 4 4 2:2 7 7 5 5 4 4 2:2 0 0 7 7 9 9 7:2 5 5 4 4 2 2 0:2')},
- {t:'Ode to Joy (ง่าย)',n:P_('4 4 5 7 7 5 4 2 0 0 2 4 4:1.5 2:.5 2:2 4 4 5 7 7 5 4 2 0 0 2 4 2:1.5 0:.5 0:2')},
- {t:'ท่อนขึ้นสูง 1 (ถึงสูงเท่าตัว)',n:P_('0 2 4 7:2 4 2 0:2 2 4 7 9 12:3')},
- {t:'ท่อนขึ้นสูง 2 (สูงกว่านั้นอีก)',n:P_('0 4 7 9:2 7 4 2:2 4 7 9 12 14:3')},
- {t:'กระโดดสูงต่ำ',n:P_('12:2 7 4 0:2 -5:2 0 4 7:2 12:2 7 4 0 -5:3')},
- {t:'ท่อนยกคีย์ (ติ๊กยกคีย์)',n:P_('0 2 4 5 7 5 4 2 0:2 0 2 4 5 7 5 4 2 0:2')},
- {t:'✏️ พิมพ์โน้ตเอง',c:true,n:[[0,1]]}
-];
-$('#sg').innerHTML=SONGS.map((x,i)=>`<option value='${i}'>${x.t}</option>`).join('');
-function gs(){const s=SONGS[+$('#sg').value||0];if(!s.c)return s;try{const n=P_($('#scx').value.trim().replace(/\s+/g,' '));if(!$('#scx').value.trim()||!n.length||n.some(x=>isNaN(x[0])||isNaN(x[1])||x[1]<=0))throw 0;return{t:s.t,n}}catch(e){return null}}
-function sUp(){const so=gs(),w=SONGS[+$('#sg').value||0];$('#scw').hidden=!w.c;if(!so){$('#sinfo').textContent='รูปแบบโน้ตไม่ถูกต้อง ดูตัวอย่างในช่องพิมพ์';return}const mx=Math.max(...so.n.map(x=>x[0]))+(+$('#sky').value)+($('#sk').checked?2:0);$('#sinfo').textContent='โน้ตสูงสุดของเพลงนี้: '+(base!==null?nm(base+mx)+' · ':'')+'สูงกว่าโน้ตกลาง '+mx+' ครึ่งเสียง'}
-$('#sg').onchange=sUp;$('#sky').onchange=sUp;$('#sk').onchange=sUp;
-$('#scx').value=lsg('cx')||'';$('#scx').oninput=()=>{lss('cx',$('#scx').value);sUp()};
-$('#sdemo').onclick=async()=>{
- if(base===null){$('#sinfo').textContent='วัดโน้ตกลางก่อนนะ กดปุ่ม “วัดโน้ตกลาง” ด้านบน';return}
- if(!run)await start();
- if(!run)return;
- let t=0;build('s').filter(s=>s.song).forEach(s=>{const m=s.m,d=s.dur;setTimeout(()=>tone(m,d*.9),t);t+=d});
-};
-const fc=$('#fc'),g4=fc.getContext('2d');
-let fp=[],fr={lo:48,hi:72},fmn=null,fmx=null,fLast=0;
-function fPush(now,m){fp.push({t:now,m});fmn=fmn===null?m:Math.min(fmn,m);fmx=fmx===null?m:Math.max(fmx,m)}
-const hc=t=>`hsl(${Math.round(220-220*Math.min(1,Math.max(0,t)))},85%,55%)`;
-function fDraw(now){
- if(!fc.clientWidth)return;
- const d=Math.min(2,devicePixelRatio||1),w=fc.clientWidth,h=fc.clientHeight;
- if(fc.width!==Math.round(w*d)||fc.height!==Math.round(h*d)){fc.width=Math.round(w*d);fc.height=Math.round(h*d)}
- g4.setTransform(d,0,0,d,0,0);g4.clearRect(0,0,w,h);
- while(fp.length&&now-fp[0].t>12000)fp.shift();
- let lo=48,hi=72;
- if(fp.length){lo=Math.min(...fp.map(p=>p.m))-3;hi=Math.max(...fp.map(p=>p.m))+3;if(hi-lo<14){const c=(hi+lo)/2;lo=c-7;hi=c+7}}
- fr.lo+=(lo-fr.lo)*.1;fr.hi+=(hi-fr.hi)*.1;
- const L=fr.lo,H=fr.hi,pad=30,y=m=>h-pad-(m-L)/(H-L)*(h-2*pad),x=t=>(w-34)-(now-t)/12000*(w-34),tt=m=>(m-L)/(H-L);
- const bg=g4.createLinearGradient(0,0,0,h);[0,.25,.5,.75,1].forEach(q=>bg.addColorStop(q,hc(1-q)));
- g4.globalAlpha=.13;g4.fillStyle=bg;g4.fillRect(0,0,w,h);g4.globalAlpha=1;g4.fillStyle=bg;g4.fillRect(w-14,0,10,h);
- g4.font='11px system-ui,sans-serif';g4.textAlign='left';g4.lineWidth=1;g4.strokeStyle=css('--line');g4.fillStyle=css('--mute');
- for(let m=Math.ceil(L);m<=H;m++){const k=((m%12)+12)%12;if(![0,2,4,5,7,9,11].includes(k))continue;if(H-L>30&&k!==0&&k!==7)continue;g4.beginPath();g4.moveTo(0,y(m));g4.lineTo(w-16,y(m));g4.stroke();g4.fillText(nm(m),4,y(m)-2)}
- g4.font='bold 13px system-ui,sans-serif';g4.textAlign='right';g4.fillText('\u25b2 \u0e2a\u0e39\u0e07',w-20,18);g4.fillText('\u25bc \u0e15\u0e48\u0e33',w-20,h-10);
- g4.lineWidth=6;g4.lineCap='round';
- for(let i=1;i<fp.length;i++){const a=fp[i-1],b=fp[i];if(b.t-a.t>200)continue;g4.strokeStyle=hc(tt(b.m));g4.beginPath();g4.moveTo(x(a.t),y(a.m));g4.lineTo(x(b.t),y(b.m));g4.stroke()}
- const p=fp[fp.length-1];
- if(p&&now-p.t<300){
-  const t=tt(p.m),c=hc(t),old=fp.find(q=>p.t-q.t<=450),dm=old?p.m-old.m:0;
-  g4.fillStyle=c;g4.strokeStyle=css('--card');g4.lineWidth=4;g4.beginPath();g4.arc(x(p.t),y(p.m),10,0,7);g4.fill();g4.stroke();
-  g4.textAlign='center';g4.font='bold 44px system-ui,sans-serif';g4.fillStyle=c;g4.fillText(nm(p.m),w/2,52);
-  g4.font='bold 18px system-ui,sans-serif';g4.fillText((t>.66?'\u0e2a\u0e39\u0e07':t<.34?'\u0e15\u0e48\u0e33':'\u0e01\u0e25\u0e32\u0e07')+(dm>.8?' \u25b2':dm<-.8?' \u25bc':''),w/2,78);
- }
- if(now-fLast>400){fLast=now;if(fmn!==null)$('#fst').textContent='\u0e15\u0e2d\u0e19\u0e19\u0e35\u0e49\u0e23\u0e49\u0e2d\u0e07\u0e44\u0e14\u0e49\u0e15\u0e31\u0e49\u0e07\u0e41\u0e15\u0e48 '+nm(fmn)+' \u0e16\u0e36\u0e07 '+nm(fmx)}
-}
-$('#fgo').onclick=async()=>{
- if(run){stop();$('#fgo').textContent='เริ่มร้อง';return}
- await start();
- $('#fgo').textContent=run?'หยุด':'เริ่มร้อง';
- if(!run)$('#fst').textContent='เปิดไมค์ไม่ได้ ลองตรวจสิทธิ์ไมค์ของเบราว์เซอร์';
-};
-$('#fclr').onclick=()=>{fp=[];fmn=fmx=null;$('#fst').textContent='ล้างแล้ว ร้องต่อได้เลย'};
-lvl=+(lsg('lv')||1);
-{const b=lsg('bs');if(b!==null){base=+b;$('#bn').textContent=nm(base)+' (วัดแล้ว)'}}
-meta();pChips();sUp();
-addEventListener('resize',size);size();tDraw(0);
+
+document.querySelectorAll('#mode-tabs button').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('#mode-tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.m;
+    const tips = {
+      free: 'ร้องอิสระ: ลองลากเสียงจากต่ำไปสูง สังเกตสีเส้นเมื่อข้ามเส้นประสีชมพู',
+      siren: 'ลิฟต์ไซเรน: ร้องคำว่า <b>"อู~"</b> ไต่ตามเส้นสีขาวจางๆ พอข้ามเส้นประให้ผ่อนลมเบาลงเป็นเสียงหลบ',
+      flip: 'ฝึกพลิกเสียง: ร้องสลับแท่งล่าง (เสียงอก) กระโดดขึ้นแท่งบน (เสียงหลบสีชมพู) ให้คล่อง',
+      hold: 'ค้างโน้ตสูง: ร้องค้างที่เส้นเป้าหมายด้วยเสียงหลบหรือมิกซ์ ห้ามให้เส้นกลายเป็นสีแดงเด็ดขาด!'
+    };
+    $('#coach-tip').innerHTML = tips[mode];
+  };
+});
+
+// วาดกราฟเริ่มต้นตอนเปิดหน้าเว็บ
+drawPitchGraph(0);
+drawSpectrumGraph(0);
 </script>
 </body>
 </html>
