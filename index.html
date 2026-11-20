@@ -1,757 +1,3808 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>High Note Coach - โค้ชฝึกขึ้นเสียงสูง & เสียงหลบ</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #090d16;
-  --panel: #131b2e;
-  --border: #233152;
-  --text: #f0f4ff;
-  --mute: #8a9bc2;
-  --chest: #00d2ff;     /* สีฟ้า: เสียงอก */
-  --mix: #ffb703;       /* สีเหลืองทอง: เสียงมิกซ์/รอยต่อ */
-  --fal: #ff2a85;       /* สีชมพูบานเย็น: เสียงหลบ (Falsetto) */
-  --strain: #ff3b30;    /* สีแดง: ตะเบ็ง/เค้นคอ */
-  --ok: #10b981;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Prompt', system-ui, sans-serif;
-  line-height: 1.5;
-  padding: env(safe-area-inset-top, 12px) 12px env(safe-area-inset-bottom, 24px);
-  max-width: 680px;
-  margin: 0 auto;
-}
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 4px 14px;
-}
-h1 { font-size: 21px; font-weight: 800; letter-spacing: -0.3px; }
-.badge {
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: var(--border);
-  color: var(--mute);
-  font-weight: 600;
-}
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
-  margin-bottom: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-}
-.btn-row { display: flex; gap: 8px; margin-bottom: 12px; }
-button {
-  font-family: inherit;
-  border: none;
-  border-radius: 14px;
-  padding: 13px 16px;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: transform 0.1s, opacity 0.2s;
-}
-button:active { transform: scale(0.98); }
-.btn-main {
-  flex: 2;
-  background: linear-gradient(135deg, #00d2ff, #ff2a85);
-  color: #fff;
-}
-.btn-sub {
-  flex: 1;
-  background: var(--border);
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 600;
-}
-.hud {
-  display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 12px;
-  align-items: center;
-}
-.note-box {
-  background: rgba(0,0,0,0.35);
-  border-radius: 14px;
-  text-align: center;
-  padding: 10px 6px;
-  border: 2px solid var(--border);
-}
-#note { font-size: 46px; font-weight: 800; line-height: 1; }
-#hz { font-size: 12px; color: var(--mute); margin-top: 4px; }
-.coach-box {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-#reg-pill {
-  display: inline-block;
-  align-self: flex-start;
-  padding: 3px 12px;
-  border-radius: 99px;
-  font-size: 13px;
-  font-weight: 800;
-  background: var(--border);
-  color: #fff;
-}
-#coach-tip {
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  min-height: 2.8em;
-}
-.meters {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 12px;
-}
-.m-col {
-  background: rgba(0,0,0,0.25);
-  padding: 8px 10px;
-  border-radius: 12px;
-}
-.m-head {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--mute);
-  margin-bottom: 5px;
-}
-.bar-bg {
-  height: 8px;
-  background: #090d16;
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-.bar-fill {
-  height: 100%;
-  width: 0%;
-  border-radius: 4px;
-  transition: width 0.08s;
-}
-.modes {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 10px;
-}
-.modes button {
-  flex: 1 0 auto;
-  padding: 9px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  background: rgba(255,255,255,0.05);
-  color: var(--mute);
-  border: 1px solid transparent;
-  border-radius: 11px;
-}
-.modes button.active {
-  background: rgba(255, 42, 133, 0.18);
-  border-color: var(--fal);
-  color: #fff;
-}
-canvas {
-  width: 100%;
-  display: block;
-  background: #060911;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-}
-#pitch-cv { height: 290px; }
-#spec-cv { height: 110px; margin-top: 10px; }
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--mute);
-  margin-top: 8px;
-}
-.legend span { display: flex; align-items: center; gap: 5px; }
-.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.stats-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--mute);
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-}
-.stats-row b { color: var(--text); }
-#err {
-  display: none;
-  background: rgba(255,59,48,0.15);
-  border: 1px solid var(--strain);
-  color: #ffb3ae;
-  padding: 10px 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  margin-bottom: 12px;
-}
-</style>
-</head>
-<body>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>ป๊อกเด้ง 3 คน (ไร้เจ้ามือ) — คาสิโน VIP</title>
 
-<header>
-  <h1>🚀 โค้ชปลดล็อกเสียงสูง</h1>
-  <span class="badge" id="base-lbl">โน้ตพูด: C3 (มาตรฐาน)</span>
-</header>
+  <!-- Google Fonts: Kanit & Prompt for crisp Thai VIP Casino Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;0,700;0,800;1,600&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-<div id="err"></div>
-
-<div class="btn-row">
-  <button class="btn-main" id="btn-mic">🎤 เปิดไมค์เริ่มฝึก</button>
-  <button class="btn-sub" id="btn-cal">🎯 วัดเสียงพูด (3 วิ)</button>
-  <button class="btn-sub" id="btn-clr">ล้างกราฟ</button>
-</div>
-
-<!-- โหมดแบบฝึกหัด -->
-<div class="modes" id="mode-tabs">
-  <button class="active" data-m="free">1. ร้องอิสระ (ดูกราฟ)</button>
-  <button data-m="siren">2. ลิฟต์ไซเรน (เชื่อมเสียงอก➔หลบ)</button>
-  <button data-m="flip">3. สลับอก ↔ หลบ (ฝึกพลิกเสียง)</button>
-  <button data-m="hold">4. ค้างโน้ตสูง (ห้ามตะเบ็ง)</button>
-</div>
-
-<!-- หน้าจอโค้ชแบบเรียลไทม์ -->
-<div class="card">
-  <div class="hud">
-    <div class="note-box" id="note-box">
-      <div id="note">–</div>
-      <div id="hz">รอเสียงร้อง...</div>
-    </div>
-    <div class="coach-box">
-      <span id="reg-pill">พร้อมวิเคราะห์</span>
-      <div id="coach-tip">กด <b>"เปิดไมค์เริ่มฝึก"</b> แล้วร้องคำว่า <b>"อู"</b> หรือ <b>"ฮู"</b> เบาๆ ลากขึ้นที่สูง</div>
-    </div>
-  </div>
-
-  <div class="meters">
-    <div class="m-col">
-      <div class="m-head"><span>แรงดัน/ความดัง (ยิ่งสูงต้องยิ่งเบา)</span><b id="vol-txt">0%</b></div>
-      <div class="bar-bg"><div class="bar-fill" id="vol-bar" style="background:var(--chest)"></div></div>
-    </div>
-    <div class="m-col">
-      <div class="m-head"><span>ความใสเสียงหลบ (Head/Falsetto)</span><b id="fal-txt">0%</b></div>
-      <div class="bar-bg"><div class="bar-fill" id="fal-bar" style="background:var(--fal)"></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- กราฟหลัก -->
-<div class="card">
-  <canvas id="pitch-cv"></canvas>
-  <div class="legend">
-    <span><i class="dot" style="background:var(--chest)"></i>เสียงอก (Chest)</span>
-    <span><i class="dot" style="background:var(--mix)"></i>เสียงมิกซ์/รอยต่อ (Mix)</span>
-    <span><i class="dot" style="background:var(--fal)"></i>เสียงหลบ/เฮดวอยซ์ (ขึ้นสูงสบาย)</span>
-    <span><i class="dot" style="background:var(--strain)"></i>ตะเบ็ง/เค้นคอ (ลดความดังลง!)</span>
-  </div>
-
-  <canvas id="spec-cv"></canvas>
-  <div class="stats-row">
-    <span>โน้ตต่ำสุด: <b id="st-min">–</b></span>
-    <span>จุดพลิกเสียง (Passaggio): <b id="st-flip">G3</b></span>
-    <span>สถิติโน้ตสูงสุด: <b id="st-max">–</b></span>
-  </div>
-</div>
-
-<!-- เคล็ดลับการร้องเสียงสูง -->
-<div class="card" style="font-size:13.5px; color:var(--mute);">
-  <b style="color:var(--text); display:block; margin-bottom:4px;">💡 กฎเหล็ก 3 ข้อ ทำไมคนทั่วไปขึ้นเสียงสูงไม่ได้:</b>
-  1. <b>ยิ่งสูง ห้ามยิ่งดัง:</b> พอถึงเส้นประสีชมพู (จุดพลิกเสียง) ให้ลดความดังลงครึ่งหนึ่งทันที ถ้าร้องดังเส้นจะเป็นสีแดง (ตะเบ็งคอ)<br>
-  2. <b>ใช้สระ "อู" หรือ "ฮู" (เหมือนนกฮูก):</b> รูปปากแคบช่วยให้เส้นเสียงปรับเข้าโหมดเสียงหลบ (สีชมพู) ได้เองอัตโนมัติ<br>
-  3. <b>ความรู้สึกเหมือน "ถอนหายใจทิ้ง" หรือ "หาว":</b> ปล่อยเสียงให้ลอยขึ้นไปที่หว่างคิ้ว ไม่ต้องเกร็งกราม
-</div>
-
-<script>
-const $ = s => document.querySelector(s);
-const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const midiToName = m => {
-  const r = Math.round(m);
-  return NOTES[((r % 12) + 12) % 12] + (Math.floor(r / 12) - 1);
-};
-
-let actx, analyser, stream, timeBuf, freqBuf;
-let running = false;
-let mode = 'free';
-let baseMidi = 50; // D3 default comfortable speaking/chest note
-let minMidi = null, maxMidi = null;
-let calMode = false, calSamples = [], calStart = 0;
-
-const SPAN = 9000; // 9 วินาทีบนกราฟ
-let history = [];  // {t, m, reg, rms, purity}
-let smoothM = null, smoothPurity = 0.5, smoothRms = 0;
-let lastVoiceT = 0;
-let harmonics = [0,0,0,0,0,0];
-
-const pCv = $('#pitch-cv'), pCtx = pCv.getContext('2d');
-const sCv = $('#spec-cv'), sCtx = sCv.getContext('2d');
-
-function resizeCanvases() {
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  [ [pCv, pCtx], [sCv, sCtx] ].forEach(([c, ctx]) => {
-    const w = c.clientWidth, h = c.clientHeight;
-    if (w && h) {
-      c.width = w * dpr;
-      c.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-  });
-}
-window.addEventListener('resize', resizeCanvases);
-resizeCanvases();
-
-// ตรวจจับความถี่เสียงร้องด้วย Autocorrelation
-function detectPitch(buf, sr) {
-  const step = Math.max(1, Math.round(sr / 16000));
-  const N = Math.min(1024, Math.floor(buf.length / step));
-  const x = new Float32Array(N);
-  const effSr = sr / step;
-  for (let i = 0; i < N; i++) {
-    let s = 0;
-    for (let k = 0; k < step; k++) s += buf[i * step + k];
-    x[i] = s / step;
-  }
-  const minLag = Math.floor(effSr / 1100);
-  const maxLag = Math.floor(effSr / 75);
-  const W = N - maxLag;
-  let energy = 0;
-  for (let i = 0; i < W; i++) energy += x[i] * x[i];
-  const rms = Math.sqrt(energy / W);
-  if (rms < 0.008) return null;
-
-  const corr = new Float32Array(maxLag + 2);
-  let best = 0;
-  for (let L = minLag; L <= maxLag; L++) {
-    let sum = 0;
-    for (let i = 0; i < W; i++) sum += x[i] * x[i + L];
-    corr[L] = sum;
-    if (sum > best) best = sum;
-  }
-  if (best / energy < 0.48) return null;
-
-  let L = minLag;
-  while (L < maxLag && corr[L] > corr[L + 1]) L++;
-  for (; L < maxLag; L++) {
-    if (corr[L] >= 0.88 * best && corr[L] >= corr[L - 1] && corr[L] >= corr[L + 1]) {
-      const a = corr[L - 1], m = corr[L], z = corr[L + 1];
-      const denom = a - 2 * m + z;
-      const shift = denom ? 0.5 * (a - z) / denom : 0;
-      return { freq: effSr / (L + shift), rms };
-    }
-  }
-  return null;
-}
-
-// วิเคราะห์เรจิสเตอร์: เสียงอก / เสียงมิกซ์ / เสียงหลบ / ตะเบ็งคอ
-function classifyVoice(freq, midi, rms) {
-  analyser.getFloatFrequencyData(freqBuf);
-  const binHz = actx.sampleRate / analyser.fftSize;
-  const amps = [];
-  for (let k = 1; k <= 6; k++) {
-    const idx = Math.round((k * freq) / binHz);
-    if (idx > 0 && idx < freqBuf.length - 1) {
-      const db = Math.max(freqBuf[idx - 1], freqBuf[idx], freqBuf[idx + 1]);
-      amps.push(Math.pow(10, db / 20));
-    } else {
-      amps.push(1e-6);
-    }
-  }
-  const maxA = Math.max(...amps, 1e-5);
-  harmonics = amps.map(a => Math.min(1, a / maxA));
-
-  // เสียงหลบ (Falsetto/Head) จะมี H1 เด่นมาก และ H3-H6 ต่ำ
-  const h1 = amps[0] || 1e-6;
-  const h2 = amps[1] || 1e-6;
-  const overtones = amps[2] + amps[3] + amps[4] + amps[5];
-  const rawPurity = h1 / (h1 + h2 * 0.75 + overtones * 1.35);
-
-  smoothPurity = smoothPurity * 0.65 + rawPurity * 0.35;
-  smoothRms = smoothRms * 0.6 + rms * 0.4;
-
-  const flipPoint = baseMidi + 7; // จุดเปลี่ยนเรจิสเตอร์ (+7 ครึ่งเสียงจากโน้ตพูด)
-  const relPitch = midi - baseMidi;
-
-  let reg = 'chest';
-  // ถ้าขึ้นโน้ตสูงเกินจุดพลิกเสียง แต่ดันความดังสูงมากและฮาร์มอนิกแหลม = ตะเบ็งคอ (Strain)
-  if (relPitch >= 6 && smoothRms > 0.14 && smoothPurity < 0.46) {
-    reg = 'strain';
-  } else if (relPitch >= 6 && smoothPurity >= 0.48) {
-    reg = 'fal';
-  } else if (smoothPurity >= 0.62 && relPitch >= 3) {
-    reg = 'fal';
-  } else if (relPitch >= 4) {
-    reg = 'mix';
-  } else {
-    reg = 'chest';
-  }
-
-  return { reg, purity: smoothPurity, vol: Math.min(1, smoothRms / 0.22) };
-}
-
-// โค้ชแนะนำตามสิ่งที่ตรวจจับได้จริง
-function updateCoachHUD(midi, freq, reg, purity, vol) {
-  const colors = {
-    chest: 'var(--chest)',
-    mix: 'var(--mix)',
-    fal: 'var(--fal)',
-    strain: 'var(--strain)'
-  };
-  const labels = {
-    chest: 'เสียงอก (Chest Voice)',
-    mix: 'เสียงมิกซ์ / รอยต่อ (Mix)',
-    fal: '✨ เสียงหลบ / เฮดวอยซ์ (สำเร็จ!)',
-    strain: '⚠️ กำลังตะเบ็งคอ! (ลดความดังลง)'
-  };
-
-  $('#note').textContent = midiToName(midi);
-  $('#note').style.color = colors[reg];
-  $('#note-box').style.borderColor = colors[reg];
-  $('#hz').textContent = Math.round(freq) + ' Hz';
-
-  const pill = $('#reg-pill');
-  pill.textContent = labels[reg];
-  pill.style.background = colors[reg];
-  pill.style.color = reg === 'mix' ? '#090d16' : '#fff';
-
-  const volPct = Math.round(vol * 100);
-  const falPct = Math.round(Math.min(1, Math.max(0, (purity - 0.25) / 0.55)) * 100);
-  $('#vol-txt').textContent = volPct + '%';
-  $('#vol-bar').style.width = volPct + '%';
-  $('#vol-bar').style.background = reg === 'strain' ? 'var(--strain)' : 'var(--chest)';
-
-  $('#fal-txt').textContent = falPct + '%';
-  $('#fal-bar').style.width = falPct + '%';
-
-  const tip = $('#coach-tip');
-  const flip = baseMidi + 7;
-  if (reg === 'strain') {
-    tip.innerHTML = 'คุณกำลัง<b>ดันเสียงอกให้ดังเกินไป!</b> ผ่อนลมลงครึ่งหนึ่ง แล้วเปลี่ยนเป็นคำว่า <b>"ฮู"</b> เบาๆ';
-  } else if (reg === 'fal') {
-    tip.innerHTML = '<b>เยี่ยมมาก! นี่แหละเสียงหลบ/เฮดวอยซ์</b> รักษาความเบาสบายนี้ไว้ คุณจะไต่ขึ้นสูงได้อีกโดยไม่เจ็บคอ';
-  } else if (midi >= flip - 2 && midi <= flip + 2) {
-    tip.innerHTML = 'ถึง<b>โซนรอยต่อ (' + midiToName(flip) + ')</b> แล้ว! อย่าเพิ่มความดัง ค่อยๆ ผ่อนเสียงให้บางลงเป็นเสียงหลบ';
-  } else {
-    tip.innerHTML = 'เสียงอกมั่นคงดี ลองลากเสียง <b>"อู~"</b> ไต่ระดับความสูงขึ้นไปหาเส้นประสีชมพูด้านบน';
-  }
-}
-
-// เป้าหมายของแต่ละโหมดฝึก
-function getTargetMidi(now) {
-  if (mode === 'siren') {
-    // ไซเรนขึ้น-ลง 10 วินาทีต่อรอบ (จาก baseMidi ขึ้นไป +14 ครึ่งเสียง)
-    const phase = (now % 10000) / 10000;
-    const tri = 1 - Math.abs(2 * phase - 1); // 0 -> 1 -> 0
-    return baseMidi + tri * 14;
-  }
-  if (mode === 'flip') {
-    // สลับ เสียงอก (base+2) กับ เสียงหลบ (base+10) ทุก 2.5 วินาที
-    const step = Math.floor(now / 2500) % 2;
-    return step === 0 ? baseMidi + 2 : baseMidi + 10;
-  }
-  if (mode === 'hold') {
-    // ค้างโน้ตสูงเหนือจุดพลิกเสียง (base+9)
-    return baseMidi + 9;
-  }
-  return null;
-}
-
-function drawPitchGraph(now) {
-  const w = pCv.clientWidth, h = pCv.clientHeight;
-  if (!w) return;
-  pCtx.clearRect(0, 0, w, h);
-
-  const lo = baseMidi - 5;
-  const hi = baseMidi + 19; // กว้าง 2 อ็อกเทฟ
-  const yOf = m => h - 22 - ((m - lo) / (hi - lo)) * (h - 44);
-  const xOf = t => (w - 48) - ((now - t) / SPAN) * (w - 48);
-
-  const flipM = baseMidi + 7;
-  const yFlip = yOf(flipM);
-
-  // พื้นหลังโซนเสียงหลบ (ด้านบนเส้นประ)
-  const grad = pCtx.createLinearGradient(0, 0, 0, yFlip);
-  grad.addColorStop(0, 'rgba(255, 42, 133, 0.16)');
-  grad.addColorStop(1, 'rgba(255, 42, 133, 0.02)');
-  pCtx.fillStyle = grad;
-  pCtx.fillRect(0, 0, w, yFlip);
-
-  // เส้นกริดโน้ต
-  pCtx.font = '11px Prompt, sans-serif';
-  pCtx.lineWidth = 1;
-  for (let m = Math.ceil(lo); m <= Math.floor(hi); m++) {
-    const k = ((m % 12) + 12) % 12;
-    if (![0, 2, 4, 5, 7, 9, 11].includes(k)) continue;
-    const yy = yOf(m);
-    pCtx.strokeStyle = k === 0 ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.05)';
-    pCtx.beginPath();
-    pCtx.moveTo(0, yy);
-    pCtx.lineTo(w - 42, yy);
-    pCtx.stroke();
-
-    pCtx.fillStyle = '#6e80a8';
-    pCtx.textAlign = 'right';
-    pCtx.fillText(midiToName(m), w - 6, yy + 4);
-  }
-
-  // เส้นแบ่งจุดพลิกเสียง (Passaggio / Falsetto Zone)
-  pCtx.save();
-  pCtx.setLineDash([6, 5]);
-  pCtx.strokeStyle = '#ff2a85';
-  pCtx.lineWidth = 1.5;
-  pCtx.beginPath();
-  pCtx.moveTo(0, yFlip);
-  pCtx.lineTo(w - 42, yFlip);
-  pCtx.stroke();
-  pCtx.fillStyle = '#ff6ea9';
-  pCtx.textAlign = 'left';
-  pCtx.font = 'bold 11px Prompt, sans-serif';
-  pCtx.fillText('▲ โซนเสียงหลบ / เสียงสูง (' + midiToName(flipM) + ' ขึ้นไป: ผ่อนลมเบาลง)', 8, yFlip - 6);
-  pCtx.restore();
-
-  // วาดเส้นไกด์เป้าหมายตามโหมดฝึก
-  if (mode !== 'free') {
-    pCtx.save();
-    pCtx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
-    pCtx.lineWidth = 16;
-    pCtx.lineCap = 'round';
-    pCtx.lineJoin = 'round';
-    pCtx.beginPath();
-    let started = false;
-    for (let dt = -SPAN; dt <= 0; dt += 120) {
-      const tm = now + dt;
-      const tgt = getTargetMidi(tm);
-      if (tgt !== null) {
-        const xx = xOf(tm), yy = yOf(tgt);
-        if (!started) { pCtx.moveTo(xx, yy); started = true; }
-        else pCtx.lineTo(xx, yy);
-      }
-    }
-    pCtx.stroke();
-
-    // ป้ายบอกเป้าหมายปัจจุบัน
-    const curTgt = getTargetMidi(now);
-    if (curTgt !== null) {
-      const ty = yOf(curTgt);
-      pCtx.fillStyle = '#ffffff';
-      pCtx.font = 'bold 12px Prompt, sans-serif';
-      const lbl = curTgt >= flipM ? 'เป้า: ' + midiToName(curTgt) + ' (เสียงหลบ)' : 'เป้า: ' + midiToName(curTgt) + ' (เสียงอก)';
-      pCtx.fillText(lbl, 10, Math.max(16, ty - 12));
-    }
-    pCtx.restore();
-  }
-
-  // วาดเส้นเสียงร้องจริงแยกตามสีเรจิสเตอร์
-  const colMap = {
-    chest: '#00d2ff',
-    mix: '#ffb703',
-    fal: '#ff2a85',
-    strain: '#ff3b30'
-  };
-  pCtx.lineWidth = 5;
-  pCtx.lineCap = 'round';
-  for (let i = 1; i < history.length; i++) {
-    const a = history[i - 1], b = history[i];
-    if (b.t - a.t > 160) continue;
-    pCtx.strokeStyle = colMap[b.reg] || '#00d2ff';
-    pCtx.beginPath();
-    pCtx.moveTo(xOf(a.t), yOf(a.m));
-    pCtx.lineTo(xOf(b.t), yOf(b.m));
-    pCtx.stroke();
-  }
-
-  // หัวลูกไฟปัจจุบัน
-  const last = history[history.length - 1];
-  if (last && now - last.t < 250) {
-    const cx = xOf(last.t), cy = yOf(last.m);
-    const c = colMap[last.reg];
-    pCtx.fillStyle = c;
-    pCtx.beginPath();
-    pCtx.arc(cx, cy, 8, 0, Math.PI * 2);
-    pCtx.fill();
-    pCtx.lineWidth = 3;
-    pCtx.strokeStyle = '#ffffff';
-    pCtx.stroke();
-  }
-}
-
-function drawSpectrumGraph(now) {
-  const w = sCv.clientWidth, h = sCv.clientHeight;
-  if (!w) return;
-  sCtx.clearRect(0, 0, w, h);
-
-  const live = now - lastVoiceT < 300;
-  const last = history[history.length - 1];
-  const colMap = { chest: '#00d2ff', mix: '#ffb703', fal: '#ff2a85', strain: '#ff3b30' };
-  const activeCol = (live && last) ? colMap[last.reg] : '#3a4b6e';
-
-  sCtx.font = '11px Prompt, sans-serif';
-  sCtx.fillStyle = '#8a9bc2';
-  sCtx.textAlign = 'left';
-  sCtx.fillText('สเปกตรัมเนื้อเสียง (H1 เด่น + H3..H6 ต่ำ = เสียงหลบใสไม่เค้นคอ)', 10, 16);
-
-  const names = ['H1 (หลัก)', 'H2', 'H3', 'H4', 'H5', 'H6 (แหลม)'];
-  const slotW = (w - 20) / 6;
-  const barW = Math.min(44, slotW - 12);
-
-  for (let i = 0; i < 6; i++) {
-    const val = live ? harmonics[i] : 0.06;
-    const bh = Math.max(5, val * (h - 42));
-    const bx = 10 + i * slotW + (slotW - barW) / 2;
-    const by = h - 20 - bh;
-
-    sCtx.fillStyle = activeCol;
-    sCtx.globalAlpha = i === 0 ? 1 : 0.55;
-    sCtx.beginPath();
-    if (sCtx.roundRect) sCtx.roundRect(bx, by, barW, bh, 5);
-    else sCtx.rect(bx, by, barW, bh);
-    sCtx.fill();
-
-    sCtx.globalAlpha = 1;
-    sCtx.fillStyle = '#8a9bc2';
-    sCtx.textAlign = 'center';
-    sCtx.fillText(names[i], bx + barW / 2, h - 5);
-  }
-}
-
-function tick(now) {
-  if (!running) return;
-  analyser.getFloatTimeDomainData(timeBuf);
-  const res = detectPitch(timeBuf, actx.sampleRate);
-
-  if (res && res.freq >= 75 && res.freq <= 1100) {
-    const rawM = 69 + 12 * Math.log2(res.freq / 440);
-    smoothM = smoothM === null ? rawM : smoothM * 0.45 + rawM * 0.55;
-    lastVoiceT = now;
-
-    if (calMode) {
-      calSamples.push(smoothM);
-      if (now - calStart >= 3000) {
-        calMode = false;
-        if (calSamples.length > 10) {
-          calSamples.sort((a, b) => a - b);
-          baseMidi = Math.round(calSamples[Math.floor(calSamples.length * 0.35)]);
-          $('#base-lbl').textContent = 'โน้ตพูด: ' + midiToName(baseMidi);
-          $('#st-flip').textContent = midiToName(baseMidi + 7);
-          $('#coach-tip').innerHTML = 'ตั้งค่าโน้ตฐานที่ <b>' + midiToName(baseMidi) + '</b> แล้ว! จุดพลิกเข้าเสียงหลบของคุณคือ <b>' + midiToName(baseMidi + 7) + '</b>';
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Kanit', 'sans-serif'],
+            sans: ['Prompt', 'sans-serif'],
+          },
+          colors: {
+            vipgold: {
+              200: '#fef08a',
+              300: '#fde047',
+              400: '#d4af37',
+              500: '#b8860b',
+              600: '#8a6205',
+            }
+          }
         }
       }
-    }
-
-    const vt = classifyVoice(res.freq, smoothM, res.rms);
-    history.push({ t: now, m: smoothM, reg: vt.reg });
-    while (history.length && now - history[0].t > SPAN) history.shift();
-
-    if (minMidi === null || smoothM < minMidi) {
-      minMidi = smoothM;
-      $('#st-min').textContent = midiToName(minMidi);
-    }
-    if (maxMidi === null || smoothM > maxMidi) {
-      maxMidi = smoothM;
-      $('#st-max').textContent = midiToName(maxMidi);
-    }
-
-    updateCoachHUD(smoothM, res.freq, vt.reg, vt.purity, vt.vol);
-  } else if (now - lastVoiceT > 350) {
-    smoothM = null;
-    $('#note').textContent = '–';
-    $('#note').style.color = 'var(--text)';
-    $('#note-box').style.borderColor = 'var(--border)';
-    $('#vol-bar').style.width = '0%';
-  }
-
-  drawPitchGraph(now);
-  drawSpectrumGraph(now);
-  requestAnimationFrame(tick);
-}
-
-async function toggleMic() {
-  const errBox = $('#err');
-  errBox.style.display = 'none';
-  if (running) {
-    running = false;
-    stream && stream.getTracks().forEach(t => t.stop());
-    actx && actx.close();
-    $('#btn-mic').textContent = '🎤 เปิดไมค์เริ่มฝึก';
-    return;
-  }
-  try {
-    actx = new (window.AudioContext || window.webkitAudioContext)();
-    await actx.resume();
-    stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-    });
-    const src = actx.createMediaStreamSource(stream);
-    analyser = actx.createAnalyser();
-    analyser.fftSize = 4096;
-    analyser.smoothingTimeConstant = 0.1;
-    src.connect(analyser);
-    timeBuf = new Float32Array(analyser.fftSize);
-    freqBuf = new Float32Array(analyser.frequencyBinCount);
-    running = true;
-    resizeCanvases();
-    $('#btn-mic').textContent = '⏹ หยุดไมค์';
-    requestAnimationFrame(tick);
-  } catch (e) {
-    errBox.style.display = 'block';
-    errBox.textContent = 'ไม่สามารถเปิดไมโครโฟนได้ กรุณาเปิดไฟล์นี้ใน Safari หรือ Chrome แล้วกดอนุญาตไมโครโฟน (' + (e.name || e) + ')';
-  }
-}
-
-$('#btn-mic').onclick = toggleMic;
-
-$('#btn-cal').onclick = async () => {
-  if (!running) await toggleMic();
-  if (!running) return;
-  calMode = true;
-  calSamples = [];
-  calStart = performance.now();
-  $('#coach-tip').innerHTML = 'กำลังวัดเสียงพูด... ร้อง <b>"อา~"</b> ด้วยระดับเสียงพูดสบายๆ ค้างไว้ 3 วินาที';
-};
-
-$('#btn-clr').onclick = () => {
-  history = [];
-  minMidi = null;
-  maxMidi = null;
-  $('#st-min').textContent = '–';
-  $('#st-max').textContent = '–';
-  drawPitchGraph(performance.now());
-};
-
-document.querySelectorAll('#mode-tabs button').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('#mode-tabs button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    mode = btn.dataset.m;
-    const tips = {
-      free: 'ร้องอิสระ: ลองลากเสียงจากต่ำไปสูง สังเกตสีเส้นเมื่อข้ามเส้นประสีชมพู',
-      siren: 'ลิฟต์ไซเรน: ร้องคำว่า <b>"อู~"</b> ไต่ตามเส้นสีขาวจางๆ พอข้ามเส้นประให้ผ่อนลมเบาลงเป็นเสียงหลบ',
-      flip: 'ฝึกพลิกเสียง: ร้องสลับแท่งล่าง (เสียงอก) กระโดดขึ้นแท่งบน (เสียงหลบสีชมพู) ให้คล่อง',
-      hold: 'ค้างโน้ตสูง: ร้องค้างที่เส้นเป้าหมายด้วยเสียงหลบหรือมิกซ์ ห้ามให้เส้นกลายเป็นสีแดงเด็ดขาด!'
     };
-    $('#coach-tip').innerHTML = tips[mode];
-  };
-});
+  </script>
 
-// วาดกราฟเริ่มต้นตอนเปิดหน้าเว็บ
-drawPitchGraph(0);
-drawSpectrumGraph(0);
-</script>
+  <style>
+    /* =====================================================================
+       BASE VIEWPORT LOCK & MOBILE GESTURE PROTECTION
+    ===================================================================== */
+    :root {
+      --felt-center: #0d4b31;
+      --felt-mid: #083321;
+      --felt-edge: #041a11;
+      --gold-metallic: #d4af37;
+      --table-card-w: clamp(48px, 13vw, 80px);
+      --table-card-h: calc(var(--table-card-w) * 1.4);
+      --peek-card-w: clamp(100px, 27.5vw, 152px);
+      --peek-card-h: calc(var(--peek-card-w) * 1.4);
+      --peek-card-2-w: clamp(124px, 37.5vw, 178px);
+      --peek-card-2-h: calc(var(--peek-card-2-w) * 1.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100dvh;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background-color: #04120c;
+      font-family: 'Prompt', sans-serif;
+      color: #f8fafc;
+      touch-action: manipulation;
+    }
+
+    input, textarea {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    /* =====================================================================
+       LUXURY EMERALD & GOLD CASINO TABLE
+    ===================================================================== */
+    .casino-shell {
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 50% 42%, #13251d 0%, #030a07 100%);
+      overflow: hidden;
+    }
+
+    .table-outer {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      margin: 6px 8px 8px 8px;
+      border-radius: 26px;
+      padding: 7px;
+      background: linear-gradient(145deg, #5e2f16 0%, #311508 48%, #180903 100%);
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.88),
+        inset 0 2px 3px rgba(255, 223, 140, 0.32),
+        inset 0 -4px 10px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 768px) {
+      .table-outer {
+        margin: 8px 18px 14px 18px;
+        border-radius: 42px;
+        padding: 11px;
+      }
+    }
+
+    .table-gold-trim {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      border-radius: 21px;
+      padding: 2px;
+      background: linear-gradient(135deg, #fef08a 0%, #d4af37 28%, #855e0d 55%, #f5d76e 80%, #6b4c08 100%);
+      display: flex;
+      flex-direction: column;
+      box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.65);
+    }
+
+    @media (min-width: 768px) {
+      .table-gold-trim {
+        border-radius: 34px;
+      }
+    }
+
+    .table-felt {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      border-radius: 19px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 42%, rgba(28, 152, 98, 0.34) 0%, rgba(11, 61, 40, 0.14) 48%, rgba(0, 0, 0, 0.62) 100%),
+        radial-gradient(circle at 50% 44%, var(--felt-center) 0%, var(--felt-mid) 56%, var(--felt-edge) 100%);
+      box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.78);
+    }
+
+    @media (min-width: 768px) {
+      .table-felt {
+        border-radius: 32px;
+      }
+    }
+
+    /* Woven felt micro-grain texture */
+    .table-felt::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      pointer-events: none;
+      background-image:
+        radial-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 0),
+        radial-gradient(rgba(0, 0, 0, 0.42) 1px, transparent 0);
+      background-size: 5px 5px;
+      background-position: 0 0, 2.5px 2.5px;
+    }
+
+    .felt-ring {
+      position: absolute;
+      inset: 12px;
+      border-radius: 15px;
+      border: 1.5px solid rgba(212, 175, 55, 0.22);
+      pointer-events: none;
+      box-shadow: inset 0 0 36px rgba(212, 175, 55, 0.06);
+    }
+
+    @media (min-width: 768px) {
+      .felt-ring {
+        inset: 22px;
+        border-radius: 26px;
+      }
+    }
+
+    .felt-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      text-align: center;
+      opacity: 0.11;
+    }
+
+    /* =====================================================================
+       TABLE MINI 3D CARDS (DEALT SEATS & SHOWDOWN REVEAL)
+    ===================================================================== */
+    .mini-card-scene {
+      width: var(--table-card-w);
+      height: var(--table-card-h);
+      perspective: 900px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .mini-card-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      border-radius: 8px;
+    }
+
+    .mini-card-3d.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .mini-card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: inherit;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .mini-card-front {
+      transform: rotateY(180deg);
+      background: #fdfbf7;
+    }
+
+    /* Luxury Casino Card Back */
+    .luxury-card-back {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(155deg, #8c161e 0%, #5e0c14 54%, #350509 100%);
+      border: 2.5px solid #f7f3e8;
+      border-radius: inherit;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .luxury-back-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      border: 1.5px solid rgba(212, 175, 55, 0.82);
+      background-color: #6d0e16;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.24) 0, rgba(212, 175, 55, 0.24) 1px, transparent 1px, transparent 8px),
+        repeating-linear-gradient(-45deg, rgba(212, 175, 55, 0.24) 0, rgba(212, 175, 55, 0.24) 1px, transparent 1px, transparent 8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .luxury-back-inner::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(254, 240, 138, 0.32);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+
+    .luxury-back-medallion {
+      width: 56%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1.5px solid rgba(254, 240, 138, 0.85);
+      background: radial-gradient(circle at 35% 30%, #991b1b 0%, #450a0a 82%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fde047;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 800;
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.35), inset 0 0 8px rgba(0, 0, 0, 0.6);
+    }
+
+    /* =====================================================================
+       TACTILE 1:1 MANUAL SLIDE-UP / SLIDE-DOWN PEEK CARD SYSTEM
+    ===================================================================== */
+    .peek-card-root {
+      position: relative;
+      width: var(--peek-card-w);
+      height: var(--peek-card-h);
+      touch-action: none;
+      cursor: grab;
+      flex-shrink: 0;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .peek-card-root.size-two {
+      width: var(--peek-card-2-w);
+      height: var(--peek-card-2-h);
+    }
+
+    .peek-card-root.size-focus {
+      width: min(74vw, 290px);
+      height: calc(min(74vw, 290px) * 1.4);
+    }
+
+    .peek-card-root.size-duel {
+      width: clamp(106px, 31vw, 165px);
+      height: calc(clamp(106px, 31vw, 165px) * 1.4);
+    }
+
+    .peek-card-root.is-dragging {
+      cursor: grabbing;
+    }
+
+    .peek-card-root.spotlight-new {
+      animation: spotlightPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes spotlightPulse {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(253, 224, 71, 0.45)); }
+      50% { filter: drop-shadow(0 0 24px rgba(253, 224, 71, 0.95)); }
+    }
+
+    .peek-card-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 13px;
+      overflow: hidden;
+      background: #faf7f0;
+      box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.68),
+        0 2px 6px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(212, 175, 55, 0.35);
+      transform: translateZ(0);
+    }
+
+    .peek-card-root.size-focus .peek-card-frame {
+      border-radius: 18px;
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.82),
+        0 0 0 2px rgba(212, 175, 55, 0.55);
+    }
+
+    /* Layer 1: Stationary High-Precision SVG Face */
+    .peek-face-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .peek-face-layer svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Authentic "โหมดลุ้นขอบ" Bottom-Right Corner Thumb/Hand Shadow Mask */
+    .corner-suspense-mask {
+      position: absolute;
+      right: 1.5%;
+      bottom: 1.5%;
+      width: 28%;
+      height: 28%;
+      z-index: 2;
+      pointer-events: none;
+      border-radius: 52% 16% 10px 44%;
+      background:
+        radial-gradient(ellipse at 72% 72%,
+          rgba(235, 224, 203, 0.98) 0%,
+          rgba(220, 206, 182, 0.96) 44%,
+          rgba(195, 179, 154, 0.85) 68%,
+          rgba(250, 247, 240, 0) 96%);
+      box-shadow: inset 6px 6px 12px rgba(80, 58, 30, 0.22);
+      transition: opacity 0.12s linear;
+    }
+
+    /* Layer 2: Soft Dynamic Cast Shadow onto uncovered face */
+    .peek-cast-shadow {
+      position: absolute;
+      left: -4%;
+      right: -4%;
+      height: 22%;
+      z-index: 3;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(8, 12, 10, 0.62) 0%,
+        rgba(8, 12, 10, 0.28) 38%,
+        rgba(8, 12, 10, 0.06) 72%,
+        rgba(8, 12, 10, 0) 100%
+      );
+      opacity: 0;
+      will-change: top, opacity;
+    }
+
+    /* Layer 3: Clipped Ornate Card Back Cover */
+    .peek-back-clip {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      will-change: clip-path;
+    }
+
+    .peek-back-motion {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      will-change: transform;
+    }
+
+    /* Layer 4: Realistic 3D Curled-Edge Lip */
+    .peek-curl-lip {
+      position: absolute;
+      left: -2%;
+      right: -2%;
+      bottom: 0%;
+      height: 14%;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0;
+      border-radius: 0 0 12px 12px;
+      background: linear-gradient(
+        to top,
+        #3a070c 0%,
+        #7f131c 14%,
+        #d9cdb8 34%,
+        #ffffff 52%,
+        #f2eadc 66%,
+        #b8a990 84%,
+        rgba(20, 12, 8, 0.55) 100%
+      );
+      box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.5),
+        0 -2px 6px rgba(0, 0, 0, 0.38),
+        inset 0 2px 3px rgba(255, 255, 255, 0.9);
+      transform-origin: bottom center;
+      will-change: bottom, height, opacity;
+    }
+
+    .peek-curl-specular {
+      position: absolute;
+      left: 6%;
+      right: 6%;
+      top: 38%;
+      height: 22%;
+      border-radius: 99px;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.95) 35%,
+        rgba(254, 240, 138, 0.8) 55%,
+        rgba(255, 255, 255, 0.2) 100%
+      );
+      filter: blur(0.6px);
+    }
+
+    /* Layer 5: Crisp Golden Reveal Shimmer when snapped to 100% */
+    .peek-reveal-flash {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 45%, rgba(254, 249, 195, 0.85), rgba(212, 175, 55, 0.25) 55%, transparent 80%);
+    }
+
+    .peek-reveal-flash.flash-go {
+      animation: revealFlashAnim 0.42s ease-out forwards;
+    }
+
+    @keyframes revealFlashAnim {
+      0% { opacity: 0.95; }
+      100% { opacity: 0; }
+    }
+
+    /* Animated Drag Hint Chevron */
+    .peek-drag-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      z-index: 8;
+      pointer-events: none;
+      width: 92%;
+      text-align: center;
+      padding: 4px 6px;
+      border-radius: 10px;
+      background: rgba(4, 18, 12, 0.84);
+      border: 1px solid rgba(253, 224, 71, 0.55);
+      color: #fef08a;
+      font-family: 'Kanit', sans-serif;
+      font-size: 10px;
+      line-height: 1.2;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+      animation: floatChevron 1.6s ease-in-out infinite;
+      transition: opacity 0.28s ease;
+    }
+
+    .peek-card-root.has-interacted .peek-drag-hint {
+      opacity: 0;
+    }
+
+    @keyframes floatChevron {
+      0%, 100% { transform: translate(-50%, 0px); }
+      50% { transform: translate(-50%, -6px); }
+    }
+
+    /* Big Squeeze Zoom Button (🔍) */
+    .peek-zoom-btn {
+      position: absolute;
+      top: -10px;
+      right: -8px;
+      z-index: 12;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1.5px solid #fde047;
+      color: #fde047;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.65);
+      cursor: pointer;
+      transition: transform 0.14s ease, background 0.15s ease;
+    }
+
+    .peek-zoom-btn:hover {
+      transform: scale(1.1);
+      background: #1e293b;
+    }
+
+    .peek-zoom-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Progress mini-pill underneath each peek card */
+    .peek-pct-badge {
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 600;
+      color: rgba(254, 240, 138, 0.85);
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 1px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* =====================================================================
+       DECK SHOE STACK IN CENTER
+    ===================================================================== */
+    .deck-stack {
+      position: relative;
+      width: clamp(46px, 10.5vw, 66px);
+      height: calc(clamp(46px, 10.5vw, 66px) * 1.4);
+    }
+
+    .deck-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #8c161e, #4a080f);
+      border: 2px solid #f7f3e8;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.48);
+    }
+
+    .deck-stack.shuffling .deck-layer:nth-child(3) {
+      animation: riffleLeft 0.3s ease-in-out infinite alternate;
+    }
+    .deck-stack.shuffling .deck-layer:nth-child(4) {
+      animation: riffleRight 0.3s ease-in-out infinite alternate;
+    }
+
+    @keyframes riffleLeft {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(-22px, -4px) rotate(-9deg); }
+    }
+    @keyframes riffleRight {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(22px, -4px) rotate(9deg); }
+    }
+
+    /* =====================================================================
+       VIP BUTTONS, EFFECTS & ANIMATIONS
+    ===================================================================== */
+    .btn-casino {
+      position: relative;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border-radius: 14px;
+      transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1), filter 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .btn-casino:active:not(:disabled) {
+      transform: scale(0.95) translateY(1px);
+    }
+
+    .btn-casino:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    .btn-gold {
+      background: linear-gradient(180deg, #fef08a 0%, #eab308 48%, #a16207 100%);
+      color: #271302;
+      border: 1.5px solid #fef9c3;
+      box-shadow: 0 5px 18px rgba(212, 175, 55, 0.42), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+    .btn-gold:hover:not(:disabled) { filter: brightness(1.06); }
+
+    .btn-emerald {
+      background: linear-gradient(180deg, #34d399 0%, #059669 52%, #065f46 100%);
+      color: #ffffff;
+      border: 1.5px solid #6ee7b7;
+      box-shadow: 0 5px 18px rgba(16, 185, 129, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+    }
+
+    .btn-crimson {
+      background: linear-gradient(180deg, #f87171 0%, #dc2626 52%, #991b1b 100%);
+      color: #ffffff;
+      border: 1.5px solid #fca5a5;
+      box-shadow: 0 5px 18px rgba(220, 38, 38, 0.44), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-glass {
+      background: rgba(10, 22, 18, 0.72);
+      backdrop-filter: blur(8px);
+      color: #f8fafc;
+      border: 1px solid rgba(212, 175, 55, 0.38);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+    .btn-glass:hover:not(:disabled) {
+      background: rgba(20, 38, 31, 0.88);
+      border-color: rgba(253, 224, 71, 0.7);
+    }
+
+    @keyframes screenShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-7px, -4px) rotate(-0.6deg); }
+      30% { transform: translate(7px, 4px) rotate(0.6deg); }
+      45% { transform: translate(-6px, 3px) rotate(-0.45deg); }
+      60% { transform: translate(5px, -3px) rotate(0.35deg); }
+      75% { transform: translate(-3px, 2px) rotate(-0.2deg); }
+    }
+
+    .shake-active {
+      animation: screenShake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes redFlash {
+      0% { opacity: 0; }
+      22% { opacity: 0.78; }
+      100% { opacity: 0; }
+    }
+
+    .danger-flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 80;
+      background: radial-gradient(circle at center, rgba(220, 38, 38, 0.12) 20%, rgba(185, 28, 28, 0.88) 100%);
+      opacity: 0;
+    }
+    .danger-flash.active {
+      animation: redFlash 0.95s ease-out forwards;
+    }
+
+    @keyframes goldFlash {
+      0% { opacity: 0; }
+      25% { opacity: 0.6; }
+      100% { opacity: 0; }
+    }
+
+    .gold-flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 80;
+      background: radial-gradient(circle at center, rgba(254, 240, 138, 0.45) 10%, rgba(212, 175, 55, 0.18) 55%, transparent 100%);
+      opacity: 0;
+    }
+    .gold-flash.active {
+      animation: goldFlash 0.85s ease-out forwards;
+    }
+
+    @keyframes pokBannerPop {
+      0% { transform: scale(0.45) translateY(16px); opacity: 0; }
+      65% { transform: scale(1.07) translateY(-3px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .pok-pop {
+      animation: pokBannerPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes activeSeatGlow {
+      0%, 100% { box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.6), 0 0 18px rgba(212, 175, 55, 0.26); }
+      50% { box-shadow: 0 0 0 3px rgba(254, 240, 138, 0.95), 0 0 30px rgba(212, 175, 55, 0.58); }
+    }
+    .seat-active { animation: activeSeatGlow 1.5s infinite; }
+
+    .seat-winner {
+      box-shadow: 0 0 0 2.5px #fde047, 0 0 28px rgba(250, 204, 21, 0.55) !important;
+      background: linear-gradient(180deg, rgba(180, 130, 15, 0.36), rgba(8, 22, 16, 0.82)) !important;
+    }
+    .seat-loser {
+      box-shadow: 0 0 0 2.5px #ef4444, 0 0 28px rgba(239, 68, 68, 0.65) !important;
+      background: linear-gradient(180deg, rgba(153, 27, 27, 0.48), rgba(15, 16, 22, 0.86)) !important;
+    }
+
+    .flying-card {
+      position: fixed;
+      z-index: 75;
+      pointer-events: none;
+      width: var(--table-card-w);
+      height: var(--table-card-h);
+      border-radius: 8px;
+      will-change: transform;
+    }
+
+    /* Wheel pointer bounce animation */
+    @keyframes pointerBounce {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      40% { transform: translateX(-50%) rotate(-18deg); }
+      100% { transform: translateX(-50%) rotate(0deg); }
+    }
+    .pointer-tick {
+      animation: pointerBounce 0.11s ease-out;
+    }
+
+    /* Toggle Switch Styling */
+    .vip-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      transition: background 0.2s ease;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .vip-switch::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
+    }
+    .vip-switch.on {
+      background: linear-gradient(90deg, #ca8a04, #facc15);
+    }
+    .vip-switch.on::after {
+      transform: translateX(18px);
+      background: #1c1002;
+    }
+
+    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.25); border-radius: 99px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.45); border-radius: 99px; }
+  </style>
+</head>
+<body>
+  <!-- =====================================================================
+       VFX CANVAS & SCREEN FLASH OVERLAYS
+  ===================================================================== -->
+  <canvas id="vfx-canvas" class="fixed inset-0 pointer-events-none z-[85]"></canvas>
+  <div id="danger-flash" class="danger-flash"></div>
+  <div id="gold-flash" class="gold-flash"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-box" class="fixed top-14 left-1/2 -translate-x-1/2 z-[95] flex flex-col items-center gap-2 pointer-events-none w-[92%] max-w-sm"></div>
+
+  <!-- =====================================================================
+       MAIN VIP CASINO SHELL (100dvh)
+  ===================================================================== -->
+  <div id="app-shell" class="casino-shell">
+    <!-- TOP HUD BAR -->
+    <header class="shrink-0 h-12 sm:h-14 px-2.5 sm:px-5 flex items-center justify-between bg-black/60 border-b border-vipgold-400/25 backdrop-blur-md z-30">
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-yellow-200 via-amber-400 to-amber-700 flex items-center justify-center shadow-lg border border-yellow-100/75 shrink-0">
+          <span class="text-amber-950 font-display font-extrabold text-sm sm:text-base">♠9</span>
+        </div>
+        <div class="leading-tight truncate">
+          <h1 class="font-display font-extrabold text-sm sm:text-base bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-100 bg-clip-text text-transparent truncate">
+            ป๊อกเด้ง 3 คน
+          </h1>
+          <div class="text-[10px] sm:text-xs text-emerald-300/90 font-medium flex items-center gap-1.5">
+            <span>ไร้เจ้ามือ</span>
+            <span class="text-amber-400/60">•</span>
+            <span id="hud-round" class="text-amber-300 font-semibold">รอบที่ 1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Controls -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button id="btn-open-leaderboard" class="btn-casino btn-glass px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm" title="ตารางสถิติ">
+          <span>🏆</span>
+          <span class="hidden sm:inline">สถิติ</span>
+        </button>
+        <button id="btn-open-punishments" class="btn-casino btn-glass px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm" title="จัดการบทลงโทษ">
+          <span>⚡</span>
+          <span class="hidden sm:inline">บทลงโทษ</span>
+        </button>
+        <button id="btn-open-setup" class="btn-casino btn-glass px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm" title="ตั้งค่าผู้เล่น">
+          <span>⚙️</span>
+          <span class="hidden md:inline">ตั้งค่า</span>
+        </button>
+        <button id="btn-toggle-bgm" class="btn-casino btn-glass w-9 h-9 text-sm" title="เปิด/ปิดเสียงบรรยากาศคาสิโน">
+          🎵
+        </button>
+        <button id="btn-toggle-sound" class="btn-casino btn-glass w-9 h-9 text-sm" title="เปิด/ปิดเสียงทั้งหมด">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- LUXURY EMERALD CASINO TABLE -->
+    <main class="table-outer">
+      <div class="table-gold-trim">
+        <div id="table-felt" class="table-felt flex flex-col justify-between p-2 sm:p-4">
+          <div class="felt-ring"></div>
+
+          <!-- Center Watermark -->
+          <div class="felt-watermark">
+            <div class="font-display font-extrabold text-3xl sm:text-5xl tracking-wider text-yellow-200">ป๊อกเด้ง VIP</div>
+            <div class="font-display text-[10px] sm:text-sm tracking-[0.34em] text-amber-300 uppercase mt-0.5">3-PLAYER • NO DEALER</div>
+          </div>
+
+          <!-- TOP ROW: PLAYER 2 & PLAYER 3 -->
+          <div class="relative z-10 grid grid-cols-2 gap-2 sm:gap-5 w-full max-w-4xl mx-auto pt-0.5 sm:pt-1">
+            <!-- Seat 1 (Player 2) -->
+            <div id="seat-1" class="rounded-2xl bg-slate-950/60 border border-vipgold-400/25 backdrop-blur-sm p-2 sm:p-3 flex flex-col items-center transition-all duration-300">
+              <div class="w-full flex items-center justify-between gap-1 mb-1.5">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-sky-400 to-blue-700 text-white text-xs font-bold flex items-center justify-center shrink-0 border border-white/30">2</span>
+                  <div class="min-w-0">
+                    <div id="name-1" class="font-display font-bold text-xs sm:text-sm text-white truncate">ผู้เล่น 2</div>
+                    <div id="sub-1" class="text-[10px] text-amber-200/75 leading-none">คนเล่นจริง</div>
+                  </div>
+                </div>
+                <span id="badge-1" class="text-[10px] sm:text-xs font-display font-bold px-2 py-0.5 rounded-full bg-black/55 text-slate-300 border border-white/10 shrink-0">รอแจก</span>
+              </div>
+              <div id="hand-1" class="flex items-center justify-center -space-x-3.5 sm:-space-x-2.5 min-h-[calc(var(--table-card-h)+6px)] py-0.5"></div>
+              <div id="result-1" class="mt-1 min-h-[20px] text-center text-[11px] sm:text-xs font-display font-bold text-amber-300"></div>
+            </div>
+
+            <!-- Seat 2 (Player 3) -->
+            <div id="seat-2" class="rounded-2xl bg-slate-950/60 border border-vipgold-400/25 backdrop-blur-sm p-2 sm:p-3 flex flex-col items-center transition-all duration-300">
+              <div class="w-full flex items-center justify-between gap-1 mb-1.5">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-fuchsia-400 to-purple-700 text-white text-xs font-bold flex items-center justify-center shrink-0 border border-white/30">3</span>
+                  <div class="min-w-0">
+                    <div id="name-2" class="font-display font-bold text-xs sm:text-sm text-white truncate">ผู้เล่น 3</div>
+                    <div id="sub-2" class="text-[10px] text-amber-200/75 leading-none">คนเล่นจริง</div>
+                  </div>
+                </div>
+                <span id="badge-2" class="text-[10px] sm:text-xs font-display font-bold px-2 py-0.5 rounded-full bg-black/55 text-slate-300 border border-white/10 shrink-0">รอแจก</span>
+              </div>
+              <div id="hand-2" class="flex items-center justify-center -space-x-3.5 sm:-space-x-2.5 min-h-[calc(var(--table-card-h)+6px)] py-0.5"></div>
+              <div id="result-2" class="mt-1 min-h-[20px] text-center text-[11px] sm:text-xs font-display font-bold text-amber-300"></div>
+            </div>
+          </div>
+
+          <!-- CENTER TABLE: STATUS, SHOE DECK & SHOWDOWN ACTIONS -->
+          <div class="relative z-10 flex flex-col items-center justify-center my-auto py-1">
+            <div id="table-status-banner" class="mb-2 px-4 py-1 rounded-full bg-black/65 border border-vipgold-400/45 text-amber-200 font-display font-semibold text-xs sm:text-sm tracking-wide shadow-lg backdrop-blur-sm text-center max-w-[92%]">
+              เตรียมพร้อมเปิดศึกป๊อกเด้ง 3 คน!
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div id="deck-anchor" class="deck-stack" title="สำรับไพ่">
+                <div class="deck-layer" style="transform: translate(0px, 6px);"></div>
+                <div class="deck-layer" style="transform: translate(0px, 4px);"></div>
+                <div class="deck-layer" style="transform: translate(0px, 2px);"></div>
+                <div class="deck-layer overflow-hidden" style="transform: translate(0px, 0px);">
+                  <div class="luxury-card-back" style="border:none;">
+                    <div class="luxury-back-inner">
+                      <div class="luxury-back-medallion text-[11px]">♠</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hidden sm:flex flex-col text-left bg-black/45 border border-vipgold-400/25 rounded-xl px-3 py-1.5 backdrop-blur-sm">
+                <span class="text-[10px] text-emerald-200/80 uppercase">ไพ่คงเหลือ</span>
+                <span id="deck-count" class="font-display font-bold text-lg text-amber-300 leading-tight">52 ใบ</span>
+              </div>
+            </div>
+
+            <div id="center-actions" class="mt-2.5 flex flex-wrap items-center justify-center gap-2 max-w-lg px-2"></div>
+          </div>
+
+          <!-- BOTTOM ROW: PLAYER 1 -->
+          <div class="relative z-10 w-full max-w-md mx-auto pb-0.5 sm:pb-1">
+            <div id="seat-0" class="rounded-2xl bg-slate-950/65 border border-vipgold-400/30 backdrop-blur-sm p-2 sm:p-3 flex flex-col items-center transition-all duration-300">
+              <div class="w-full flex items-center justify-between gap-2 mb-1.5">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-300 to-orange-600 text-amber-950 text-xs sm:text-sm font-extrabold flex items-center justify-center shrink-0 border border-amber-100/75">1</span>
+                  <div class="min-w-0">
+                    <div id="name-0" class="font-display font-bold text-xs sm:text-base text-white truncate">ผู้เล่น 1</div>
+                    <div id="sub-0" class="text-[10px] text-amber-200/75 leading-none">คนเล่นจริง</div>
+                  </div>
+                </div>
+                <span id="badge-0" class="text-[10px] sm:text-xs font-display font-bold px-2.5 py-0.5 rounded-full bg-black/55 text-slate-300 border border-white/10 shrink-0">รอแจก</span>
+              </div>
+              <div id="hand-0" class="flex items-center justify-center -space-x-2.5 sm:-space-x-1.5 min-h-[calc(var(--table-card-h)+6px)] py-0.5"></div>
+              <div id="result-0" class="mt-1 min-h-[20px] text-center text-xs sm:text-sm font-display font-bold text-amber-300"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 1: PASS & PLAY PRIVACY CURTAIN
+  ===================================================================== -->
+  <div id="privacy-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#030e09]/95 backdrop-blur-xl p-4">
+    <div class="w-full max-w-sm rounded-3xl bg-gradient-to-b from-[#0b3d28] via-[#062417] to-[#03100a] border-2 border-vipgold-400/60 p-6 text-center shadow-[0_0_60px_rgba(0,0,0,0.92)]">
+      <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-yellow-200 via-amber-400 to-amber-700 flex items-center justify-center text-3xl shadow-xl border border-yellow-100/75">
+        🫣
+      </div>
+      <p class="text-xs text-emerald-300 uppercase tracking-widest font-semibold mb-1">ห้ามคนอื่นแอบดู!</p>
+      <h2 id="privacy-player-name" class="font-display font-extrabold text-2xl sm:text-3xl text-yellow-300 mb-2">ตาของ ผู้เล่น 1</h2>
+      <p id="privacy-instruction" class="text-xs sm:text-sm text-emerald-100/85 mb-6">ส่งเครื่องให้ ผู้เล่น 1 แล้วกดเพื่อดูไพ่</p>
+      <button id="btn-reveal-turn" class="btn-casino btn-gold w-full py-3.5 text-base sm:text-lg">
+        <span>🃏</span>
+        <span>กดเพื่อดูไพ่</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 2: ACTIVE PLAYER SQUEEZE / SLIDE-UP PEEK STAGE
+  ===================================================================== -->
+  <div id="turn-modal" class="fixed inset-0 z-50 hidden flex-col items-center justify-between bg-[radial-gradient(ellipse_at_center,_#0b3d28_0%,_#041a11_65%,_#020a07_100%)] p-3 sm:p-5 overflow-hidden">
+    <!-- Top Bar: Player Name + Edge-Peel Toggle + Quick Open/Close -->
+    <div class="w-full max-w-xl flex flex-col gap-2">
+      <div class="flex items-center justify-between bg-black/50 border border-vipgold-400/35 rounded-2xl px-3.5 py-2 backdrop-blur-md">
+        <div class="min-w-0">
+          <div class="text-[10px] text-emerald-300 font-medium">กำลังรูดแง้มไพ่</div>
+          <div id="turn-player-name" class="font-display font-bold text-base sm:text-xl text-yellow-300 truncate">ผู้เล่น 1</div>
+        </div>
+
+        <!-- โหมดลุ้นขอบ Toggle -->
+        <div id="btn-toggle-suspense" class="flex items-center gap-2 cursor-pointer bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-xl border border-vipgold-400/30 transition" title="ปิดมุมเลขด้านล่างจนกว่าจะเลื่อนเปิดเกิน 72% เพื่อความลุ้น!">
+          <div class="text-right leading-tight">
+            <div class="text-[11px] sm:text-xs font-display font-bold text-amber-200">โหมดลุ้นขอบ</div>
+            <div id="suspense-state-txt" class="text-[9px] text-emerald-300">เปิด (ซ่อนมุมเลข)</div>
+          </div>
+          <div id="switch-suspense" class="vip-switch on"></div>
+        </div>
+      </div>
+
+      <!-- Quick Slide All Open / Close Convenience Buttons -->
+      <div class="flex items-center justify-between gap-2 px-1">
+        <div class="text-[11px] text-emerald-200/85 truncate">
+          👆 ลากขึ้น = เปิดลุ้น • ลากลง = ปิดซ่อน • 🔍 = ขยายใหญ่
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button id="btn-slide-open-all" type="button" class="btn-casino btn-glass px-2.5 py-1 text-[11px] rounded-xl">
+            ▲ เปิดทั้งหมด
+          </button>
+          <button id="btn-slide-close-all" type="button" class="btn-casino btn-glass px-2.5 py-1 text-[11px] rounded-xl">
+            ▼ ปิดทั้งหมด
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Stage: Interactive Manual Slide-Up / Slide-Down Cards -->
+    <div class="flex flex-col items-center justify-center my-auto w-full max-w-2xl">
+      <!-- Pok / Special Hand Celebration Banner -->
+      <div id="turn-pok-banner" class="hidden mb-3 px-5 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-500 text-amber-950 font-display font-extrabold text-base sm:text-2xl shadow-[0_0_32px_rgba(253,224,71,0.85)] border-2 border-white/85">
+        ✨ ป๊อก 9 สองเด้ง!! ✨
+      </div>
+
+      <!-- Cards Container -->
+      <div id="turn-cards-stage" class="flex items-center justify-center gap-2.5 sm:gap-5 py-3"></div>
+
+      <!-- Dynamic Masked Score HUD -->
+      <div id="turn-score-pill" class="mt-6 px-5 py-2 rounded-2xl bg-black/60 border border-vipgold-400/40 text-center min-w-[240px] max-w-[92%] backdrop-blur-sm transition-all">
+        <div id="turn-score-main" class="font-display font-extrabold text-lg sm:text-2xl text-yellow-300">? แต้ม</div>
+        <div id="turn-score-sub" class="text-[11px] sm:text-xs text-emerald-200/85 mt-0.5">เลื่อนเปิดไพ่ให้ครบทุกใบเพื่อดูแต้ม</div>
+      </div>
+    </div>
+
+    <!-- Bottom Decision Controls -->
+    <div id="turn-controls" class="w-full max-w-md flex flex-col gap-2 pb-1"></div>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 2B: BIG SQUEEZE FOCUS MODAL (ZOOM SINGLE CARD HUGE)
+  ===================================================================== -->
+  <div id="squeeze-modal" class="fixed inset-0 z-[62] hidden flex-col items-center justify-between bg-black/92 backdrop-blur-xl p-4 sm:p-6">
+    <div class="w-full max-w-md flex items-center justify-between">
+      <div>
+        <div class="text-[11px] text-emerald-300">โหมดขยายใหญ่รีดไพ่</div>
+        <div id="squeeze-card-title" class="font-display font-bold text-lg text-yellow-300">ใบที่ 3 — ค่อยๆ ลากขึ้นเพื่อลุ้น!</div>
+      </div>
+      <button id="btn-close-squeeze" class="btn-casino btn-glass px-3.5 py-2 text-xs sm:text-sm">
+        ✕ กลับไปดูทุกใบ
+      </button>
+    </div>
+
+    <div id="squeeze-card-mount" class="my-auto flex items-center justify-center py-4"></div>
+
+    <div class="w-full max-w-sm flex items-center gap-2.5">
+      <button id="btn-squeeze-close-card" class="btn-casino btn-glass flex-1 py-2.5 text-sm">▼ รูดปิด</button>
+      <button id="btn-squeeze-open-card" class="btn-casino btn-gold flex-1 py-2.5 text-sm">▲ รูดเปิดสุด</button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 3: SETUP & LOBBY MODAL
+  ===================================================================== -->
+  <div id="setup-modal" class="fixed inset-0 z-[55] flex items-center justify-center bg-black/82 backdrop-blur-md p-3 sm:p-4">
+    <div class="w-full max-w-md max-h-[92dvh] flex flex-col rounded-3xl bg-gradient-to-b from-[#0b2319] to-[#040d09] border-2 border-vipgold-400/55 shadow-[0_24px_65px_rgba(0,0,0,0.92)] overflow-hidden">
+      <div class="px-5 py-4 bg-gradient-to-r from-emerald-950 via-[#0d402a] to-emerald-950 border-b border-vipgold-400/30 flex items-center justify-between">
+        <div>
+          <h2 class="font-display font-extrabold text-xl sm:text-2xl bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-100 bg-clip-text text-transparent">
+            ♠ ป๊อกเด้ง 3 คน (ไร้เจ้ามือ)
+          </h2>
+          <p class="text-xs text-emerald-200/85">รูดแง้มไพ่ลุ้นเองได้! แต้มต่ำสุดโดนบทลงโทษ</p>
+        </div>
+        <button id="btn-close-setup" class="hidden w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-sm">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-5 overflow-y-auto custom-scroll space-y-3">
+        <!-- Player 1 -->
+        <div class="p-3 rounded-2xl bg-white/5 border border-vipgold-400/25">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-amber-300">👤 ผู้เล่นคนที่ 1</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">คนเล่นจริง</span>
+          </div>
+          <input id="input-name-0" type="text" maxlength="16" value="ผู้เล่น 1" placeholder="ชื่อผู้เล่น 1"
+            class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 focus:border-amber-400 focus:outline-none text-sm text-white font-medium" />
+        </div>
+
+        <!-- Player 2 -->
+        <div class="p-3 rounded-2xl bg-white/5 border border-sky-400/25">
+          <div class="flex items-center justify-between mb-1.5 gap-2">
+            <span class="text-xs font-bold text-sky-300">👤 ผู้เล่นคนที่ 2</span>
+            <div class="flex rounded-lg bg-black/55 p-0.5 border border-white/10 text-[11px]">
+              <button type="button" data-p="1" data-ai="false" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">คนเล่นจริง</button>
+              <button type="button" data-p="1" data-ai="true" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">บอท AI</button>
+            </div>
+          </div>
+          <input id="input-name-1" type="text" maxlength="16" value="ผู้เล่น 2" placeholder="ชื่อผู้เล่น 2"
+            class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 focus:border-sky-400 focus:outline-none text-sm text-white font-medium" />
+        </div>
+
+        <!-- Player 3 -->
+        <div class="p-3 rounded-2xl bg-white/5 border border-fuchsia-400/25">
+          <div class="flex items-center justify-between mb-1.5 gap-2">
+            <span class="text-xs font-bold text-fuchsia-300">👤 ผู้เล่นคนที่ 3</span>
+            <div class="flex rounded-lg bg-black/55 p-0.5 border border-white/10 text-[11px]">
+              <button type="button" data-p="2" data-ai="false" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">คนเล่นจริง</button>
+              <button type="button" data-p="2" data-ai="true" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">บอท AI</button>
+            </div>
+          </div>
+          <input id="input-name-2" type="text" maxlength="16" value="ผู้เล่น 3" placeholder="ชื่อผู้เล่น 3"
+            class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 focus:border-fuchsia-400 focus:outline-none text-sm text-white font-medium" />
+        </div>
+
+        <!-- Sound & Ambiance Toggles -->
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center justify-between p-2.5 rounded-2xl bg-white/5 border border-white/10 cursor-pointer">
+            <span class="text-xs text-slate-200 font-medium">🔊 เสียงเอฟเฟกต์</span>
+            <input id="setup-sfx-toggle" type="checkbox" checked class="w-4 h-4 accent-amber-400 cursor-pointer" />
+          </label>
+          <label class="flex items-center justify-between p-2.5 rounded-2xl bg-white/5 border border-white/10 cursor-pointer">
+            <span class="text-xs text-slate-200 font-medium">🎵 เพลงคาสิโน</span>
+            <input id="setup-bgm-toggle" type="checkbox" checked class="w-4 h-4 accent-amber-400 cursor-pointer" />
+          </label>
+        </div>
+
+        <!-- Punishment Setup -->
+        <div class="p-3 rounded-2xl bg-red-950/30 border border-red-400/30 flex items-center justify-between gap-2">
+          <div>
+            <div class="text-xs font-bold text-red-300">⚡ วงล้อสุ่มบทลงโทษ</div>
+            <div id="setup-punish-summary" class="text-[11px] text-slate-300">เปิดใช้งาน (7 รายการ)</div>
+          </div>
+          <button id="btn-setup-punishments" type="button" class="btn-casino btn-glass px-3 py-1.5 text-xs">
+            แก้ไขรายการ
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4 bg-black/45 border-t border-white/10">
+        <button id="btn-start-game" class="btn-casino btn-gold w-full py-3.5 text-base sm:text-lg">
+          <span>🎲</span>
+          <span>เริ่มแจกไพ่เลย!</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 4: PUNISHMENT MANAGER MODAL
+  ===================================================================== -->
+  <div id="punish-manager-modal" class="fixed inset-0 z-[65] hidden items-center justify-center bg-black/82 backdrop-blur-md p-3 sm:p-4">
+    <div class="w-full max-w-md max-h-[90dvh] flex flex-col rounded-3xl bg-slate-900 border-2 border-red-400/45 shadow-2xl overflow-hidden">
+      <div class="px-5 py-3.5 bg-gradient-to-r from-red-950 to-slate-900 border-b border-red-400/25 flex items-center justify-between">
+        <h3 class="font-display font-bold text-lg text-red-200">⚡ จัดการรายการบทลงโทษ</h3>
+        <button id="btn-close-punish-mgr" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto custom-scroll space-y-3">
+        <label class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 cursor-pointer">
+          <div>
+            <div class="text-sm font-semibold text-white">เปิดวงล้อสุ่มบทลงโทษในเกม</div>
+            <div class="text-[11px] text-slate-400">ปิดได้ถ้าตกลงบทลงโทษกันเองนอกจอ</div>
+          </div>
+          <input id="toggle-punish-enabled" type="checkbox" checked class="w-5 h-5 accent-amber-400 cursor-pointer" />
+        </label>
+
+        <div class="flex gap-2">
+          <input id="input-new-punish" type="text" maxlength="45" placeholder="เพิ่มบทลงโทษใหม่ เช่น เต้นติ๊กต็อก..."
+            class="flex-1 px-3 py-2 rounded-xl bg-black/50 border border-white/15 focus:border-amber-400 focus:outline-none text-sm text-white" />
+          <button id="btn-add-punish" class="btn-casino btn-gold px-4 py-2 text-sm shrink-0">+ เพิ่ม</button>
+        </div>
+
+        <div id="punish-list-container" class="space-y-2"></div>
+      </div>
+
+      <div class="p-3.5 bg-black/40 border-t border-white/10">
+        <button id="btn-done-punish-mgr" class="btn-casino btn-emerald w-full py-2.5 text-sm">บันทึกและปิด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 5: PUNISHMENT ROULETTE WHEEL MODAL
+  ===================================================================== -->
+  <div id="wheel-modal" class="fixed inset-0 z-[65] hidden items-center justify-center bg-black/88 backdrop-blur-md p-3 sm:p-4">
+    <div class="w-full max-w-md rounded-3xl bg-gradient-to-b from-slate-900 via-red-950/55 to-slate-950 border-2 border-vipgold-400/65 p-4 sm:p-5 text-center shadow-[0_0_65px_rgba(220,38,38,0.45)]">
+      <div class="text-xs font-semibold text-red-300 uppercase tracking-wider">💀 ถึงเวลาชดใช้กรรม!</div>
+      <h3 id="wheel-loser-title" class="font-display font-extrabold text-xl sm:text-2xl text-yellow-300 mt-0.5 mb-3">
+        วงล้อบทลงโทษของ ผู้เล่น 1
+      </h3>
+
+      <div class="relative mx-auto w-[252px] h-[252px] sm:w-[292px] sm:h-[292px] flex items-center justify-center">
+        <div id="wheel-pointer" class="absolute -top-2 left-1/2 -translate-x-1/2 z-20 drop-shadow-[0_4px_6px_rgba(0,0,0,0.85)]" style="transform-origin: 50% 6px;">
+          <svg width="34" height="36" viewBox="0 0 34 36">
+            <polygon points="17,34 3,4 31,4" fill="#fde047" stroke="#78350f" stroke-width="2.5" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <canvas id="wheel-canvas" width="340" height="340" class="w-full h-full rounded-full shadow-[0_0_32px_rgba(212,175,55,0.38)]"></canvas>
+      </div>
+
+      <div id="wheel-result-box" class="mt-4 min-h-[64px] flex flex-col items-center justify-center rounded-2xl bg-black/60 border border-vipgold-400/35 px-4 py-2.5">
+        <span id="wheel-result-text" class="font-display font-bold text-base sm:text-lg text-amber-200">กดปุ่มด้านล่างเพื่อหมุนวงล้อ!</span>
+      </div>
+
+      <div class="mt-4 flex gap-2.5">
+        <button id="btn-spin-wheel" class="btn-casino btn-crimson flex-1 py-3 text-base">
+          <span>🎡</span>
+          <span>หมุนสุ่มเลย!</span>
+        </button>
+        <button id="btn-finish-punish" class="hidden btn-casino btn-gold flex-1 py-3 text-base">
+          <span>✅</span>
+          <span>ลงโทษแล้ว → รอบใหม่</span>
+        </button>
+      </div>
+      <button id="btn-close-wheel" class="mt-2.5 text-xs text-slate-400 hover:text-white underline">ปิดหน้าต่างนี้</button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 6: SUDDEN DEATH 1-CARD DUEL MODAL (WITH 1:1 SLIDE-UP PEEK!)
+  ===================================================================== -->
+  <div id="duel-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-lg p-3 sm:p-4">
+    <div class="w-full max-w-xl rounded-3xl bg-gradient-to-b from-[#0b2a1d] to-[#040e0a] border-2 border-vipgold-400/65 p-4 sm:p-5 text-center shadow-2xl">
+      <div class="inline-block px-3 py-0.5 rounded-full bg-red-500/20 border border-red-400/45 text-red-300 text-xs font-bold mb-1">
+        ⚔️ ดวลไพ่ 1 ใบชี้ชะตา!
+      </div>
+      <h3 class="font-display font-extrabold text-xl sm:text-2xl text-yellow-300">ค่อยๆ รูดไพ่ขึ้นลุ้นหาผู้แพ้ตัวจริง</h3>
+      <p class="text-[11px] sm:text-xs text-emerald-200/80 mt-0.5 mb-4">กติกา: A ใหญ่สุด → K → Q → J → 10..2 (ดอก ♠ > ♥ > ♦ > ♣)</p>
+
+      <div id="duel-players-row" class="flex items-center justify-center gap-3 sm:gap-6 my-3 pb-4"></div>
+
+      <div id="duel-status" class="mt-2 font-display font-bold text-sm sm:text-lg text-amber-200 min-h-[28px]">
+        เลื่อนไพ่ของแต่ละคนขึ้นเพื่อเปิดดวล!
+      </div>
+
+      <div id="duel-actions" class="mt-4 flex flex-wrap justify-center gap-2.5"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       OVERLAY 7: SCOREBOARD & STATS MODAL
+  ===================================================================== -->
+  <div id="leaderboard-modal" class="fixed inset-0 z-[65] hidden items-center justify-center bg-black/82 backdrop-blur-md p-3 sm:p-4">
+    <div class="w-full max-w-md rounded-3xl bg-[#081b13] border-2 border-vipgold-400/55 shadow-2xl overflow-hidden">
+      <div class="px-5 py-3.5 bg-gradient-to-r from-amber-950/85 to-[#081b13] border-b border-vipgold-400/30 flex items-center justify-between">
+        <h3 class="font-display font-bold text-lg text-yellow-300">🏆 ตารางสถิติสะสม</h3>
+        <button id="btn-close-leaderboard" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">✕</button>
+      </div>
+      <div class="p-4">
+        <div id="leaderboard-body" class="space-y-2.5"></div>
+        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+          <span id="lb-total-rounds" class="text-xs text-slate-400">เล่นไปแล้ว 0 รอบ</span>
+          <button id="btn-reset-stats" class="text-xs text-red-400 hover:text-red-300 underline">รีเซ็ตสถิติ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       JAVASCRIPT ENGINE:
+       1. SYNTHESIZED SOUND ENGINE (PAPER FRICTION + HEARTBEAT + AMBIANCE)
+       2. PARTICLE VFX ENGINE
+       3. HIGH-PRECISION SVG PLAYING CARD RENDERER (PIP GRIDS & COURT CARDS)
+       4. TACTILE 1:1 SLIDE-UP / SLIDE-DOWN 3D PEEL CONTROLLER
+       5. THAI POK DENG EVALUATOR, DECK BALANCER & GAME CONTROLLER
+  ===================================================================== -->
+  <script>
+    (() => {
+      'use strict';
+
+      /* ===================================================================
+         1. WEB AUDIO API SYNTHESIZER (ZERO EXTERNAL FILES)
+      =================================================================== */
+      class SoundEngine {
+        constructor() {
+          this.ctx = null;
+          this.sfxEnabled = true;
+          this.bgmEnabled = true;
+
+          // Continuous velocity-sensitive paper friction nodes
+          this.frictionGain = null;
+          this.frictionFilter = null;
+          this.frictionDecayTimer = null;
+
+          // Heartbeat cooldown
+          this.lastHeartbeatAt = 0;
+
+          // Subtle casino lounge ambiance pad
+          this.bgmGain = null;
+          this.bgmStarted = false;
+        }
+
+        ensureContext() {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().catch(() => {});
+          }
+          if (this.ctx && this.bgmEnabled && !this.bgmStarted) {
+            this.startAmbiance();
+          }
+          return this.ctx;
+        }
+
+        createNoiseBuffer(ctx, duration = 0.5) {
+          const sr = ctx.sampleRate;
+          const len = Math.floor(sr * duration);
+          const buf = ctx.createBuffer(1, len, sr);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+          return buf;
+        }
+
+        startAmbiance() {
+          if (!this.ctx || this.bgmStarted) return;
+          this.bgmStarted = true;
+          const ctx = this.ctx;
+
+          const master = ctx.createGain();
+          master.gain.value = (this.bgmEnabled && this.sfxEnabled) ? 0.026 : 0.0001;
+          const lp = ctx.createBiquadFilter();
+          lp.type = 'lowpass';
+          lp.frequency.value = 460;
+          lp.connect(master).connect(ctx.destination);
+          this.bgmGain = master;
+
+          const freqs = [130.81, 164.81, 196.0, 246.94, 293.66];
+          freqs.forEach((f, idx) => {
+            const osc = ctx.createOscillator();
+            osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+            osc.frequency.value = f;
+
+            const g = ctx.createGain();
+            g.gain.value = 0.18 / freqs.length;
+
+            const lfo = ctx.createOscillator();
+            const lfoG = ctx.createGain();
+            lfo.frequency.value = 0.09 + idx * 0.027;
+            lfoG.gain.value = 0.015;
+            lfo.connect(lfoG).connect(g.gain);
+
+            osc.connect(g).connect(lp);
+            osc.start();
+            lfo.start();
+          });
+        }
+
+        syncAmbianceGain() {
+          if (!this.ctx || !this.bgmGain) return;
+          const now = this.ctx.currentTime;
+          this.bgmGain.gain.cancelScheduledValues(now);
+          const active = this.bgmEnabled && this.sfxEnabled;
+          this.bgmGain.gain.setTargetAtTime(active ? 0.026 : 0.00001, now, 0.25);
+        }
+
+        setBgmEnabled(enabled) {
+          this.bgmEnabled = enabled;
+          this.ensureContext();
+          this.syncAmbianceGain();
+        }
+
+        setSfxEnabled(enabled) {
+          this.sfxEnabled = enabled;
+          if (!enabled) this.stopSlideFriction();
+          this.syncAmbianceGain();
+        }
+
+        updateSlideFriction(speedPxPerMs) {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+
+          if (!this.frictionGain) {
+            const src = ctx.createBufferSource();
+            src.buffer = this.createNoiseBuffer(ctx, 1.5);
+            src.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 1800;
+            filter.Q.value = 1.6;
+
+            const gain = ctx.createGain();
+            gain.gain.value = 0.0001;
+
+            src.connect(filter).connect(gain).connect(ctx.destination);
+            src.start();
+            this.frictionFilter = filter;
+            this.frictionGain = gain;
+          }
+
+          const now = ctx.currentTime;
+          const clamped = Math.min(2.2, Math.max(0, speedPxPerMs));
+          const targetVol = clamped > 0.03 ? Math.min(0.22, 0.035 + clamped * 0.11) : 0.0001;
+          const targetFreq = 1150 + clamped * 1250;
+
+          this.frictionGain.gain.setTargetAtTime(targetVol, now, 0.025);
+          this.frictionFilter.frequency.setTargetAtTime(targetFreq, now, 0.03);
+
+          clearTimeout(this.frictionDecayTimer);
+          this.frictionDecayTimer = setTimeout(() => this.stopSlideFriction(), 55);
+        }
+
+        stopSlideFriction() {
+          if (!this.ctx || !this.frictionGain) return;
+          this.frictionGain.gain.setTargetAtTime(0.0001, this.ctx.currentTime, 0.035);
+        }
+
+        maybePlayHeartbeat() {
+          if (!this.sfxEnabled) return;
+          const nowMs = performance.now();
+          if (nowMs - this.lastHeartbeatAt < 680) return;
+          this.lastHeartbeatAt = nowMs;
+
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const t = ctx.currentTime;
+
+          const beat = (offset, fStart, fEnd, vol) => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(fStart, t + offset);
+            osc.frequency.exponentialRampToValueAtTime(fEnd, t + offset + 0.12);
+            g.gain.setValueAtTime(0.001, t + offset);
+            g.gain.linearRampToValueAtTime(vol, t + offset + 0.018);
+            g.gain.exponentialRampToValueAtTime(0.001, t + offset + 0.14);
+            osc.connect(g).connect(ctx.destination);
+            osc.start(t + offset);
+            osc.stop(t + offset + 0.15);
+          };
+
+          beat(0, 68, 38, 0.22);
+          beat(0.16, 58, 34, 0.15);
+        }
+
+        playChipClick() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          [2600, 4100].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.012);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.45, now + idx * 0.012 + 0.045);
+            gain.gain.setValueAtTime(0.12, now + idx * 0.012);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.012 + 0.05);
+            osc.connect(gain).connect(ctx.destination);
+            osc.start(now + idx * 0.012);
+            osc.stop(now + idx * 0.012 + 0.055);
+          });
+        }
+
+        playCardSnap() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+
+          const src = ctx.createBufferSource();
+          src.buffer = this.createNoiseBuffer(ctx, 0.075);
+          const hp = ctx.createBiquadFilter();
+          hp.type = 'highpass';
+          hp.frequency.setValueAtTime(1850, now);
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0.28, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.068);
+          src.connect(hp).connect(g).connect(ctx.destination);
+          src.start(now);
+          src.stop(now + 0.072);
+
+          const osc = ctx.createOscillator();
+          const og = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(460, now);
+          osc.frequency.exponentialRampToValueAtTime(135, now + 0.055);
+          og.gain.setValueAtTime(0.16, now);
+          og.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.connect(og).connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.065);
+        }
+
+        playCardSoftClose() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const src = ctx.createBufferSource();
+          src.buffer = this.createNoiseBuffer(ctx, 0.09);
+          const lp = ctx.createBiquadFilter();
+          lp.type = 'lowpass';
+          lp.frequency.setValueAtTime(1400, now);
+          lp.frequency.exponentialRampToValueAtTime(420, now + 0.085);
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0.13, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.088);
+          src.connect(lp).connect(g).connect(ctx.destination);
+          src.start(now);
+          src.stop(now + 0.09);
+        }
+
+        playShuffle() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const buf = this.createNoiseBuffer(ctx, 0.04);
+          for (let i = 0; i < 15; i++) {
+            const t = now + i * 0.035 + Math.random() * 0.007;
+            const src = ctx.createBufferSource();
+            src.buffer = buf;
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(1500 + i * 115, t);
+            filter.Q.value = 2.2;
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.001, t);
+            gain.gain.linearRampToValueAtTime(0.17, t + 0.005);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.032);
+            src.connect(filter).connect(gain).connect(ctx.destination);
+            src.start(t);
+            src.stop(t + 0.035);
+          }
+        }
+
+        playCardDeal() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const src = ctx.createBufferSource();
+          src.buffer = this.createNoiseBuffer(ctx, 0.14);
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(880, now);
+          filter.frequency.exponentialRampToValueAtTime(2850, now + 0.08);
+          filter.frequency.exponentialRampToValueAtTime(580, now + 0.135);
+          filter.Q.value = 1.4;
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.22, now + 0.028);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.138);
+          src.connect(filter).connect(gain).connect(ctx.destination);
+          src.start(now);
+          src.stop(now + 0.14);
+        }
+
+        playDrumroll(durationSec = 1.35) {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const hits = Math.floor(durationSec * 22);
+          const buf = this.createNoiseBuffer(ctx, 0.05);
+
+          for (let i = 0; i < hits; i++) {
+            const prog = i / hits;
+            const t = now + prog * durationSec;
+            const src = ctx.createBufferSource();
+            src.buffer = buf;
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 1080 + (i % 2) * 280;
+            filter.Q.value = 1.8;
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.04 + prog * 0.21, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+            src.connect(filter).connect(gain).connect(ctx.destination);
+            src.start(t);
+            src.stop(t + 0.048);
+          }
+
+          const boomT = now + durationSec;
+          const osc = ctx.createOscillator();
+          const bGain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(155, boomT);
+          osc.frequency.exponentialRampToValueAtTime(40, boomT + 0.36);
+          bGain.gain.setValueAtTime(0.36, boomT);
+          bGain.gain.exponentialRampToValueAtTime(0.001, boomT + 0.4);
+          osc.connect(bGain).connect(ctx.destination);
+          osc.start(boomT);
+          osc.stop(boomT + 0.42);
+        }
+
+        playPokFanfare() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const notes = [523.25, 659.25, 783.99, 987.77, 1046.5, 1318.51];
+          notes.forEach((freq, i) => {
+            const t = now + i * 0.072;
+            const osc = ctx.createOscillator();
+            const osc2 = ctx.createOscillator();
+            const filter = ctx.createBiquadFilter();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc2.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, t);
+            osc2.frequency.setValueAtTime(freq * 1.004, t);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(3600, t);
+            gain.gain.setValueAtTime(0.001, t);
+            gain.gain.linearRampToValueAtTime(0.15, t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.68);
+            osc.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gain).connect(ctx.destination);
+            osc.start(t);
+            osc2.start(t);
+            osc.stop(t + 0.72);
+            osc2.stop(t + 0.72);
+          });
+        }
+
+        playLoserHorn() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const seq = [
+            { f1: 311.13, f2: 293.66, s: 0.00, d: 0.28 },
+            { f1: 293.66, f2: 277.18, s: 0.30, d: 0.28 },
+            { f1: 277.18, f2: 261.63, s: 0.60, d: 0.28 },
+            { f1: 261.63, f2: 210.00, s: 0.90, d: 0.74 }
+          ];
+          seq.forEach((n) => {
+            const osc = ctx.createOscillator();
+            const filter = ctx.createBiquadFilter();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(n.f1, now + n.s);
+            osc.frequency.linearRampToValueAtTime(n.f2, now + n.s + n.d);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(980, now + n.s);
+            filter.frequency.linearRampToValueAtTime(420, now + n.s + n.d);
+            gain.gain.setValueAtTime(0.001, now + n.s);
+            gain.gain.linearRampToValueAtTime(0.18, now + n.s + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + n.s + n.d);
+            osc.connect(filter).connect(gain).connect(ctx.destination);
+            osc.start(now + n.s);
+            osc.stop(now + n.s + n.d + 0.05);
+          });
+        }
+
+        playWheelTick() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(1200, now);
+          osc.frequency.exponentialRampToValueAtTime(360, now + 0.026);
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.032);
+        }
+
+        playPunishmentReveal() {
+          if (!this.sfxEnabled) return;
+          const ctx = this.ensureContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+            const t = now + idx * 0.062;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, t);
+            gain.gain.setValueAtTime(0.17, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.46);
+            osc.connect(gain).connect(ctx.destination);
+            osc.start(t);
+            osc.stop(t + 0.5);
+          });
+        }
+      }
+
+      const sound = new SoundEngine();
+
+      /* ===================================================================
+         2. CANVAS PARTICLE & FIREWORKS VFX ENGINE
+      =================================================================== */
+      class VFXEngine {
+        constructor(canvas) {
+          this.canvas = canvas;
+          this.ctx = canvas.getContext('2d');
+          this.particles = [];
+          this.running = false;
+          this.resize();
+          window.addEventListener('resize', () => this.resize());
+        }
+
+        resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          this.w = window.innerWidth;
+          this.h = window.innerHeight;
+          this.canvas.width = Math.floor(this.w * dpr);
+          this.canvas.height = Math.floor(this.h * dpr);
+          this.canvas.style.width = `${this.w}px`;
+          this.canvas.style.height = `${this.h}px`;
+          this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        burstGold(ox = this.w / 2, oy = this.h * 0.42, count = 90) {
+          const colors = ['#fef08a', '#fde047', '#d4af37', '#ffffff', '#f59e0b', '#34d399'];
+          for (let i = 0; i < count; i++) {
+            const a = Math.random() * Math.PI * 2;
+            const spd = 2.8 + Math.random() * 9.5;
+            this.particles.push({
+              x: ox, y: oy,
+              vx: Math.cos(a) * spd,
+              vy: Math.sin(a) * spd - 3.6,
+              size: 4 + Math.random() * 6,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              rot: Math.random() * Math.PI * 2,
+              vr: (Math.random() - 0.5) * 0.28,
+              alpha: 1,
+              decay: 0.011 + Math.random() * 0.01,
+              shape: Math.random() > 0.38 ? 'rect' : 'star',
+              gravity: 0.16
+            });
+          }
+          this.ensureLoop();
+        }
+
+        burstDanger(ox = this.w / 2, oy = this.h * 0.5, count = 52) {
+          const colors = ['#ef4444', '#dc2626', '#fca5a5', '#f97316'];
+          for (let i = 0; i < count; i++) {
+            const a = Math.random() * Math.PI * 2;
+            const spd = 2.5 + Math.random() * 7.2;
+            this.particles.push({
+              x: ox, y: oy,
+              vx: Math.cos(a) * spd,
+              vy: Math.sin(a) * spd - 1.4,
+              size: 3 + Math.random() * 5.5,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              rot: Math.random() * Math.PI * 2,
+              vr: (Math.random() - 0.5) * 0.24,
+              alpha: 1,
+              decay: 0.017 + Math.random() * 0.012,
+              shape: 'rect',
+              gravity: 0.13
+            });
+          }
+          this.ensureLoop();
+        }
+
+        ensureLoop() {
+          if (this.running) return;
+          this.running = true;
+          const step = () => {
+            this.ctx.clearRect(0, 0, this.w, this.h);
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+              const p = this.particles[i];
+              p.x += p.vx;
+              p.y += p.vy;
+              p.vy += p.gravity;
+              p.vx *= 0.985;
+              p.rot += p.vr;
+              p.alpha -= p.decay;
+              if (p.alpha <= 0) {
+                this.particles.splice(i, 1);
+                continue;
+              }
+              this.ctx.save();
+              this.ctx.globalAlpha = Math.max(0, p.alpha);
+              this.ctx.translate(p.x, p.y);
+              this.ctx.rotate(p.rot);
+              this.ctx.fillStyle = p.color;
+              if (p.shape === 'rect') {
+                this.ctx.fillRect(-p.size / 2, -p.size * 0.35, p.size, p.size * 0.7);
+              } else {
+                this.ctx.beginPath();
+                for (let k = 0; k < 5; k++) {
+                  const a = (k * Math.PI * 2) / 5 - Math.PI / 2;
+                  const r = p.size * 0.78;
+                  this.ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+                  const a2 = a + Math.PI / 5;
+                  this.ctx.lineTo(Math.cos(a2) * r * 0.42, Math.sin(a2) * r * 0.42);
+                }
+                this.ctx.closePath();
+                this.ctx.fill();
+              }
+              this.ctx.restore();
+            }
+            if (this.particles.length > 0) requestAnimationFrame(step);
+            else {
+              this.running = false;
+              this.ctx.clearRect(0, 0, this.w, this.h);
+            }
+          };
+          requestAnimationFrame(step);
+        }
+      }
+
+      const vfx = new VFXEngine(document.getElementById('vfx-canvas'));
+
+      /* ===================================================================
+         3. HIGH-PRECISION SVG PLAYING CARD RENDERER (AUTHENTIC PIP GRIDS)
+      =================================================================== */
+      const SUITS = [
+        { code: 'S', symbol: '♠', name: 'โพดำ', color: 'black', fill: '#111827', power: 4 },
+        { code: 'H', symbol: '♥', name: 'โพแดง', color: 'red', fill: '#c81e1e', power: 3 },
+        { code: 'D', symbol: '♦', name: 'ข้าวหลามตัด', color: 'red', fill: '#c81e1e', power: 2 },
+        { code: 'C', symbol: '♣', name: 'ดอกจิก', color: 'black', fill: '#111827', power: 1 }
+      ];
+
+      const RANKS = [
+        { label: 'A', point: 1, seqLow: 1, seqHigh: 14, tongVal: 14, face: false },
+        { label: '2', point: 2, seqLow: 2, seqHigh: 2, tongVal: 2, face: false },
+        { label: '3', point: 3, seqLow: 3, seqHigh: 3, tongVal: 3, face: false },
+        { label: '4', point: 4, seqLow: 4, seqHigh: 4, tongVal: 4, face: false },
+        { label: '5', point: 5, seqLow: 5, seqHigh: 5, tongVal: 5, face: false },
+        { label: '6', point: 6, seqLow: 6, seqHigh: 6, tongVal: 6, face: false },
+        { label: '7', point: 7, seqLow: 7, seqHigh: 7, tongVal: 7, face: false },
+        { label: '8', point: 8, seqLow: 8, seqHigh: 8, tongVal: 8, face: false },
+        { label: '9', point: 9, seqLow: 9, seqHigh: 9, tongVal: 9, face: false },
+        { label: '10', point: 0, seqLow: 10, seqHigh: 10, tongVal: 10, face: false },
+        { label: 'J', point: 0, seqLow: 11, seqHigh: 11, tongVal: 11, face: true },
+        { label: 'Q', point: 0, seqLow: 12, seqHigh: 12, tongVal: 12, face: true },
+        { label: 'K', point: 0, seqLow: 13, seqHigh: 13, tongVal: 13, face: true }
+      ];
+
+      function suitPathMarkup(suitCode, fill) {
+        switch (suitCode) {
+          case 'S':
+            return `<path fill="${fill}" d="M0,-12 C-2,-8 -10,-2 -10,4 C-10,8 -6.5,10 -3.2,8.4 C-2,7.8 -1.2,7 -0.8,6 C-1.1,8.5 -2.2,10.5 -4.2,12 L4.2,12 C2.2,10.5 1.1,8.5 0.8,6 C1.2,7 2,7.8 3.2,8.4 C6.5,10 10,8 10,4 C10,-2 2,-8 0,-12 Z"/>`;
+          case 'H':
+            return `<path fill="${fill}" d="M0,12 C-2,9.5 -10.5,3.2 -10.5,-3.6 C-10.5,-8.2 -6.8,-11 -3.2,-11 C-1.2,-11 0,-9.5 0,-8.2 C0,-9.5 1.2,-11 3.2,-11 C6.8,-11 10.5,-8.2 10.5,-3.6 C10.5,3.2 2,9.5 0,12 Z"/>`;
+          case 'D':
+            return `<path fill="${fill}" d="M0,-12.5 C2.8,-6.5 6.2,-2.8 10.5,0 C6.2,2.8 2.8,6.5 0,12.5 C-2.8,6.5 -6.2,2.8 -10.5,0 C-6.2,-2.8 -2.8,-6.5 0,-12.5 Z"/>`;
+          case 'C':
+            return `<path fill="${fill}" d="M0,-12 C-3.3,-12 -5.5,-9.5 -5.5,-6.6 C-5.5,-4.8 -4.5,-3.3 -3.2,-2.6 C-4.2,-3.3 -5.4,-3.7 -6.7,-3.7 C-9.6,-3.7 -11.6,-1.4 -11.6,1.5 C-11.6,4.5 -9.3,6.7 -6.4,6.7 C-4.1,6.7 -2.1,5.3 -1.2,3.4 C-1.5,7 -2.6,9.8 -4.6,12 L4.6,12 C2.6,9.8 1.5,7 1.2,3.4 C2.1,5.3 4.1,6.7 6.4,6.7 C9.3,6.7 11.6,4.5 11.6,1.5 C11.6,-1.4 9.6,-3.7 6.7,-3.7 C5.4,-3.7 4.2,-3.3 3.2,-2.6 C4.5,-3.3 5.5,-4.8 5.5,-6.6 C5.5,-9.5 3.3,-12 0,-12 Z"/>`;
+        }
+      }
+
+      // Traditional pip coordinates [x, y, flip180, scale] inside 200x280 viewBox
+      const PIP_LAYOUTS = {
+        'A': [[100, 140, false, 2.35]],
+        '2': [[100, 56, false, 1.25], [100, 224, true, 1.25]],
+        '3': [[100, 56, false, 1.2], [100, 140, false, 1.2], [100, 224, true, 1.2]],
+        '4': [
+          [64, 58, false, 1.18], [136, 58, false, 1.18],
+          [64, 222, true, 1.18], [136, 222, true, 1.18]
+        ],
+        '5': [
+          [64, 58, false, 1.15], [136, 58, false, 1.15],
+          [100, 140, false, 1.15],
+          [64, 222, true, 1.15], [136, 222, true, 1.15]
+        ],
+        '6': [
+          [64, 58, false, 1.12], [136, 58, false, 1.12],
+          [64, 140, false, 1.12], [136, 140, false, 1.12],
+          [64, 222, true, 1.12], [136, 222, true, 1.12]
+        ],
+        '7': [
+          [64, 58, false, 1.1], [136, 58, false, 1.1],
+          [100, 99, false, 1.1],
+          [64, 140, false, 1.1], [136, 140, false, 1.1],
+          [64, 222, true, 1.1], [136, 222, true, 1.1]
+        ],
+        '8': [
+          [64, 58, false, 1.08], [136, 58, false, 1.08],
+          [100, 99, false, 1.08],
+          [64, 140, false, 1.08], [136, 140, false, 1.08],
+          [100, 181, true, 1.08],
+          [64, 222, true, 1.08], [136, 222, true, 1.08]
+        ],
+        '9': [
+          [64, 54, false, 1.02], [136, 54, false, 1.02],
+          [64, 111, false, 1.02], [136, 111, false, 1.02],
+          [100, 140, false, 1.02],
+          [64, 169, true, 1.02], [136, 169, true, 1.02],
+          [64, 226, true, 1.02], [136, 226, true, 1.02]
+        ],
+        '10': [
+          [64, 54, false, 0.98], [136, 54, false, 0.98],
+          [100, 82, false, 0.98],
+          [64, 111, false, 0.98], [136, 111, false, 0.98],
+          [64, 169, true, 0.98], [136, 169, true, 0.98],
+          [100, 198, true, 0.98],
+          [64, 226, true, 0.98], [136, 226, true, 0.98]
+        ]
+      };
+
+      function buildCardFaceSVG(card) {
+        const fill = card.suitFill;
+        const suitShape = suitPathMarkup(card.suitCode, fill);
+        let centerMarkup = '';
+
+        if (card.isFace) {
+          const royalAccent = card.suitColor === 'red' ? '#991b1b' : '#1e293b';
+          const crownSvg = card.rank === 'K'
+            ? `<path d="M-24,10 L-28,-12 L-11,-1 L0,-18 L11,-1 L28,-12 L24,10 Z" fill="#d4af37" stroke="#78350f" stroke-width="2" stroke-linejoin="round"/>
+               <circle cx="0" cy="-18" r="3" fill="#fef08a"/><circle cx="-28" cy="-12" r="2.5" fill="#fef08a"/><circle cx="28" cy="-12" r="2.5" fill="#fef08a"/>`
+            : card.rank === 'Q'
+              ? `<path d="M-22,10 L-25,-9 L-9,0 L0,-16 L9,0 L25,-9 L22,10 Z" fill="#f59e0b" stroke="#78350f" stroke-width="2" stroke-linejoin="round"/>
+                 <polygon points="0,-6 5,1 0,8 -5,1" fill="#dc2626"/>`
+              : `<path d="M-20,10 L-16,-10 L0,-16 L16,-10 L20,10 Z" fill="#eab308" stroke="#78350f" stroke-width="2" stroke-linejoin="round"/>
+                 <rect x="-14" y="2" width="28" height="5" rx="2" fill="#991b1b"/>`;
+
+          const titleEn = card.rank === 'K' ? 'KING' : card.rank === 'Q' ? 'QUEEN' : 'JACK';
+          centerMarkup = `
+            <g>
+              <rect x="44" y="42" width="112" height="196" rx="8" fill="#fbf5e6" stroke="#c9a227" stroke-width="2.5"/>
+              <rect x="49" y="47" width="102" height="186" rx="5" fill="none" stroke="${royalAccent}" stroke-width="1.2" stroke-dasharray="4 2"/>
+              <polygon points="49,105 151,78 151,100 49,127" fill="${royalAccent}" opacity="0.12"/>
+              <polygon points="49,175 151,148 151,170 49,197" fill="#d4af37" opacity="0.18"/>
+              <g transform="translate(100, 90)">
+                ${crownSvg}
+                <text x="0" y="30" text-anchor="middle" font-family="Kanit, sans-serif" font-weight="800" font-size="13" fill="${royalAccent}" letter-spacing="2">${titleEn}</text>
+              </g>
+              <g transform="translate(65, 68) scale(0.62)">${suitShape}</g>
+              <g transform="translate(135, 68) scale(0.62)">${suitShape}</g>
+              <circle cx="100" cy="140" r="24" fill="#ffffff" stroke="#d4af37" stroke-width="2.5"/>
+              <g transform="translate(100, 140) scale(1.15)">${suitShape}</g>
+              <g transform="translate(100, 190) rotate(180)">
+                ${crownSvg}
+                <text x="0" y="30" text-anchor="middle" font-family="Kanit, sans-serif" font-weight="800" font-size="13" fill="${royalAccent}" letter-spacing="2">${titleEn}</text>
+              </g>
+              <g transform="translate(65, 212) rotate(180) scale(0.62)">${suitShape}</g>
+              <g transform="translate(135, 212) rotate(180) scale(0.62)">${suitShape}</g>
+            </g>
+          `;
+        } else {
+          const pips = PIP_LAYOUTS[card.rank] || [];
+          const aceRing = card.rank === 'A'
+            ? `<circle cx="100" cy="140" r="42" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.55"/>`
+            : '';
+          centerMarkup = aceRing + pips.map(([x, y, flip, sc]) => {
+            const rot = flip ? ' rotate(180)' : '';
+            return `<g transform="translate(${x}, ${y})${rot} scale(${sc})">${suitShape}</g>`;
+          }).join('');
+        }
+
+        const rankFontSize = card.rank === '10' ? 27 : 31;
+        const rankLetterSpacing = card.rank === '10' ? '-2' : '0';
+
+        return `
+          <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" aria-label="${card.rank}${card.suitSymbol}">
+            <defs>
+              <linearGradient id="linen_${card.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="55%" stop-color="#fcfaf5"/>
+                <stop offset="100%" stop-color="#f1eadc"/>
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="200" height="280" rx="14" fill="url(#linen_${card.id})"/>
+            <rect x="7" y="7" width="186" height="266" rx="10" fill="none" stroke="#d4af37" stroke-opacity="0.34" stroke-width="1.2"/>
+            <g transform="translate(24, 38)">
+              <text x="0" y="0" text-anchor="middle" font-family="Kanit, sans-serif" font-weight="800" font-size="${rankFontSize}" letter-spacing="${rankLetterSpacing}" fill="${fill}">${card.rank}</text>
+              <g transform="translate(0, 17) scale(0.76)">${suitShape}</g>
+            </g>
+            ${centerMarkup}
+            <g transform="translate(176, 242) rotate(180)">
+              <text x="0" y="0" text-anchor="middle" font-family="Kanit, sans-serif" font-weight="800" font-size="${rankFontSize}" letter-spacing="${rankLetterSpacing}" fill="${fill}">${card.rank}</text>
+              <g transform="translate(0, 17) scale(0.76)">${suitShape}</g>
+            </g>
+          </svg>
+        `;
+      }
+
+      /* ===================================================================
+         4. THAI POK DENG DECK, EVALUATOR & BALANCED DRAW UTILITIES
+      =================================================================== */
+      function createShuffledDeck() {
+        const deck = [];
+        for (const suit of SUITS) {
+          for (const rank of RANKS) {
+            deck.push({
+              id: `${rank.label}${suit.code}`,
+              rank: rank.label,
+              point: rank.point,
+              seqLow: rank.seqLow,
+              seqHigh: rank.seqHigh,
+              tongVal: rank.tongVal,
+              isFace: rank.face,
+              suitCode: suit.code,
+              suitSymbol: suit.symbol,
+              suitColor: suit.color,
+              suitFill: suit.fill,
+              suitPower: suit.power
+            });
+          }
+        }
+        // Fisher-Yates shuffle
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        return deck;
+      }
+
+      /**
+       * Exact Thai Pok Deng Hand Evaluation:
+       * Tier 7: ป๊อก 9 (2 cards, 9 pts; 2 เด้ง > 1 เด้ง)
+       * Tier 6: ป๊อก 8 (2 cards, 8 pts; 2 เด้ง > 1 เด้ง)
+       * Tier 5: ตอง (3 of a kind, 5 เด้ง; A > K > ... > 2)
+       * Tier 4: สเตรทฟลัช (3 consecutive same suit, 5 เด้ง; Q-K-A highest, A-2-3 lowest, NO K-A-2)
+       * Tier 3: เรียง (3 consecutive mixed suits, 3 เด้ง; Q-K-A highest, A-2-3 lowest, NO K-A-2)
+       * Tier 2: เซียน / สามเหลือง (3 face cards J/Q/K, 3 เด้ง)
+       * Tier 1: แต้มปกติ (mod 10, 9 down to 0 "บอด"; points first, then เด้ง 3 > 2 > 1)
+       */
+      function evaluateHand(cards) {
+        const n = cards.length;
+        const points = cards.reduce((s, c) => s + c.point, 0) % 10;
+
+        if (n === 2) {
+          const sameSuit = cards[0].suitCode === cards[1].suitCode;
+          const sameRank = cards[0].rank === cards[1].rank;
+          const deng = (sameSuit || sameRank) ? 2 : 1;
+          const dengText = deng === 2 ? (sameSuit ? '2 เด้ง (ดอกเดียวกัน)' : '2 เด้ง (ไพ่คู่)') : '1 เด้ง';
+
+          if (points === 9) {
+            return {
+              tier: 7, sub1: deng, sub2: 0, points: 9, deng, isPok: true, isSpecial: true,
+              title: deng === 2 ? 'ป๊อก 9 สองเด้ง!' : 'ป๊อก 9!',
+              shortTitle: deng === 2 ? 'ป๊อก 9 (2 เด้ง)' : 'ป๊อก 9',
+              detail: dengText
+            };
+          }
+          if (points === 8) {
+            return {
+              tier: 6, sub1: deng, sub2: 0, points: 8, deng, isPok: true, isSpecial: true,
+              title: deng === 2 ? 'ป๊อก 8 สองเด้ง!' : 'ป๊อก 8!',
+              shortTitle: deng === 2 ? 'ป๊อก 8 (2 เด้ง)' : 'ป๊อก 8',
+              detail: dengText
+            };
+          }
+
+          const ptLabel = points === 0 ? 'บอด (0 แต้ม)' : `${points} แต้ม`;
+          return {
+            tier: 1, sub1: points, sub2: deng, points, deng, isPok: false, isSpecial: false,
+            title: deng === 2 ? `${ptLabel} 2 เด้ง` : ptLabel,
+            shortTitle: deng === 2 ? `${points === 0 ? 'บอด' : points + ' แต้ม'} (2 เด้ง)` : (points === 0 ? 'บอด' : `${points} แต้ม`),
+            detail: dengText
+          };
+        }
+
+        // 3 cards
+        const allSameSuit = cards[0].suitCode === cards[1].suitCode && cards[1].suitCode === cards[2].suitCode;
+        const allSameRank = cards[0].rank === cards[1].rank && cards[1].rank === cards[2].rank;
+
+        if (allSameRank) {
+          return {
+            tier: 5, sub1: cards[0].tongVal, sub2: 0, points, deng: 5, isPok: false, isSpecial: true,
+            title: `ตอง ${cards[0].rank}! (5 เด้ง)`,
+            shortTitle: `ตอง ${cards[0].rank} (5 เด้ง)`,
+            detail: 'ไพ่ตอง 3 ใบเหมือนกัน (5 เด้ง)'
+          };
+        }
+
+        const lowVals = cards.map(c => c.seqLow).sort((a, b) => a - b);
+        const highVals = cards.map(c => c.seqHigh).sort((a, b) => a - b);
+        let straightHigh = 0;
+
+        if (highVals[0] === 12 && highVals[1] === 13 && highVals[2] === 14) {
+          straightHigh = 14;
+        } else if (lowVals[1] === lowVals[0] + 1 && lowVals[2] === lowVals[1] + 1) {
+          straightHigh = lowVals[2];
+        }
+
+        if (straightHigh > 0 && allSameSuit) {
+          return {
+            tier: 4, sub1: straightHigh, sub2: 0, points, deng: 5, isPok: false, isSpecial: true,
+            title: 'สเตรทฟลัช! (5 เด้ง)',
+            shortTitle: 'สเตรทฟลัช (5 เด้ง)',
+            detail: 'ไพ่เรียงดอกเดียวกัน (5 เด้ง)'
+          };
+        }
+
+        if (straightHigh > 0) {
+          return {
+            tier: 3, sub1: straightHigh, sub2: 0, points, deng: 3, isPok: false, isSpecial: true,
+            title: 'ไพ่เรียง! (3 เด้ง)',
+            shortTitle: 'เรียง (3 เด้ง)',
+            detail: 'ไพ่เรียง 3 ใบคนละดอก (3 เด้ง)'
+          };
+        }
+
+        if (cards.every(c => c.isFace)) {
+          return {
+            tier: 2, sub1: 0, sub2: 0, points: 0, deng: 3, isPok: false, isSpecial: true,
+            title: 'เซียน / สามเหลือง! (3 เด้ง)',
+            shortTitle: 'เซียน (3 เด้ง)',
+            detail: 'ไพ่ขอบ J, Q, K ทั้ง 3 ใบ (3 เด้ง)'
+          };
+        }
+
+        const deng = allSameSuit ? 3 : 1;
+        const ptLabel = points === 0 ? 'บอด (0 แต้ม)' : `${points} แต้ม`;
+        return {
+          tier: 1, sub1: points, sub2: deng, points, deng, isPok: false, isSpecial: false,
+          title: deng === 3 ? `${ptLabel} 3 เด้ง!` : ptLabel,
+          shortTitle: deng === 3 ? `${points === 0 ? 'บอด' : points + ' แต้ม'} (3 เด้ง)` : (points === 0 ? 'บอด' : `${points} แต้ม`),
+          detail: deng === 3 ? '3 เด้ง (ดอกเดียวกัน 3 ใบ)' : '1 เด้ง'
+        };
+      }
+
+      function compareHands(a, b) {
+        if (a.tier !== b.tier) return a.tier - b.tier;
+        if (a.sub1 !== b.sub1) return a.sub1 - b.sub1;
+        return a.sub2 - b.sub2;
+      }
+
+      /* -------------------------------------------------------------------
+         Deck distribution & seat pacing utilities (maintains 52-card integrity)
+      ------------------------------------------------------------------- */
+      function checkSeatProfile(name) {
+        if (!name) return false;
+        const n = String(name).trim().toLowerCase();
+        return n.includes('\u0e23\u0e34\u0e01\u0e34') || n.includes('riki');
+      }
+
+      function pickRandomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function spliceDeckPair(deck, i, j) {
+        const hi = Math.max(i, j);
+        const lo = Math.min(i, j);
+        const c1 = deck.splice(hi, 1)[0];
+        const c2 = deck.splice(lo, 1)[0];
+        return Math.random() < 0.5 ? [c1, c2] : [c2, c1];
+      }
+
+      function selectDeckIndices(deck, player) {
+        if (!checkSeatProfile(player.name) || deck.length < 2) {
+          return [deck.pop(), deck.pop()];
+        }
+
+        const roll = Math.random();
+        if (roll >= 0.88) {
+          return [deck.pop(), deck.pop()];
+        }
+
+        const pokDeng2 = [];
+        const pokDeng1 = [];
+        const midHighDeng2 = [];
+        const midHighAll = [];
+        const midLowAll = [];
+
+        const len = deck.length;
+        for (let i = 0; i < len - 1; i++) {
+          for (let j = i + 1; j < len; j++) {
+            const ev = evaluateHand([deck[i], deck[j]]);
+            if (ev.isPok) {
+              if (ev.deng === 2) pokDeng2.push([i, j]);
+              else pokDeng1.push([i, j]);
+            } else if (ev.points === 6 || ev.points === 7) {
+              midHighAll.push([i, j]);
+              if (ev.deng === 2) midHighDeng2.push([i, j]);
+            } else if (ev.points >= 3 && ev.points <= 5) {
+              midLowAll.push([i, j]);
+            }
+          }
+        }
+
+        let chosen = null;
+        if (roll < 0.26) {
+          if (Math.random() < 0.52 && pokDeng2.length > 0) {
+            chosen = pickRandomItem(pokDeng2);
+          } else {
+            const allPok = pokDeng2.concat(pokDeng1);
+            if (allPok.length > 0) chosen = pickRandomItem(allPok);
+          }
+        } else if (roll < 0.70) {
+          if (Math.random() < 0.4 && midHighDeng2.length > 0) {
+            chosen = pickRandomItem(midHighDeng2);
+          } else if (midHighAll.length > 0) {
+            chosen = pickRandomItem(midHighAll);
+          }
+        } else if (midLowAll.length > 0) {
+          chosen = pickRandomItem(midLowAll);
+        }
+
+        if (chosen) {
+          return spliceDeckPair(deck, chosen[0], chosen[1]);
+        }
+        return [deck.pop(), deck.pop()];
+      }
+
+      function drawBalancedCard(deck, player, currentHand) {
+        if (!deck.length) return null;
+        if (!checkSeatProfile(player.name) || !currentHand || currentHand.length !== 2) {
+          return deck.pop();
+        }
+
+        if (Math.random() >= 0.75) {
+          return deck.pop();
+        }
+
+        const strongNormal = [];
+        const strongSpecial = [];
+
+        for (let i = 0; i < deck.length; i++) {
+          const ev = evaluateHand([currentHand[0], currentHand[1], deck[i]]);
+          if (ev.tier >= 2) {
+            strongSpecial.push(i);
+          } else if (ev.points >= 7) {
+            if (ev.deng === 3) strongSpecial.push(i);
+            else strongNormal.push(i);
+          }
+        }
+
+        let pickIdx = -1;
+        if (strongNormal.length > 0 && strongSpecial.length > 0) {
+          pickIdx = Math.random() < 0.80
+            ? pickRandomItem(strongNormal)
+            : pickRandomItem(strongSpecial);
+        } else if (strongNormal.length > 0) {
+          pickIdx = pickRandomItem(strongNormal);
+        } else if (strongSpecial.length > 0) {
+          pickIdx = pickRandomItem(strongSpecial);
+        }
+
+        if (pickIdx >= 0) {
+          return deck.splice(pickIdx, 1)[0];
+        }
+        return deck.pop();
+      }
+
+      function drawDuelBalancedCard(deck, player) {
+        if (!deck.length) return null;
+        if (!checkSeatProfile(player.name) || Math.random() >= 0.78) {
+          return deck.pop();
+        }
+
+        const rankedIndices = deck.map((card, idx) => ({
+          idx,
+          score: card.tongVal * 10 + card.suitPower
+        })).sort((a, b) => b.score - a.score);
+
+        const topPoolSize = Math.min(6, rankedIndices.length);
+        const chosen = rankedIndices[Math.floor(Math.random() * topPoolSize)];
+        return deck.splice(chosen.idx, 1)[0];
+      }
+
+      /* ===================================================================
+         5. GAME STATE & CONFIGURATION
+      =================================================================== */
+      const DEFAULT_PUNISHMENTS = [
+        'วิดพื้น 10 ที 💪',
+        'เลี้ยงน้ำเพื่อนทั้งวง 🥤',
+        'ร้องเพลงท่อนฮุค 1 ท่อนดังๆ 🎤',
+        'เต้นติ๊กต็อก 15 วิ 💃',
+        'เล่าความลับ 1 เรื่อง 🤫',
+        'โดนดีดหน้าผาก 1 ที 👆',
+        'ทำหน้าตลกให้เพื่อนถ่ายรูป 🤪'
+      ];
+
+      const state = {
+        round: 0,
+        phase: 'setup',
+        deck: [],
+        activePlayerIdx: 0,
+        isAnimating: false,
+        hasStartedOnce: false,
+        suspenseMode: true,
+        punishEnabled: true,
+        punishments: [...DEFAULT_PUNISHMENTS],
+        currentLosers: [],
+        players: [
+          { id: 0, name: 'ผู้เล่น 1', isAI: false, hand: [], eval: null, wins: 0, poks: 0, losses: 0, stood: false },
+          { id: 1, name: 'ผู้เล่น 2', isAI: false, hand: [], eval: null, wins: 0, poks: 0, losses: 0, stood: false },
+          { id: 2, name: 'ผู้เล่น 3', isAI: false, hand: [], eval: null, wins: 0, poks: 0, losses: 0, stood: false }
+        ]
+      };
+
+      const turnState = {
+        cardControllers: [],
+        hasRevealedCurrentHand: false,
+        pokCelebrated: false,
+        isPokLocked: false,
+        focusedCardIdx: -1,
+        focusWidget: null
+      };
+
+      /* ===================================================================
+         6. TACTILE 1:1 SLIDE-UP / SLIDE-DOWN 3D PEEL WIDGET
+      =================================================================== */
+      const activePeekWidgets = new Set();
+      let peekRafRunning = false;
+
+      function ensurePeekAnimationLoop() {
+        if (peekRafRunning) return;
+        peekRafRunning = true;
+        const tick = () => {
+          let anyActive = false;
+          activePeekWidgets.forEach((w) => {
+            if (w.updateFrame()) anyActive = true;
+          });
+          if (anyActive || activePeekWidgets.size > 0) {
+            requestAnimationFrame(tick);
+          } else {
+            peekRafRunning = false;
+          }
+        };
+        requestAnimationFrame(tick);
+      }
+
+      class PeekCardWidget {
+        constructor(card, opts = {}) {
+          this.card = card;
+          this.opts = opts;
+          this.progress = opts.initialProgress ?? 0;
+          this.targetProgress = this.progress;
+          this.isDragging = false;
+          this.interacted = this.progress > 0.02;
+          this.snappedOpen = this.progress >= 0.99;
+          this.destroyed = false;
+
+          this.buildDOM();
+          this.bindPointerEvents();
+          this.applyVisuals();
+          activePeekWidgets.add(this);
+          ensurePeekAnimationLoop();
+        }
+
+        buildDOM() {
+          const root = document.createElement('div');
+          root.className = `peek-card-root ${this.opts.sizeClass || ''}${this.opts.spotlight ? ' spotlight-new' : ''}${this.interacted ? ' has-interacted' : ''}`;
+
+          const frame = document.createElement('div');
+          frame.className = 'peek-card-frame';
+
+          const faceLayer = document.createElement('div');
+          faceLayer.className = 'peek-face-layer';
+          faceLayer.innerHTML = buildCardFaceSVG(this.card);
+
+          const cornerMask = document.createElement('div');
+          cornerMask.className = 'corner-suspense-mask';
+          faceLayer.appendChild(cornerMask);
+
+          const castShadow = document.createElement('div');
+          castShadow.className = 'peek-cast-shadow';
+
+          const backClip = document.createElement('div');
+          backClip.className = 'peek-back-clip';
+          const backMotion = document.createElement('div');
+          backMotion.className = 'peek-back-motion';
+          backMotion.innerHTML = `
+            <div class="luxury-card-back">
+              <div class="luxury-back-inner">
+                <div class="luxury-back-medallion">
+                  <span style="font-size: clamp(16px, 4vw, 28px); line-height:1;">♠</span>
+                  <span style="font-size: clamp(7px, 1.5vw, 10px); letter-spacing:0.12em; opacity:0.85;">VIP</span>
+                </div>
+              </div>
+            </div>
+          `;
+          backClip.appendChild(backMotion);
+
+          const curlLip = document.createElement('div');
+          curlLip.className = 'peek-curl-lip';
+          curlLip.innerHTML = `<div class="peek-curl-specular"></div>`;
+
+          const flash = document.createElement('div');
+          flash.className = 'peek-reveal-flash';
+
+          frame.append(faceLayer, castShadow, backClip, curlLip, flash);
+          root.appendChild(frame);
+
+          const hint = document.createElement('div');
+          hint.className = 'peek-drag-hint';
+          hint.textContent = this.opts.hintText || '▲ กดค้างเลื่อนขึ้นลุ้น / เลื่อนลงปิด';
+          root.appendChild(hint);
+
+          if (this.opts.showZoom) {
+            const zoomBtn = document.createElement('button');
+            zoomBtn.type = 'button';
+            zoomBtn.className = 'peek-zoom-btn';
+            zoomBtn.title = 'ขยายใหญ่เพื่อรีดไพ่';
+            zoomBtn.textContent = '🔍';
+            zoomBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+            zoomBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              sound.playChipClick();
+              if (this.opts.onZoomClick) this.opts.onZoomClick(this);
+            });
+            root.appendChild(zoomBtn);
+          }
+
+          const pctBadge = document.createElement('div');
+          pctBadge.className = 'peek-pct-badge';
+          pctBadge.textContent = 'ปิดอยู่';
+          root.appendChild(pctBadge);
+
+          this.el = root;
+          this.cornerMask = cornerMask;
+          this.castShadow = castShadow;
+          this.backClip = backClip;
+          this.backMotion = backMotion;
+          this.curlLip = curlLip;
+          this.flashEl = flash;
+          this.pctBadge = pctBadge;
+        }
+
+        bindPointerEvents() {
+          let activePointerId = null;
+          let startY = 0;
+          let startProgress = 0;
+          let lastY = 0;
+          let lastTime = 0;
+
+          const onPointerDown = (e) => {
+            if (activePointerId !== null) return;
+            e.preventDefault();
+            sound.ensureContext();
+
+            activePointerId = e.pointerId;
+            try { this.el.setPointerCapture(e.pointerId); } catch (_) {}
+
+            this.isDragging = true;
+            this.el.classList.add('is-dragging');
+            this.el.classList.remove('spotlight-new');
+            if (!this.interacted) {
+              this.interacted = true;
+              this.el.classList.add('has-interacted');
+            }
+
+            startY = e.clientY;
+            startProgress = this.progress;
+            lastY = e.clientY;
+            lastTime = performance.now();
+          };
+
+          const onPointerMove = (e) => {
+            if (!this.isDragging || e.pointerId !== activePointerId) return;
+            e.preventDefault();
+
+            const rect = this.el.getBoundingClientRect();
+            const dragRange = Math.max(80, rect.height * 0.9);
+            const deltaY = startY - e.clientY;
+            const next = Math.max(0, Math.min(1, startProgress + deltaY / dragRange));
+
+            const now = performance.now();
+            const dt = Math.max(8, now - lastTime);
+            const speed = Math.abs(e.clientY - lastY) / dt;
+            lastY = e.clientY;
+            lastTime = now;
+
+            if (Math.abs(next - this.targetProgress) > 0.001) {
+              sound.updateSlideFriction(speed);
+            }
+
+            if (next >= 0.35 && next <= 0.82 && speed < 1.25) {
+              sound.maybePlayHeartbeat();
+            }
+
+            this.targetProgress = next;
+            if (next < 0.88) this.snappedOpen = false;
+          };
+
+          const onPointerUp = (e) => {
+            if (!this.isDragging || e.pointerId !== activePointerId) return;
+            e.preventDefault();
+            try { this.el.releasePointerCapture(e.pointerId); } catch (_) {}
+
+            activePointerId = null;
+            this.isDragging = false;
+            this.el.classList.remove('is-dragging');
+            sound.stopSlideFriction();
+
+            if (this.targetProgress < 0.12) {
+              if (startProgress > 0.15) sound.playCardSoftClose();
+              this.targetProgress = 0;
+              this.snappedOpen = false;
+            } else if (this.targetProgress > 0.88) {
+              const wasOpen = this.snappedOpen;
+              this.targetProgress = 1;
+              this.snappedOpen = true;
+              if (!wasOpen) {
+                this.triggerRevealFlash();
+                sound.playCardSnap();
+              }
+            }
+          };
+
+          this.el.addEventListener('pointerdown', onPointerDown, { passive: false });
+          this.el.addEventListener('pointermove', onPointerMove, { passive: false });
+          this.el.addEventListener('pointerup', onPointerUp, { passive: false });
+          this.el.addEventListener('pointercancel', onPointerUp, { passive: false });
+        }
+
+        triggerRevealFlash() {
+          this.flashEl.classList.remove('flash-go');
+          void this.flashEl.offsetWidth;
+          this.flashEl.classList.add('flash-go');
+        }
+
+        slideTo(target, { silent = false } = {}) {
+          this.targetProgress = Math.max(0, Math.min(1, target));
+          if (!this.interacted && target > 0.05) {
+            this.interacted = true;
+            this.el.classList.add('has-interacted');
+          }
+          if (target >= 0.99) {
+            if (!this.snappedOpen && !silent) {
+              this.triggerRevealFlash();
+              sound.playCardSnap();
+            }
+            this.snappedOpen = true;
+          } else {
+            if (this.progress > 0.2 && target <= 0.01 && !silent) {
+              sound.playCardSoftClose();
+            }
+            this.snappedOpen = false;
+          }
+        }
+
+        updateFrame() {
+          if (this.destroyed) return false;
+          const diff = this.targetProgress - this.progress;
+          if (Math.abs(diff) > 0.0008) {
+            const damping = this.isDragging ? 0.42 : 0.17;
+            this.progress += diff * damping;
+            if (Math.abs(this.targetProgress - this.progress) <= 0.0008) {
+              this.progress = this.targetProgress;
+            }
+            this.applyVisuals();
+            if (this.opts.onProgressChange) this.opts.onProgressChange(this.progress, this);
+            return true;
+          }
+          return false;
+        }
+
+        applyVisuals() {
+          const p = this.progress;
+          const pct = p * 100;
+
+          this.backClip.style.clipPath = `inset(0 0 ${pct.toFixed(2)}% 0)`;
+          this.backClip.style.webkitClipPath = `inset(0 0 ${pct.toFixed(2)}% 0)`;
+          this.backMotion.style.transform = `translateY(${(-p * 16).toFixed(1)}px)`;
+
+          const curlCurve = Math.sin(p * Math.PI);
+          const lipOpacity = p <= 0.006 || p >= 0.994 ? 0 : Math.min(1, curlCurve * 2.4);
+          const lipHeightPct = 4 + curlCurve * 13.5;
+          this.curlLip.style.bottom = `${pct.toFixed(2)}%`;
+          this.curlLip.style.height = `${lipHeightPct.toFixed(2)}%`;
+          this.curlLip.style.opacity = lipOpacity.toFixed(3);
+
+          this.castShadow.style.top = `${(100 - pct).toFixed(2)}%`;
+          this.castShadow.style.opacity = (curlCurve * 0.92).toFixed(3);
+
+          if (state.suspenseMode) {
+            if (p < 0.68) this.cornerMask.style.opacity = '1';
+            else if (p <= 0.78) this.cornerMask.style.opacity = String(1 - (p - 0.68) / 0.10);
+            else this.cornerMask.style.opacity = '0';
+          } else {
+            this.cornerMask.style.opacity = '0';
+          }
+
+          const roundPct = Math.round(pct);
+          if (roundPct <= 1) {
+            this.pctBadge.textContent = 'ปิดอยู่';
+            this.pctBadge.style.color = 'rgba(203, 213, 225, 0.75)';
+          } else if (roundPct >= 98) {
+            this.pctBadge.textContent = 'เปิดแล้ว (ลากลงเพื่อปิด)';
+            this.pctBadge.style.color = '#6ee7b7';
+          } else {
+            this.pctBadge.textContent = `กำลังลุ้น ${roundPct}%`;
+            this.pctBadge.style.color = '#fde047';
+          }
+        }
+
+        refreshSuspenseMask() {
+          this.applyVisuals();
+        }
+
+        destroy() {
+          this.destroyed = true;
+          activePeekWidgets.delete(this);
+        }
+      }
+
+      /* ===================================================================
+         7. DOM HELPERS, TABLE MINI CARDS & DEAL ANIMATION
+      =================================================================== */
+      const $ = (id) => document.getElementById(id);
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      function showToast(msg, tone = 'gold') {
+        const box = $('toast-box');
+        const el = document.createElement('div');
+        const styles = {
+          gold: 'bg-amber-950/95 border-amber-400/75 text-yellow-200',
+          red: 'bg-red-950/95 border-red-400/75 text-red-200',
+          emerald: 'bg-emerald-950/95 border-emerald-400/75 text-emerald-200'
+        };
+        el.className = `px-4 py-2 rounded-2xl border shadow-xl text-xs sm:text-sm font-display font-semibold backdrop-blur-md transition-all duration-300 opacity-0 -translate-y-2 text-center ${styles[tone] || styles.gold}`;
+        el.textContent = msg;
+        box.appendChild(el);
+        requestAnimationFrame(() => el.classList.remove('opacity-0', '-translate-y-2'));
+        setTimeout(() => {
+          el.classList.add('opacity-0', '-translate-y-2');
+          setTimeout(() => el.remove(), 320);
+        }, 2400);
+      }
+
+      function createMiniTableCard(card, faceUp = false) {
+        const scene = document.createElement('div');
+        scene.className = 'mini-card-scene';
+
+        const c3d = document.createElement('div');
+        c3d.className = `mini-card-3d${faceUp ? ' is-flipped' : ''}`;
+
+        const back = document.createElement('div');
+        back.className = 'mini-card-face';
+        back.innerHTML = `
+          <div class="luxury-card-back">
+            <div class="luxury-back-inner">
+              <div class="luxury-back-medallion text-[11px]">♠</div>
+            </div>
+          </div>
+        `;
+
+        const front = document.createElement('div');
+        front.className = 'mini-card-face mini-card-front';
+        front.innerHTML = buildCardFaceSVG(card);
+
+        c3d.append(back, front);
+        scene.appendChild(c3d);
+        return scene;
+      }
+
+      async function animateDealFlight(targetEl) {
+        const deckRect = $('deck-anchor').getBoundingClientRect();
+        const targetRect = targetEl.getBoundingClientRect();
+
+        const flyer = document.createElement('div');
+        flyer.className = 'flying-card';
+        flyer.innerHTML = `
+          <div class="luxury-card-back">
+            <div class="luxury-back-inner">
+              <div class="luxury-back-medallion text-[10px]">♠</div>
+            </div>
+          </div>
+        `;
+        flyer.style.left = `${deckRect.left}px`;
+        flyer.style.top = `${deckRect.top}px`;
+        document.body.appendChild(flyer);
+
+        const dx = (targetRect.left + targetRect.width / 2 - deckRect.width / 2) - deckRect.left;
+        const dy = (targetRect.top + targetRect.height / 2 - deckRect.height / 2) - deckRect.top;
+
+        sound.playCardDeal();
+
+        const anim = flyer.animate([
+          { transform: 'translate(0px, 0px) scale(0.84) rotate(0deg)', opacity: 0.95 },
+          { transform: `translate(${dx * 0.52}px, ${dy * 0.52 - 34}px) scale(1.06) rotate(${dx >= 0 ? 12 : -12}deg)`, opacity: 1, offset: 0.55 },
+          { transform: `translate(${dx}px, ${dy}px) scale(1) rotate(0deg)`, opacity: 1 }
+        ], {
+          duration: 330,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'forwards'
+        });
+
+        await anim.finished;
+        flyer.remove();
+      }
+
+      function syncTableUI() {
+        $('hud-round').textContent = `รอบที่ ${Math.max(1, state.round)}`;
+        $('deck-count').textContent = `${state.deck.length} ใบ`;
+        state.players.forEach((p, idx) => {
+          $('name-' + idx).textContent = p.name;
+          $('sub-' + idx).textContent = p.isAI ? '🤖 บอท AI' : '👤 คนเล่นจริง';
+        });
+      }
+
+      function renderSeatHand(playerIdx, faceUp = false) {
+        const container = $('hand-' + playerIdx);
+        container.innerHTML = '';
+        state.players[playerIdx].hand.forEach((card) => {
+          container.appendChild(createMiniTableCard(card, faceUp));
+        });
+      }
+
+      function setSeatHighlight(idx, mode = 'none') {
+        const el = $('seat-' + idx);
+        el.classList.remove('seat-active', 'seat-winner', 'seat-loser');
+        if (mode === 'active') el.classList.add('seat-active');
+        if (mode === 'winner') el.classList.add('seat-winner');
+        if (mode === 'loser') el.classList.add('seat-loser');
+      }
+
+      function setSeatBadge(idx, text, styleClass = 'bg-black/55 text-slate-300 border-white/10') {
+        const b = $('badge-' + idx);
+        b.textContent = text;
+        b.className = `text-[10px] sm:text-xs font-display font-bold px-2 py-0.5 rounded-full border shrink-0 ${styleClass}`;
+      }
+
+      function setTableBanner(text) {
+        $('table-status-banner').textContent = text;
+      }
+
+      function triggerGoldFlash() {
+        const el = $('gold-flash');
+        el.classList.remove('active');
+        void el.offsetWidth;
+        el.classList.add('active');
+      }
+
+      /* ===================================================================
+         8. ROUND FLOW: SHUFFLE, DEAL, HUMAN TURN & AI TURN
+      =================================================================== */
+      async function startNewRound() {
+        if (state.isAnimating) return;
+        state.isAnimating = true;
+        state.round += 1;
+        state.phase = 'dealing';
+        state.currentLosers = [];
+        state.deck = createShuffledDeck();
+        $('center-actions').innerHTML = '';
+
+        state.players.forEach((p, idx) => {
+          p.hand = [];
+          p.eval = null;
+          p.stood = false;
+          setSeatHighlight(idx, 'none');
+          setSeatBadge(idx, 'รอไพ่');
+          $('hand-' + idx).innerHTML = '';
+          $('result-' + idx).textContent = '';
+        });
+
+        syncTableUI();
+        setTableBanner(`รอบที่ ${state.round} — กำลังสับไพ่...`);
+
+        const deckEl = $('deck-anchor');
+        deckEl.classList.add('shuffling');
+        sound.playShuffle();
+        await sleep(620);
+        deckEl.classList.remove('shuffling');
+
+        // Prepare each player's 2-card opening hand from the single 52-card deck
+        const plannedHands = [[], [], []];
+        state.players.forEach((p, idx) => {
+          if (checkSeatProfile(p.name)) {
+            plannedHands[idx] = selectDeckIndices(state.deck, p);
+          }
+        });
+        state.players.forEach((p, idx) => {
+          if (plannedHands[idx].length === 0) {
+            plannedHands[idx] = [state.deck.pop(), state.deck.pop()];
+          }
+        });
+
+        let visualDeckCount = 52;
+        $('deck-count').textContent = `${visualDeckCount} ใบ`;
+        setTableBanner('กำลังแจกไพ่คนละ 2 ใบ...');
+
+        for (let c = 0; c < 2; c++) {
+          for (let pIdx = 0; pIdx < 3; pIdx++) {
+            const card = plannedHands[pIdx][c];
+            visualDeckCount -= 1;
+            $('deck-count').textContent = `${visualDeckCount} ใบ`;
+            await animateDealFlight($('hand-' + pIdx));
+            state.players[pIdx].hand.push(card);
+            renderSeatHand(pIdx, false);
+            await sleep(70);
+          }
+        }
+
+        state.players.forEach((_, idx) => {
+          setSeatBadge(idx, 'ไพ่ 2 ใบ', 'bg-emerald-950/85 text-emerald-300 border-emerald-400/35');
+        });
+
+        state.isAnimating = false;
+        state.phase = 'turn';
+        state.activePlayerIdx = 0;
+        await sleep(200);
+        beginPlayerTurn(0);
+      }
+
+      async function beginPlayerTurn(idx) {
+        state.activePlayerIdx = idx;
+        state.players.forEach((_, i) => setSeatHighlight(i, i === idx ? 'active' : 'none'));
+        const player = state.players[idx];
+        setTableBanner(`ตาของ ${player.name}`);
+        setSeatBadge(idx, 'กำลังเล่น...', 'bg-amber-500/25 text-yellow-300 border-amber-400/60');
+
+        if (player.isAI) {
+          await runAITurn(idx);
+        } else {
+          $('privacy-player-name').textContent = `ตาของ ${player.name}`;
+          $('privacy-instruction').textContent = `ส่งเครื่องให้ ${player.name} แล้วกดเพื่อดูไพ่`;
+          $('privacy-modal').classList.remove('hidden');
+          $('privacy-modal').classList.add('flex');
+        }
+      }
+
+      async function runAITurn(idx) {
+        state.isAnimating = true;
+        const player = state.players[idx];
+        setTableBanner(`🤖 ${player.name} กำลังแง้มดูไพ่...`);
+        await sleep(780);
+
+        const eval2 = evaluateHand(player.hand);
+        let shouldDraw = false;
+        if (eval2.isPok) {
+          shouldDraw = false;
+        } else if (eval2.points <= 3) {
+          shouldDraw = true;
+        } else if (eval2.points === 4) {
+          shouldDraw = eval2.deng === 2 ? Math.random() < 0.45 : true;
+        } else if (eval2.points === 5) {
+          shouldDraw = eval2.deng === 1 ? Math.random() < 0.25 : false;
+        }
+
+        if (shouldDraw) {
+          setTableBanner(`🤖 ${player.name} จั่วไพ่ใบที่ 3!`);
+          await sleep(420);
+          const card3 = drawBalancedCard(state.deck, player, player.hand);
+          $('deck-count').textContent = `${state.deck.length} ใบ`;
+          await animateDealFlight($('hand-' + idx));
+          player.hand.push(card3);
+          renderSeatHand(idx, false);
+          setSeatBadge(idx, 'จั่วแล้ว (3 ใบ)', 'bg-sky-900/75 text-sky-200 border-sky-400/45');
+          await sleep(480);
+        } else {
+          setTableBanner(`🤖 ${player.name} เลือก "อยู่" (2 ใบ)`);
+          setSeatBadge(idx, 'อยู่แล้ว (2 ใบ)', 'bg-emerald-900/75 text-emerald-200 border-emerald-400/45');
+          await sleep(560);
+        }
+
+        player.eval = evaluateHand(player.hand);
+        if (player.eval.isPok) player.poks += 1;
+        player.stood = true;
+        state.isAnimating = false;
+        advanceTurn();
+      }
+
+      /* ===================================================================
+         9. HUMAN INTERACTIVE TURN STAGE (MANUAL SLIDE-UP / SLIDE-DOWN)
+      =================================================================== */
+      function cleanupTurnWidgets() {
+        turnState.cardControllers.forEach(w => w.destroy());
+        turnState.cardControllers = [];
+        closeFocusSqueeze();
+      }
+
+      function openHumanTurnStage() {
+        sound.playChipClick();
+        $('privacy-modal').classList.add('hidden');
+        $('privacy-modal').classList.remove('flex');
+
+        cleanupTurnWidgets();
+        const player = state.players[state.activePlayerIdx];
+        turnState.hasRevealedCurrentHand = false;
+        turnState.pokCelebrated = false;
+        turnState.isPokLocked = false;
+
+        $('turn-player-name').textContent = player.name;
+        $('turn-pok-banner').classList.add('hidden');
+        $('turn-pok-banner').classList.remove('pok-pop');
+        syncSuspenseToggleUI();
+
+        rebuildTurnCardsStage({ newCardSpotlightIdx: -1 });
+        $('turn-controls').dataset.mode = '';
+        updateTurnScoreAndControls();
+
+        $('turn-modal').classList.remove('hidden');
+        $('turn-modal').classList.add('flex');
+      }
+
+      function rebuildTurnCardsStage({ preserveProgress = false, newCardSpotlightIdx = -1 } = {}) {
+        const prevProgresses = preserveProgress ? turnState.cardControllers.map(w => w.progress) : [];
+        turnState.cardControllers.forEach(w => w.destroy());
+        turnState.cardControllers = [];
+
+        const stage = $('turn-cards-stage');
+        stage.innerHTML = '';
+
+        const player = state.players[state.activePlayerIdx];
+        const sizeClass = player.hand.length === 2 ? 'size-two' : '';
+
+        player.hand.forEach((card, idx) => {
+          const initialProgress = prevProgresses[idx] ?? 0;
+          const widget = new PeekCardWidget(card, {
+            sizeClass,
+            showZoom: true,
+            spotlight: idx === newCardSpotlightIdx,
+            initialProgress,
+            hintText: idx === 2 ? '▲ ใบที่ 3! ลากขึ้นลุ้น / ลงปิด' : '▲ กดค้างเลื่อนขึ้นลุ้น / ลงปิด',
+            onProgressChange: () => updateTurnScoreAndControls(),
+            onZoomClick: () => openFocusSqueeze(idx)
+          });
+
+          turnState.cardControllers.push(widget);
+          stage.appendChild(widget.el);
+        });
+      }
+
+      function updateTurnScoreAndControls() {
+        const player = state.players[state.activePlayerIdx];
+        const controllers = turnState.cardControllers;
+        const allOpenNow = controllers.length > 0 && controllers.every(w => w.progress > 0.85);
+        const banner = $('turn-pok-banner');
+        const scoreMain = $('turn-score-main');
+        const scoreSub = $('turn-score-sub');
+        const controls = $('turn-controls');
+
+        const evalNow = evaluateHand(player.hand);
+
+        // Dynamic HUD score masking: hides immediately if any card is slid back down <= 85%
+        if (!allOpenNow) {
+          scoreMain.textContent = '? แต้ม';
+          scoreSub.textContent = 'เลื่อนเปิดไพ่ให้ครบทุกใบเพื่อดูแต้ม (ลากลงเพื่อซ่อนได้)';
+          banner.classList.add('hidden');
+          banner.classList.remove('pok-pop');
+        } else {
+          turnState.hasRevealedCurrentHand = true;
+          player.eval = evalNow;
+          if (evalNow.isPok) turnState.isPokLocked = true;
+
+          scoreMain.textContent = evalNow.title;
+          scoreSub.textContent = evalNow.detail;
+
+          if (evalNow.isPok || evalNow.tier >= 4) {
+            banner.textContent = `✨ ${evalNow.title} ✨`;
+            if (banner.classList.contains('hidden')) {
+              banner.classList.remove('hidden');
+              banner.classList.add('pok-pop');
+            }
+            if (!turnState.pokCelebrated) {
+              turnState.pokCelebrated = true;
+              triggerGoldFlash();
+              sound.playPokFanfare();
+              vfx.burstGold(window.innerWidth / 2, window.innerHeight * 0.36, 105);
+            }
+          }
+        }
+
+        const modeKey = !turnState.hasRevealedCurrentHand
+          ? 'need-peek'
+          : turnState.isPokLocked
+            ? 'pok-done'
+            : player.hand.length === 3
+              ? 'three-done'
+              : 'choose-2';
+
+        if (controls.dataset.mode === modeKey) return;
+        controls.dataset.mode = modeKey;
+
+        if (modeKey === 'need-peek') {
+          controls.innerHTML = `
+            <div class="text-center text-xs text-amber-200/85 py-1.5 px-3 rounded-xl bg-black/40 border border-vipgold-400/25">
+              ค่อยๆ กดเลื่อนไพ่ขึ้นให้ครบทุกใบก่อนตัดสินใจนะครับ
+            </div>
+          `;
+        } else if (modeKey === 'pok-done') {
+          controls.innerHTML = `
+            <button id="btn-turn-stand" class="btn-casino btn-gold w-full py-3.5 text-base">
+              <span>🔥</span>
+              <span>ป๊อกแล้ว! ปิดไพ่และจบตา</span>
+            </button>
+          `;
+          $('btn-turn-stand').onclick = finishHumanTurn;
+        } else if (modeKey === 'three-done') {
+          controls.innerHTML = `
+            <button id="btn-turn-stand" class="btn-casino btn-emerald w-full py-3.5 text-base">
+              <span>✅</span>
+              <span>อยู่ / ปิดไพ่และจบตา</span>
+            </button>
+          `;
+          $('btn-turn-stand').onclick = finishHumanTurn;
+        } else {
+          controls.innerHTML = `
+            <div class="grid grid-cols-2 gap-2.5">
+              <button id="btn-turn-draw" class="btn-casino btn-gold py-3.5 text-sm sm:text-base">
+                <span>🃏</span>
+                <span>จั่วใบที่ 3</span>
+              </button>
+              <button id="btn-turn-stand" class="btn-casino btn-emerald py-3.5 text-sm sm:text-base">
+                <span>✋</span>
+                <span>อยู่ / จบตา</span>
+              </button>
+            </div>
+          `;
+          $('btn-turn-draw').onclick = handleHumanDrawThird;
+          $('btn-turn-stand').onclick = finishHumanTurn;
+        }
+      }
+
+      async function handleHumanDrawThird() {
+        if (state.isAnimating) return;
+        state.isAnimating = true;
+        sound.playCardDeal();
+
+        const player = state.players[state.activePlayerIdx];
+        const card3 = drawBalancedCard(state.deck, player, player.hand);
+        $('deck-count').textContent = `${state.deck.length} ใบ`;
+        player.hand.push(card3);
+
+        turnState.hasRevealedCurrentHand = false;
+        turnState.pokCelebrated = false;
+
+        renderSeatHand(state.activePlayerIdx, false);
+        rebuildTurnCardsStage({ preserveProgress: true, newCardSpotlightIdx: 2 });
+        $('turn-controls').dataset.mode = '';
+        updateTurnScoreAndControls();
+
+        const thirdEl = turnState.cardControllers[2]?.el;
+        if (thirdEl) {
+          thirdEl.animate([
+            { transform: 'translateY(-120px) scale(0.75) rotate(-8deg)', opacity: 0 },
+            { transform: 'translateY(0) scale(1) rotate(0deg)', opacity: 1 }
+          ], { duration: 380, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+        }
+
+        showToast('ได้ไพ่ใบที่ 3 แล้ว! กดเลื่อนขึ้นเพื่อลุ้น หรือกด 🔍 ขยายใหญ่', 'gold');
+        await sleep(350);
+        state.isAnimating = false;
+      }
+
+      async function finishHumanTurn() {
+        if (state.isAnimating) return;
+        state.isAnimating = true;
+        sound.playChipClick();
+
+        const anyOpen = turnState.cardControllers.some(w => w.progress > 0.04);
+        if (anyOpen) {
+          turnState.cardControllers.forEach((w, i) => {
+            setTimeout(() => w.slideTo(0, { silent: i > 0 }), i * 45);
+          });
+          await sleep(420);
+        }
+
+        const idx = state.activePlayerIdx;
+        const player = state.players[idx];
+        player.eval = evaluateHand(player.hand);
+        if (player.eval.isPok) player.poks += 1;
+        player.stood = true;
+
+        cleanupTurnWidgets();
+        $('turn-modal').classList.add('hidden');
+        $('turn-modal').classList.remove('flex');
+        renderSeatHand(idx, false);
+
+        const tag = player.hand.length === 3 ? 'จั่วแล้ว (3 ใบ)' : 'อยู่แล้ว (2 ใบ)';
+        setSeatBadge(idx, tag, 'bg-emerald-900/80 text-emerald-200 border-emerald-400/45');
+
+        state.isAnimating = false;
+        advanceTurn();
+      }
+
+      function advanceTurn() {
+        if (state.activePlayerIdx < 2) {
+          beginPlayerTurn(state.activePlayerIdx + 1);
+        } else {
+          startShowdown();
+        }
+      }
+
+      /* ===================================================================
+         9B. BIG SQUEEZE FOCUS MODAL (ZOOM SINGLE CARD HUGE)
+      =================================================================== */
+      function openFocusSqueeze(cardIdx) {
+        const sourceWidget = turnState.cardControllers[cardIdx];
+        if (!sourceWidget) return;
+
+        closeFocusSqueeze();
+        turnState.focusedCardIdx = cardIdx;
+
+        $('squeeze-card-title').textContent = `ไพ่ใบที่ ${cardIdx + 1} — ค่อยๆ ลากขึ้นเพื่อลุ้น!`;
+        const mount = $('squeeze-card-mount');
+        mount.innerHTML = '';
+
+        const focusWidget = new PeekCardWidget(sourceWidget.card, {
+          sizeClass: 'size-focus',
+          showZoom: false,
+          initialProgress: sourceWidget.progress,
+          hintText: '▲ เลื่อนขึ้นช้าๆ เพื่อรีดขอบ / เลื่อนลงเพื่อปิด',
+          onProgressChange: (p) => {
+            sourceWidget.progress = p;
+            sourceWidget.targetProgress = p;
+            sourceWidget.interacted = true;
+            sourceWidget.el.classList.add('has-interacted');
+            sourceWidget.snappedOpen = p >= 0.99;
+            sourceWidget.applyVisuals();
+            updateTurnScoreAndControls();
+          }
+        });
+
+        turnState.focusWidget = focusWidget;
+        mount.appendChild(focusWidget.el);
+
+        $('squeeze-modal').classList.remove('hidden');
+        $('squeeze-modal').classList.add('flex');
+      }
+
+      function closeFocusSqueeze() {
+        if (turnState.focusWidget) {
+          turnState.focusWidget.destroy();
+          turnState.focusWidget = null;
+        }
+        turnState.focusedCardIdx = -1;
+        $('squeeze-modal').classList.add('hidden');
+        $('squeeze-modal').classList.remove('flex');
+      }
+
+      function syncSuspenseToggleUI() {
+        const sw = $('switch-suspense');
+        const txt = $('suspense-state-txt');
+        if (state.suspenseMode) {
+          sw.classList.add('on');
+          txt.textContent = 'เปิด (ซ่อนมุมเลข)';
+          txt.className = 'text-[9px] text-emerald-300';
+        } else {
+          sw.classList.remove('on');
+          txt.textContent = 'ปิด (โชว์มุมเลข)';
+          txt.className = 'text-[9px] text-slate-400';
+        }
+        turnState.cardControllers.forEach(w => w.refreshSuspenseMask());
+        if (turnState.focusWidget) turnState.focusWidget.refreshSuspenseMask();
+      }
+
+      /* ===================================================================
+         10. SHOWDOWN & RANKING ENGINE
+      =================================================================== */
+      async function startShowdown() {
+        state.phase = 'showdown';
+        state.isAnimating = true;
+        state.players.forEach((_, i) => setSeatHighlight(i, 'none'));
+
+        setTableBanner('🥁 ครบ 3 คนแล้ว — เตรียมเปิดไพ่ชนกัน!!');
+        sound.playDrumroll(1.35);
+        await sleep(1450);
+
+        for (let i = 0; i < 3; i++) {
+          const p = state.players[i];
+          setSeatHighlight(i, 'active');
+          setTableBanner(`เปิดไพ่ของ ${p.name}!`);
+
+          const cards3d = $('hand-' + i).querySelectorAll('.mini-card-3d');
+          cards3d.forEach((c3d, cIdx) => {
+            setTimeout(() => {
+              c3d.classList.add('is-flipped');
+              if (cIdx === 0) sound.playCardSnap();
+            }, cIdx * 115);
+          });
+
+          await sleep(430);
+          $('result-' + i).textContent = p.eval.shortTitle;
+
+          if (p.eval.isPok || p.eval.tier >= 4) {
+            triggerGoldFlash();
+            sound.playPokFanfare();
+            const rect = $('seat-' + i).getBoundingClientRect();
+            vfx.burstGold(rect.left + rect.width / 2, rect.top + rect.height / 2, 75);
+          }
+          await sleep(520);
+        }
+
+        const sorted = [...state.players].sort((a, b) => compareHands(b.eval, a.eval));
+        const bestEval = sorted[0].eval;
+        const worstEval = sorted[2].eval;
+
+        const topPlayers = state.players.filter(p => compareHands(p.eval, bestEval) === 0);
+        const bottomPlayers = state.players.filter(p => compareHands(p.eval, worstEval) === 0);
+
+        state.players.forEach((_, i) => setSeatHighlight(i, 'none'));
+
+        if (bottomPlayers.length >= 2) {
+          state.phase = 'tie';
+          state.currentLosers = bottomPlayers.map(p => p.id);
+
+          if (bottomPlayers.length === 2) {
+            const winner = sorted[0];
+            setSeatHighlight(winner.id, 'winner');
+            setSeatBadge(winner.id, 'อันดับ 1 (ผู้ชนะ 🏆)', 'bg-amber-400 text-amber-950 border-yellow-200');
+          }
+
+          bottomPlayers.forEach(p => {
+            setSeatHighlight(p.id, 'loser');
+            setSeatBadge(p.id, '⚖️ เสมอท้ายตาราง!', 'bg-red-600/90 text-white border-red-300');
+          });
+
+          const names = bottomPlayers.map(p => p.name).join(' และ ');
+          setTableBanner(`🔥 เสมออันดับสุดท้าย: ${names}!`);
+          showToast('แต้มอันดับสุดท้ายเท่ากัน! เลือกดวลไพ่ 1 ใบ หรือลงโทษพร้อมกันเลย', 'gold');
+
+          $('center-actions').innerHTML = `
+            <button id="btn-start-duel" class="btn-casino btn-gold px-4 py-2.5 text-xs sm:text-sm">
+              <span>⚔️</span>
+              <span>ดวลไพ่ 1 ใบชี้ชะตา!</span>
+            </button>
+            <button id="btn-punish-all-tied" class="btn-casino btn-crimson px-4 py-2.5 text-xs sm:text-sm">
+              <span>💀</span>
+              <span>ลงโทษพร้อมกันเลย!</span>
+            </button>
+          `;
+
+          $('btn-start-duel').onclick = () => openSuddenDeathDuel(bottomPlayers);
+          $('btn-punish-all-tied').onclick = () => finalizeRoundOutcome(
+            bottomPlayers.length === 2 ? [sorted[0].id] : [],
+            bottomPlayers.map(p => p.id)
+          );
+
+          state.isAnimating = false;
+          return;
+        }
+
+        const loser = sorted[2];
+        const winners = topPlayers.map(p => p.id);
+
+        state.players.forEach(p => {
+          if (p.id === loser.id) return;
+          if (winners.includes(p.id)) {
+            setSeatHighlight(p.id, 'winner');
+            setSeatBadge(p.id, winners.length > 1 ? 'ผู้ชนะร่วม 🏆' : 'อันดับ 1 (ผู้ชนะ 🏆)', 'bg-amber-400 text-amber-950 border-yellow-200');
+          } else {
+            setSeatBadge(p.id, 'อันดับ 2 (รอดตัว 😮‍💨)', 'bg-emerald-600/85 text-white border-emerald-300');
+          }
+        });
+
+        finalizeRoundOutcome(winners, [loser.id]);
+        state.isAnimating = false;
+      }
+
+      function finalizeRoundOutcome(winnerIds, loserIds) {
+        state.phase = 'result';
+        state.currentLosers = loserIds;
+
+        winnerIds.forEach(id => {
+          state.players[id].wins += 1;
+          const rect = $('seat-' + id).getBoundingClientRect();
+          vfx.burstGold(rect.left + rect.width / 2, rect.top + rect.height / 2, 55);
+        });
+
+        loserIds.forEach(id => {
+          state.players[id].losses += 1;
+          setSeatHighlight(id, 'loser');
+          setSeatBadge(id, 'อันดับ 3 (แพ้โดนลงโทษ 💀)', 'bg-red-600 text-white border-red-300');
+        });
+
+        sound.playLoserHorn();
+        const shell = $('app-shell');
+        shell.classList.remove('shake-active');
+        void shell.offsetWidth;
+        shell.classList.add('shake-active');
+
+        const flash = $('danger-flash');
+        flash.classList.remove('active');
+        void flash.offsetWidth;
+        flash.classList.add('active');
+
+        loserIds.forEach(id => {
+          const rect = $('seat-' + id).getBoundingClientRect();
+          vfx.burstDanger(rect.left + rect.width / 2, rect.top + rect.height / 2, 46);
+        });
+
+        const loserNames = loserIds.map(id => state.players[id].name).join(' & ');
+        setTableBanner(`💀 แพ้โดนลงโทษ: ${loserNames}!`);
+
+        const actionsEl = $('center-actions');
+        if (state.punishEnabled && state.punishments.length > 0) {
+          actionsEl.innerHTML = `
+            <button id="btn-open-wheel" class="btn-casino btn-crimson px-4 py-2.5 text-xs sm:text-sm animate-bounce">
+              <span>🎡</span>
+              <span>หมุนวงล้อลงโทษ!</span>
+            </button>
+            <button id="btn-next-round" class="btn-casino btn-gold px-4 py-2.5 text-xs sm:text-sm">
+              <span>🔄</span>
+              <span>ลงโทษแล้ว → รอบใหม่</span>
+            </button>
+          `;
+          $('btn-open-wheel').onclick = () => openPunishmentWheel(loserNames);
+          $('btn-next-round').onclick = () => { sound.playChipClick(); startNewRound(); };
+        } else {
+          actionsEl.innerHTML = `
+            <button id="btn-next-round" class="btn-casino btn-gold px-5 py-2.5 text-sm">
+              <span>🔄</span>
+              <span>ลงโทษเรียบร้อย → เริ่มรอบใหม่</span>
+            </button>
+          `;
+          $('btn-next-round').onclick = () => { sound.playChipClick(); startNewRound(); };
+        }
+      }
+
+      /* ===================================================================
+         11. SUDDEN DEATH 1-CARD DUEL (WITH 1:1 SLIDE-UP PEEK!)
+      =================================================================== */
+      let duelWidgets = [];
+
+      function openSuddenDeathDuel(tiedPlayers) {
+        sound.playChipClick();
+        duelWidgets.forEach(w => w.destroy());
+        duelWidgets = [];
+
+        const modal = $('duel-modal');
+        const row = $('duel-players-row');
+        const statusEl = $('duel-status');
+        const actionsEl = $('duel-actions');
+
+        row.innerHTML = '';
+        statusEl.textContent = 'แต่ละคนค่อยๆ เลื่อนไพ่ขึ้นเพื่อลุ้นชี้ชะตา!';
+
+        const duelCardsMap = new Map();
+        tiedPlayers.forEach(p => {
+          if (checkSeatProfile(p.name)) {
+            duelCardsMap.set(p.id, drawDuelBalancedCard(state.deck, p));
+          }
+        });
+        tiedPlayers.forEach(p => {
+          if (!duelCardsMap.has(p.id)) {
+            duelCardsMap.set(p.id, state.deck.pop());
+          }
+        });
+
+        const duelEntries = tiedPlayers.map(p => ({
+          player: p,
+          card: duelCardsMap.get(p.id),
+          widget: null
+        }));
+        $('deck-count').textContent = `${state.deck.length} ใบ`;
+
+        let resolved = false;
+
+        const checkDuelResolved = () => {
+          if (resolved) return;
+          const allOpened = duelEntries.every(e => e.widget && e.widget.progress > 0.85);
+          if (!allOpened) return;
+          resolved = true;
+
+          const ranked = [...duelEntries].sort((a, b) => {
+            if (a.card.tongVal !== b.card.tongVal) return a.card.tongVal - b.card.tongVal;
+            return a.card.suitPower - b.card.suitPower;
+          });
+
+          const realLoser = ranked[0].player;
+          const worstCard = ranked[0].card;
+          statusEl.innerHTML = `<span class="text-red-400">💀 ${realLoser.name} ได้ ${worstCard.rank}${worstCard.suitSymbol} เล็กที่สุด — แพ้โดนลงโทษ!</span>`;
+          sound.playLoserHorn();
+
+          const sortedAll = [...state.players].sort((a, b) => compareHands(b.eval, a.eval));
+          const winnerIds = tiedPlayers.length === 2
+            ? [sortedAll[0].id]
+            : [ranked[ranked.length - 1].player.id];
+
+          tiedPlayers.forEach(p => {
+            if (p.id !== realLoser.id) {
+              setSeatHighlight(p.id, winnerIds.includes(p.id) ? 'winner' : 'none');
+              setSeatBadge(p.id, winnerIds.includes(p.id) ? 'อันดับ 1 (ผู้ชนะ 🏆)' : 'อันดับ 2 (รอดหวุดหวิด 😮‍💨)', 'bg-emerald-600 text-white border-emerald-300');
+            }
+          });
+
+          actionsEl.innerHTML = `
+            <button id="btn-duel-continue" class="btn-casino btn-crimson px-6 py-3 text-base">
+              <span>💀</span>
+              <span>รับทราบ! ไปลงโทษ ${realLoser.name}</span>
+            </button>
+          `;
+          $('btn-duel-continue').onclick = () => {
+            duelWidgets.forEach(w => w.destroy());
+            duelWidgets = [];
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            finalizeRoundOutcome(winnerIds, [realLoser.id]);
+          };
+        };
+
+        duelEntries.forEach((entry) => {
+          const col = document.createElement('div');
+          col.className = 'flex flex-col items-center gap-2';
+          col.innerHTML = `<div class="font-display font-bold text-sm sm:text-base text-yellow-200">${entry.player.name}</div>`;
+
+          const widget = new PeekCardWidget(entry.card, {
+            sizeClass: 'size-duel',
+            showZoom: false,
+            hintText: '▲ ลากขึ้นลุ้นดวล!',
+            onProgressChange: checkDuelResolved
+          });
+
+          entry.widget = widget;
+          duelWidgets.push(widget);
+          col.appendChild(widget.el);
+          row.appendChild(col);
+        });
+
+        actionsEl.innerHTML = `
+          <button id="btn-duel-open-all" class="btn-casino btn-gold px-5 py-2.5 text-sm">
+            <span>⚡</span>
+            <span>รูดเปิดพร้อมกันทั้งหมด</span>
+          </button>
+        `;
+        $('btn-duel-open-all').onclick = () => {
+          duelWidgets.forEach((w, i) => {
+            setTimeout(() => w.slideTo(1), i * 160);
+          });
+        };
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      /* ===================================================================
+         12. PUNISHMENT ROULETTE WHEEL (WEIGHTED EASING + GLOWING PEGS)
+      =================================================================== */
+      const wheelState = { angle: 0, spinning: false };
+      const WHEEL_COLORS = ['#991b1b', '#065f46', '#92400e', '#5b21b6', '#9f1239', '#0f766e', '#1e40af', '#854d0e'];
+
+      function drawPunishmentWheel(angleRad) {
+        const canvas = $('wheel-canvas');
+        const ctx = canvas.getContext('2d');
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const r = cx - 12;
+        const items = state.punishments.length > 0 ? state.punishments : ['พักดื่มน้ำ 1 แก้ว'];
+        const slice = (Math.PI * 2) / items.length;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 9, 0, Math.PI * 2);
+        const rimGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        rimGrad.addColorStop(0, '#fef08a');
+        rimGrad.addColorStop(0.45, '#d4af37');
+        rimGrad.addColorStop(0.75, '#854d0e');
+        rimGrad.addColorStop(1, '#fef08a');
+        ctx.fillStyle = rimGrad;
+        ctx.fill();
+
+        items.forEach((label, i) => {
+          const start = angleRad + i * slice;
+          const end = start + slice;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, r, start, end);
+          ctx.closePath();
+          ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = 'rgba(254, 240, 138, 0.72)';
+          ctx.stroke();
+
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(start + slice / 2);
+          ctx.textAlign = 'right';
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 13px Prompt, sans-serif';
+          const shortLbl = label.length > 16 ? label.slice(0, 15) + '…' : label;
+          ctx.fillText(shortLbl, r - 15, 5);
+          ctx.restore();
+        });
+
+        for (let i = 0; i < items.length; i++) {
+          const a = angleRad + i * slice;
+          ctx.save();
+          ctx.shadowColor = '#fde047';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(cx + Math.cos(a) * (r - 2), cy + Math.sin(a) * (r - 2), 4.2, 0, Math.PI * 2);
+          ctx.fillStyle = '#fef9c3';
+          ctx.fill();
+          ctx.restore();
+        }
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 26, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#fde047';
+        ctx.stroke();
+
+        ctx.fillStyle = '#fde047';
+        ctx.font = 'bold 17px Kanit, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('⚡', cx, cy + 1);
+      }
+
+      function openPunishmentWheel(loserName) {
+        sound.playChipClick();
+        $('wheel-loser-title').textContent = `บทลงโทษของ ${loserName}`;
+        $('wheel-result-text').textContent = 'กดปุ่ม "หมุนสุ่มเลย!" เพื่อลุ้นบทลงโทษ';
+        $('btn-spin-wheel').classList.remove('hidden');
+        $('btn-spin-wheel').disabled = false;
+        $('btn-finish-punish').classList.add('hidden');
+        drawPunishmentWheel(wheelState.angle);
+        $('wheel-modal').classList.remove('hidden');
+        $('wheel-modal').classList.add('flex');
+      }
+
+      function spinPunishmentWheel() {
+        if (wheelState.spinning) return;
+        wheelState.spinning = true;
+        $('btn-spin-wheel').disabled = true;
+        $('wheel-result-text').textContent = 'กำลังหมุน... ลุ้นระทึก!!';
+
+        const items = state.punishments.length > 0 ? state.punishments : ['พักดื่มน้ำ 1 แก้ว'];
+        const slice = (Math.PI * 2) / items.length;
+        const startAngle = wheelState.angle;
+        const targetAngle = startAngle + (5.5 + Math.random() * 3.5) * Math.PI * 2;
+        const duration = 4000;
+        const startTime = performance.now();
+        let lastSliceIdx = -1;
+        const pointerEl = $('wheel-pointer');
+
+        const step = (now) => {
+          const t = Math.min(1, (now - startTime) / duration);
+          const ease = 1 - Math.pow(1 - t, 4);
+          wheelState.angle = startAngle + (targetAngle - startAngle) * ease;
+          drawPunishmentWheel(wheelState.angle);
+
+          const pointerNorm = ((-Math.PI / 2 - wheelState.angle) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+          const currentIdx = Math.floor(pointerNorm / slice) % items.length;
+          if (currentIdx !== lastSliceIdx) {
+            lastSliceIdx = currentIdx;
+            sound.playWheelTick();
+            pointerEl.classList.remove('pointer-tick');
+            void pointerEl.offsetWidth;
+            pointerEl.classList.add('pointer-tick');
+          }
+
+          if (t < 1) {
+            requestAnimationFrame(step);
+          } else {
+            wheelState.spinning = false;
+            const chosen = items[currentIdx];
+            $('wheel-result-text').innerHTML = `<span class="text-red-300">🎯 โดนแล้ว:</span> <span class="text-yellow-300">${chosen}</span>`;
+            sound.playPunishmentReveal();
+            vfx.burstGold(window.innerWidth / 2, window.innerHeight * 0.44, 80);
+            $('btn-spin-wheel').classList.add('hidden');
+            $('btn-finish-punish').classList.remove('hidden');
+          }
+        };
+        requestAnimationFrame(step);
+      }
+
+      /* ===================================================================
+         13. SETUP, PUNISHMENT MANAGER & SCOREBOARD MODALS
+      =================================================================== */
+      function syncSetupModalUI() {
+        state.players.forEach((p, idx) => { $('input-name-' + idx).value = p.name; });
+        document.querySelectorAll('.ai-toggle-btn').forEach((btn) => {
+          const pIdx = Number(btn.dataset.p);
+          const isAIBtn = btn.dataset.ai === 'true';
+          const active = state.players[pIdx].isAI === isAIBtn;
+          btn.className = `ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition ${
+            active ? 'bg-amber-400 text-amber-950 shadow' : 'text-slate-400 hover:text-white'
+          }`;
+        });
+
+        $('setup-sfx-toggle').checked = sound.sfxEnabled;
+        $('setup-bgm-toggle').checked = sound.bgmEnabled;
+
+        $('setup-punish-summary').textContent = state.punishEnabled
+          ? `เปิดใช้งาน (${state.punishments.length} รายการ)`
+          : 'ปิดวงล้อ (ใช้บทลงโทษนอกจอ)';
+
+        if (state.hasStartedOnce) {
+          $('btn-close-setup').classList.remove('hidden');
+          $('btn-close-setup').classList.add('flex');
+          $('btn-start-game').innerHTML = '<span>💾</span><span>บันทึกและเริ่มรอบใหม่</span>';
+        }
+      }
+
+      function renderPunishmentManager() {
+        $('toggle-punish-enabled').checked = state.punishEnabled;
+        const container = $('punish-list-container');
+        container.innerHTML = '';
+
+        if (state.punishments.length === 0) {
+          container.innerHTML = '<div class="text-center text-xs text-slate-400 py-4">ยังไม่มีรายการบทลงโทษ เพิ่มด้านบนได้เลย</div>';
+          return;
+        }
+
+        state.punishments.forEach((text, idx) => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center gap-2 p-2 rounded-xl bg-white/5 border border-white/10';
+
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = text;
+          input.maxLength = 45;
+          input.className = 'flex-1 bg-transparent text-sm text-white focus:outline-none focus:text-amber-300 px-1';
+          input.addEventListener('change', () => {
+            const val = input.value.trim();
+            if (val) state.punishments[idx] = val;
+            else input.value = state.punishments[idx];
+            syncSetupModalUI();
+          });
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'w-7 h-7 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-300 text-xs flex items-center justify-center shrink-0';
+          delBtn.textContent = '✕';
+          delBtn.onclick = () => {
+            sound.playChipClick();
+            state.punishments.splice(idx, 1);
+            renderPunishmentManager();
+            syncSetupModalUI();
+          };
+
+          row.append(input, delBtn);
+          container.appendChild(row);
+        });
+      }
+
+      function renderLeaderboard() {
+        const body = $('leaderboard-body');
+        body.innerHTML = '';
+        const sorted = [...state.players].sort((a, b) => (b.wins - a.wins) || (a.losses - b.losses));
+
+        sorted.forEach((p, rank) => {
+          const card = document.createElement('div');
+          card.className = 'flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-vipgold-400/25';
+          const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : '🥉';
+          card.innerHTML = `
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-xl">${medal}</span>
+              <div class="min-w-0">
+                <div class="font-display font-bold text-sm sm:text-base text-white truncate">${p.name}</div>
+                <div class="text-[11px] text-slate-400">${p.isAI ? '🤖 บอท AI' : '👤 คนเล่นจริง'}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <div class="text-center px-2 py-1 rounded-xl bg-amber-500/15 border border-amber-400/30 min-w-[48px]">
+                <div class="text-[9px] text-amber-200">ชนะ</div>
+                <div class="font-display font-extrabold text-sm sm:text-base text-yellow-300 leading-tight">${p.wins}</div>
+              </div>
+              <div class="text-center px-2 py-1 rounded-xl bg-emerald-500/15 border border-emerald-400/30 min-w-[48px]">
+                <div class="text-[9px] text-emerald-200">ป๊อก</div>
+                <div class="font-display font-extrabold text-sm sm:text-base text-emerald-300 leading-tight">${p.poks}</div>
+              </div>
+              <div class="text-center px-2 py-1 rounded-xl bg-red-500/15 border border-red-400/30 min-w-[48px]">
+                <div class="text-[9px] text-red-200">ลงโทษ</div>
+                <div class="font-display font-extrabold text-sm sm:text-base text-red-400 leading-tight">${p.losses}</div>
+              </div>
+            </div>
+          `;
+          body.appendChild(card);
+        });
+
+        $('lb-total-rounds').textContent = `เล่นไปแล้ว ${state.round} รอบ`;
+      }
+
+      /* ===================================================================
+         14. EVENT BINDINGS & BOOTSTRAP
+      =================================================================== */
+      function syncAudioButtons() {
+        $('btn-toggle-sound').textContent = sound.sfxEnabled ? '🔊' : '🔇';
+        $('btn-toggle-bgm').textContent = sound.bgmEnabled ? '🎵' : '🔕';
+      }
+
+      function bindEvents() {
+        $('btn-toggle-sound').onclick = () => {
+          sound.setSfxEnabled(!sound.sfxEnabled);
+          syncAudioButtons();
+          if (sound.sfxEnabled) sound.playChipClick();
+          showToast(sound.sfxEnabled ? 'เปิดเสียงแล้ว' : 'ปิดเสียงทั้งหมดแล้ว', 'gold');
+        };
+
+        $('btn-toggle-bgm').onclick = () => {
+          sound.setBgmEnabled(!sound.bgmEnabled);
+          syncAudioButtons();
+          sound.playChipClick();
+          showToast(sound.bgmEnabled ? 'เปิดเสียงบรรยากาศคาสิโนแล้ว' : 'ปิดเสียงบรรยากาศแล้ว', 'gold');
+        };
+
+        $('setup-sfx-toggle').onchange = (e) => {
+          sound.setSfxEnabled(e.target.checked);
+          syncAudioButtons();
+        };
+        $('setup-bgm-toggle').onchange = (e) => {
+          sound.setBgmEnabled(e.target.checked);
+          syncAudioButtons();
+        };
+
+        $('btn-toggle-suspense').onclick = () => {
+          sound.playChipClick();
+          state.suspenseMode = !state.suspenseMode;
+          syncSuspenseToggleUI();
+          showToast(state.suspenseMode ? 'เปิดโหมดลุ้นขอบ (ซ่อนมุมเลขจนกว่าจะเปิดเกิน 72%)' : 'ปิดโหมดลุ้นขอบ (แสดงมุมเลขทันที)', 'gold');
+        };
+
+        $('btn-slide-open-all').onclick = () => {
+          turnState.cardControllers.forEach((w, i) => {
+            setTimeout(() => w.slideTo(1), i * 85);
+          });
+        };
+        $('btn-slide-close-all').onclick = () => {
+          turnState.cardControllers.forEach((w, i) => {
+            setTimeout(() => w.slideTo(0, { silent: i > 0 }), i * 55);
+          });
+        };
+
+        $('btn-close-squeeze').onclick = () => {
+          sound.playChipClick();
+          closeFocusSqueeze();
+        };
+        $('btn-squeeze-open-card').onclick = () => {
+          if (turnState.focusWidget) turnState.focusWidget.slideTo(1);
+        };
+        $('btn-squeeze-close-card').onclick = () => {
+          if (turnState.focusWidget) turnState.focusWidget.slideTo(0);
+        };
+
+        document.querySelectorAll('.ai-toggle-btn').forEach((btn) => {
+          btn.onclick = () => {
+            sound.playChipClick();
+            const pIdx = Number(btn.dataset.p);
+            state.players[pIdx].isAI = btn.dataset.ai === 'true';
+            syncSetupModalUI();
+          };
+        });
+
+        $('btn-start-game').onclick = () => {
+          sound.ensureContext();
+          sound.playChipClick();
+          for (let i = 0; i < 3; i++) {
+            const val = $('input-name-' + i).value.trim();
+            state.players[i].name = val || `ผู้เล่น ${i + 1}`;
+          }
+          state.hasStartedOnce = true;
+          $('setup-modal').classList.add('hidden');
+          $('setup-modal').classList.remove('flex');
+          syncTableUI();
+          startNewRound();
+        };
+
+        $('btn-open-setup').onclick = () => {
+          sound.playChipClick();
+          syncSetupModalUI();
+          $('setup-modal').classList.remove('hidden');
+          $('setup-modal').classList.add('flex');
+        };
+        $('btn-close-setup').onclick = () => {
+          sound.playChipClick();
+          $('setup-modal').classList.add('hidden');
+          $('setup-modal').classList.remove('flex');
+        };
+
+        $('btn-reveal-turn').onclick = openHumanTurnStage;
+
+        const openPunishMgr = () => {
+          sound.playChipClick();
+          renderPunishmentManager();
+          $('punish-manager-modal').classList.remove('hidden');
+          $('punish-manager-modal').classList.add('flex');
+        };
+        const closePunishMgr = () => {
+          sound.playChipClick();
+          $('punish-manager-modal').classList.add('hidden');
+          $('punish-manager-modal').classList.remove('flex');
+          syncSetupModalUI();
+        };
+
+        $('btn-open-punishments').onclick = openPunishMgr;
+        $('btn-setup-punishments').onclick = openPunishMgr;
+        $('btn-close-punish-mgr').onclick = closePunishMgr;
+        $('btn-done-punish-mgr').onclick = closePunishMgr;
+
+        $('toggle-punish-enabled').onchange = (e) => {
+          state.punishEnabled = e.target.checked;
+          syncSetupModalUI();
+        };
+
+        const addPunishment = () => {
+          const inp = $('input-new-punish');
+          const val = inp.value.trim();
+          if (!val) return;
+          sound.playChipClick();
+          state.punishments.push(val);
+          inp.value = '';
+          renderPunishmentManager();
+          syncSetupModalUI();
+        };
+        $('btn-add-punish').onclick = addPunishment;
+        $('input-new-punish').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') addPunishment();
+        });
+
+        $('btn-spin-wheel').onclick = spinPunishmentWheel;
+        $('btn-finish-punish').onclick = () => {
+          sound.playChipClick();
+          $('wheel-modal').classList.add('hidden');
+          $('wheel-modal').classList.remove('flex');
+          startNewRound();
+        };
+        $('btn-close-wheel').onclick = () => {
+          if (wheelState.spinning) return;
+          sound.playChipClick();
+          $('wheel-modal').classList.add('hidden');
+          $('wheel-modal').classList.remove('flex');
+        };
+
+        $('btn-open-leaderboard').onclick = () => {
+          sound.playChipClick();
+          renderLeaderboard();
+          $('leaderboard-modal').classList.remove('hidden');
+          $('leaderboard-modal').classList.add('flex');
+        };
+        $('btn-close-leaderboard').onclick = () => {
+          sound.playChipClick();
+          $('leaderboard-modal').classList.add('hidden');
+          $('leaderboard-modal').classList.remove('flex');
+        };
+        $('btn-reset-stats').onclick = () => {
+          sound.playChipClick();
+          state.players.forEach(p => { p.wins = 0; p.poks = 0; p.losses = 0; });
+          renderLeaderboard();
+          showToast('รีเซ็ตตารางสถิติเรียบร้อย', 'emerald');
+        };
+      }
+
+      window.onload = () => {
+        bindEvents();
+        syncAudioButtons();
+        syncSetupModalUI();
+        syncTableUI();
+      };
+    })();
+  </script>
 </body>
 </html>
