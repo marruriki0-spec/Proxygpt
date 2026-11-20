@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>ป๊อกเด้ง 3 คน (ไร้เจ้ามือ) — คาสิโน VIP</title>
+  <title>ป๊อกเด้งไร้เจ้ามือ (2–8+ คน) — คาสิโน VIP</title>
 
   <!-- Google Fonts: Kanit & Prompt for crisp Thai VIP Casino Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -49,6 +49,14 @@
       --peek-card-h: calc(var(--peek-card-w) * 1.4);
       --peek-card-2-w: clamp(124px, 37.5vw, 178px);
       --peek-card-2-h: calc(var(--peek-card-2-w) * 1.4);
+    }
+
+    /* Dynamic Card Sizing for Multi-Player Tables */
+    .table-felt.density-medium {
+      --table-card-w: clamp(38px, 9.8vw, 62px);
+    }
+    .table-felt.density-compact {
+      --table-card-w: clamp(32px, 8.2vw, 52px);
     }
 
     * {
@@ -207,7 +215,7 @@
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-      border-radius: 8px;
+      border-radius: 7px;
     }
 
     .mini-card-3d.is-flipped {
@@ -220,7 +228,7 @@
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: inherit;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.35);
       overflow: hidden;
     }
 
@@ -234,24 +242,24 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(155deg, #8c161e 0%, #5e0c14 54%, #350509 100%);
-      border: 2.5px solid #f7f3e8;
+      border: 2px solid #f7f3e8;
       border-radius: inherit;
-      padding: 4px;
+      padding: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .luxury-back-inner {
       width: 100%;
       height: 100%;
-      border-radius: 5px;
-      border: 1.5px solid rgba(212, 175, 55, 0.82);
+      border-radius: 4px;
+      border: 1.2px solid rgba(212, 175, 55, 0.82);
       background-color: #6d0e16;
       background-image:
-        repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.24) 0, rgba(212, 175, 55, 0.24) 1px, transparent 1px, transparent 8px),
-        repeating-linear-gradient(-45deg, rgba(212, 175, 55, 0.24) 0, rgba(212, 175, 55, 0.24) 1px, transparent 1px, transparent 8px);
+        repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.24) 0, rgba(212, 175, 55, 0.24) 1px, transparent 1px, transparent 7px),
+        repeating-linear-gradient(-45deg, rgba(212, 175, 55, 0.24) 0, rgba(212, 175, 55, 0.24) 1px, transparent 1px, transparent 7px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -262,7 +270,7 @@
     .luxury-back-inner::after {
       content: "";
       position: absolute;
-      inset: 4px;
+      inset: 3px;
       border: 1px solid rgba(254, 240, 138, 0.32);
       border-radius: 3px;
       pointer-events: none;
@@ -281,7 +289,7 @@
       color: #fde047;
       font-family: 'Kanit', sans-serif;
       font-weight: 800;
-      box-shadow: 0 0 14px rgba(212, 175, 55, 0.35), inset 0 0 8px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.35), inset 0 0 6px rgba(0, 0, 0, 0.6);
     }
 
     /* =====================================================================
@@ -308,8 +316,8 @@
     }
 
     .peek-card-root.size-duel {
-      width: clamp(106px, 31vw, 165px);
-      height: calc(clamp(106px, 31vw, 165px) * 1.4);
+      width: clamp(92px, 26vw, 145px);
+      height: calc(clamp(92px, 26vw, 145px) * 1.4);
     }
 
     .peek-card-root.is-dragging {
@@ -565,16 +573,22 @@
     ===================================================================== */
     .deck-stack {
       position: relative;
-      width: clamp(46px, 10.5vw, 66px);
-      height: calc(clamp(46px, 10.5vw, 66px) * 1.4);
+      width: clamp(40px, 9.5vw, 60px);
+      height: calc(clamp(40px, 9.5vw, 60px) * 1.4);
+      flex-shrink: 0;
+    }
+
+    .deck-stack.deck-mini {
+      width: clamp(30px, 7vw, 44px);
+      height: calc(clamp(30px, 7vw, 44px) * 1.4);
     }
 
     .deck-layer {
       position: absolute;
       inset: 0;
-      border-radius: 8px;
+      border-radius: 7px;
       background: linear-gradient(145deg, #8c161e, #4a080f);
-      border: 2px solid #f7f3e8;
+      border: 1.8px solid #f7f3e8;
       box-shadow: 0 3px 6px rgba(0, 0, 0, 0.48);
     }
 
@@ -587,11 +601,11 @@
 
     @keyframes riffleLeft {
       0% { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(-22px, -4px) rotate(-9deg); }
+      100% { transform: translate(-20px, -4px) rotate(-9deg); }
     }
     @keyframes riffleRight {
       0% { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(22px, -4px) rotate(9deg); }
+      100% { transform: translate(20px, -4px) rotate(9deg); }
     }
 
     /* =====================================================================
@@ -735,7 +749,7 @@
       pointer-events: none;
       width: var(--table-card-w);
       height: var(--table-card-h);
-      border-radius: 8px;
+      border-radius: 7px;
       will-change: transform;
     }
 
@@ -780,7 +794,7 @@
       background: #1c1002;
     }
 
-    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.25); border-radius: 99px; }
     .custom-scroll::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.45); border-radius: 99px; }
   </style>
@@ -808,7 +822,7 @@
         </div>
         <div class="leading-tight truncate">
           <h1 class="font-display font-extrabold text-sm sm:text-base bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-100 bg-clip-text text-transparent truncate">
-            ป๊อกเด้ง 3 คน
+            ป๊อกเด้ง VIP <span id="hud-player-count" class="text-xs text-emerald-300 font-semibold">(3 คน)</span>
           </h1>
           <div class="text-[10px] sm:text-xs text-emerald-300/90 font-medium flex items-center gap-1.5">
             <span>ไร้เจ้ามือ</span>
@@ -850,89 +864,11 @@
           <!-- Center Watermark -->
           <div class="felt-watermark">
             <div class="font-display font-extrabold text-3xl sm:text-5xl tracking-wider text-yellow-200">ป๊อกเด้ง VIP</div>
-            <div class="font-display text-[10px] sm:text-sm tracking-[0.34em] text-amber-300 uppercase mt-0.5">3-PLAYER • NO DEALER</div>
+            <div id="felt-watermark-sub" class="font-display text-[10px] sm:text-sm tracking-[0.34em] text-amber-300 uppercase mt-0.5">3-PLAYER • NO DEALER</div>
           </div>
 
-          <!-- TOP ROW: PLAYER 2 & PLAYER 3 -->
-          <div class="relative z-10 grid grid-cols-2 gap-2 sm:gap-5 w-full max-w-4xl mx-auto pt-0.5 sm:pt-1">
-            <!-- Seat 1 (Player 2) -->
-            <div id="seat-1" class="rounded-2xl bg-slate-950/60 border border-vipgold-400/25 backdrop-blur-sm p-2 sm:p-3 flex flex-col items-center transition-all duration-300">
-              <div class="w-full flex items-center justify-between gap-1 mb-1.5">
-                <div class="flex items-center gap-1.5 min-w-0">
-                  <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-sky-400 to-blue-700 text-white text-xs font-bold flex items-center justify-center shrink-0 border border-white/30">2</span>
-                  <div class="min-w-0">
-                    <div id="name-1" class="font-display font-bold text-xs sm:text-sm text-white truncate">ผู้เล่น 2</div>
-                    <div id="sub-1" class="text-[10px] text-amber-200/75 leading-none">คนเล่นจริง</div>
-                  </div>
-                </div>
-                <span id="badge-1" class="text-[10px] sm:text-xs font-display font-bold px-2 py-0.5 rounded-full bg-black/55 text-slate-300 border border-white/10 shrink-0">รอแจก</span>
-              </div>
-              <div id="hand-1" class="flex items-center justify-center -space-x-3.5 sm:-space-x-2.5 min-h-[calc(var(--table-card-h)+6px)] py-0.5"></div>
-              <div id="result-1" class="mt-1 min-h-[20px] text-center text-[11px] sm:text-xs font-display font-bold text-amber-300"></div>
-            </div>
-
-            <!-- Seat 2 (Player 3) -->
-            <div id="seat-2" class="rounded-2xl bg-slate-950/60 border border-vipgold-400/25 backdrop-blur-sm p-2 sm:p-3 flex flex-col items-center transition-all duration-300">
-              <div class="w-full flex items-center justify-between gap-1 mb-1.5">
-                <div class="flex items-center gap-1.5 min-w-0">
-                  <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-fuchsia-400 to-purple-700 text-white text-xs font-bold flex items-center justify-center shrink-0 border border-white/30">3</span>
-                  <div class="min-w-0">
-                    <div id="name-2" class="font-display font-bold text-xs sm:text-sm text-white truncate">ผู้เล่น 3</div>
-                    <div id="sub-2" class="text-[10px] text-amber-200/75 leading-none">คนเล่นจริง</div>
-                  </div>
-                </div>
-                <span id="badge-2" class="text-[10px] sm:text-xs font-display font-bold px-2 py-0.5 rounded-full bg-black/55 text-slate-300 border border-white/10 shrink-0">รอแจก</span>
-              </div>
-              <div id="hand-2" class="flex items-center justify-center -space-x-3.5 sm:-space-x-2.5 min-h-[calc(var(--table-card-h)+6px)] py-0.5"></div>
-              <div id="result-2" class="mt-1 min-h-[20px] text-center text-[11px] sm:text-xs font-display font-bold text-amber-300"></div>
-            </div>
-          </div>
-
-          <!-- CENTER TABLE: STATUS, SHOE DECK & SHOWDOWN ACTIONS -->
-          <div class="relative z-10 flex flex-col items-center justify-center my-auto py-1">
-            <div id="table-status-banner" class="mb-2 px-4 py-1 rounded-full bg-black/65 border border-vipgold-400/45 text-amber-200 font-display font-semibold text-xs sm:text-sm tracking-wide shadow-lg backdrop-blur-sm text-center max-w-[92%]">
-              เตรียมพร้อมเปิดศึกป๊อกเด้ง 3 คน!
-            </div>
-
-            <div class="flex items-center gap-4">
-              <div id="deck-anchor" class="deck-stack" title="สำรับไพ่">
-                <div class="deck-layer" style="transform: translate(0px, 6px);"></div>
-                <div class="deck-layer" style="transform: translate(0px, 4px);"></div>
-                <div class="deck-layer" style="transform: translate(0px, 2px);"></div>
-                <div class="deck-layer overflow-hidden" style="transform: translate(0px, 0px);">
-                  <div class="luxury-card-back" style="border:none;">
-                    <div class="luxury-back-inner">
-                      <div class="luxury-back-medallion text-[11px]">♠</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="hidden sm:flex flex-col text-left bg-black/45 border border-vipgold-400/25 rounded-xl px-3 py-1.5 backdrop-blur-sm">
-                <span class="text-[10px] text-emerald-200/80 uppercase">ไพ่คงเหลือ</span>
-                <span id="deck-count" class="font-display font-bold text-lg text-amber-300 leading-tight">52 ใบ</span>
-              </div>
-            </div>
-
-            <div id="center-actions" class="mt-2.5 flex flex-wrap items-center justify-center gap-2 max-w-lg px-2"></div>
-          </div>
-
-          <!-- BOTTOM ROW: PLAYER 1 -->
-          <div class="relative z-10 w-full max-w-md mx-auto pb-0.5 sm:pb-1">
-            <div id="seat-0" class="rounded-2xl bg-slate-950/65 border border-vipgold-400/30 backdrop-blur-sm p-2 sm:p-3 flex flex-col items-center transition-all duration-300">
-              <div class="w-full flex items-center justify-between gap-2 mb-1.5">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-300 to-orange-600 text-amber-950 text-xs sm:text-sm font-extrabold flex items-center justify-center shrink-0 border border-amber-100/75">1</span>
-                  <div class="min-w-0">
-                    <div id="name-0" class="font-display font-bold text-xs sm:text-base text-white truncate">ผู้เล่น 1</div>
-                    <div id="sub-0" class="text-[10px] text-amber-200/75 leading-none">คนเล่นจริง</div>
-                  </div>
-                </div>
-                <span id="badge-0" class="text-[10px] sm:text-xs font-display font-bold px-2.5 py-0.5 rounded-full bg-black/55 text-slate-300 border border-white/10 shrink-0">รอแจก</span>
-              </div>
-              <div id="hand-0" class="flex items-center justify-center -space-x-2.5 sm:-space-x-1.5 min-h-[calc(var(--table-card-h)+6px)] py-0.5"></div>
-              <div id="result-0" class="mt-1 min-h-[20px] text-center text-xs sm:text-sm font-display font-bold text-amber-300"></div>
-            </div>
-          </div>
+          <!-- DYNAMIC SEATS & CENTER CONTROLS MOUNT -->
+          <div id="table-dynamic-root" class="relative z-10 flex-1 min-h-0 flex flex-col justify-between gap-2"></div>
         </div>
       </div>
     </main>
@@ -945,6 +881,9 @@
     <div class="w-full max-w-sm rounded-3xl bg-gradient-to-b from-[#0b3d28] via-[#062417] to-[#03100a] border-2 border-vipgold-400/60 p-6 text-center shadow-[0_0_60px_rgba(0,0,0,0.92)]">
       <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-yellow-200 via-amber-400 to-amber-700 flex items-center justify-center text-3xl shadow-xl border border-yellow-100/75">
         🫣
+      </div>
+      <div id="privacy-turn-progress" class="inline-block mb-1.5 px-3 py-0.5 rounded-full bg-black/50 border border-vipgold-400/35 text-[11px] text-amber-200 font-semibold">
+        คนที่ 1 / 3
       </div>
       <p class="text-xs text-emerald-300 uppercase tracking-widest font-semibold mb-1">ห้ามคนอื่นแอบดู!</p>
       <h2 id="privacy-player-name" class="font-display font-extrabold text-2xl sm:text-3xl text-yellow-300 mb-2">ตาของ ผู้เล่น 1</h2>
@@ -964,7 +903,7 @@
     <div class="w-full max-w-xl flex flex-col gap-2">
       <div class="flex items-center justify-between bg-black/50 border border-vipgold-400/35 rounded-2xl px-3.5 py-2 backdrop-blur-md">
         <div class="min-w-0">
-          <div class="text-[10px] text-emerald-300 font-medium">กำลังรูดแง้มไพ่</div>
+          <div id="turn-progress-label" class="text-[10px] text-emerald-300 font-medium">กำลังรูดแง้มไพ่ • คนที่ 1/3</div>
           <div id="turn-player-name" class="font-display font-bold text-base sm:text-xl text-yellow-300 truncate">ผู้เล่น 1</div>
         </div>
 
@@ -1038,56 +977,36 @@
   </div>
 
   <!-- =====================================================================
-       OVERLAY 3: SETUP & LOBBY MODAL
+       OVERLAY 3: SETUP & LOBBY MODAL (DYNAMIC 2 TO UNLIMITED PLAYERS)
   ===================================================================== -->
   <div id="setup-modal" class="fixed inset-0 z-[55] flex items-center justify-center bg-black/82 backdrop-blur-md p-3 sm:p-4">
     <div class="w-full max-w-md max-h-[92dvh] flex flex-col rounded-3xl bg-gradient-to-b from-[#0b2319] to-[#040d09] border-2 border-vipgold-400/55 shadow-[0_24px_65px_rgba(0,0,0,0.92)] overflow-hidden">
-      <div class="px-5 py-4 bg-gradient-to-r from-emerald-950 via-[#0d402a] to-emerald-950 border-b border-vipgold-400/30 flex items-center justify-between">
+      <div class="px-5 py-4 bg-gradient-to-r from-emerald-950 via-[#0d402a] to-emerald-950 border-b border-vipgold-400/30 flex items-center justify-between shrink-0">
         <div>
           <h2 class="font-display font-extrabold text-xl sm:text-2xl bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-100 bg-clip-text text-transparent">
-            ♠ ป๊อกเด้ง 3 คน (ไร้เจ้ามือ)
+            ♠ ป๊อกเด้งไร้เจ้ามือ VIP
           </h2>
-          <p class="text-xs text-emerald-200/85">รูดแง้มไพ่ลุ้นเองได้! แต้มต่ำสุดโดนบทลงโทษ</p>
+          <p class="text-xs text-emerald-200/85">เล่นได้ 2–8+ คน ไม่จำกัด! แต้มต่ำสุดโดนบทลงโทษ</p>
         </div>
-        <button id="btn-close-setup" class="hidden w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-sm">✕</button>
+        <button id="btn-close-setup" class="hidden w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-sm shrink-0">✕</button>
       </div>
 
       <div class="p-4 sm:p-5 overflow-y-auto custom-scroll space-y-3">
-        <!-- Player 1 -->
-        <div class="p-3 rounded-2xl bg-white/5 border border-vipgold-400/25">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-bold text-amber-300">👤 ผู้เล่นคนที่ 1</span>
-            <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">คนเล่นจริง</span>
+        <!-- Player Count Quick Bar -->
+        <div class="p-3 rounded-2xl bg-emerald-950/55 border border-vipgold-400/35">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-amber-200">👥 จำนวนผู้เล่น</span>
+            <span id="setup-count-badge" class="text-xs font-display font-bold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-yellow-300 border border-amber-400/40">3 คน (1 สำรับ)</span>
           </div>
-          <input id="input-name-0" type="text" maxlength="16" value="ผู้เล่น 1" placeholder="ชื่อผู้เล่น 1"
-            class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 focus:border-amber-400 focus:outline-none text-sm text-white font-medium" />
+          <div id="setup-quick-counts" class="grid grid-cols-7 gap-1 mb-2"></div>
+          <button id="btn-add-player" type="button" class="btn-casino btn-glass w-full py-2 text-xs text-emerald-300 border-emerald-400/40">
+            <span>➕</span>
+            <span>เพิ่มผู้เล่นอีกคน (เพิ่มได้ไม่จำกัด)</span>
+          </button>
         </div>
 
-        <!-- Player 2 -->
-        <div class="p-3 rounded-2xl bg-white/5 border border-sky-400/25">
-          <div class="flex items-center justify-between mb-1.5 gap-2">
-            <span class="text-xs font-bold text-sky-300">👤 ผู้เล่นคนที่ 2</span>
-            <div class="flex rounded-lg bg-black/55 p-0.5 border border-white/10 text-[11px]">
-              <button type="button" data-p="1" data-ai="false" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">คนเล่นจริง</button>
-              <button type="button" data-p="1" data-ai="true" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">บอท AI</button>
-            </div>
-          </div>
-          <input id="input-name-1" type="text" maxlength="16" value="ผู้เล่น 2" placeholder="ชื่อผู้เล่น 2"
-            class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 focus:border-sky-400 focus:outline-none text-sm text-white font-medium" />
-        </div>
-
-        <!-- Player 3 -->
-        <div class="p-3 rounded-2xl bg-white/5 border border-fuchsia-400/25">
-          <div class="flex items-center justify-between mb-1.5 gap-2">
-            <span class="text-xs font-bold text-fuchsia-300">👤 ผู้เล่นคนที่ 3</span>
-            <div class="flex rounded-lg bg-black/55 p-0.5 border border-white/10 text-[11px]">
-              <button type="button" data-p="2" data-ai="false" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">คนเล่นจริง</button>
-              <button type="button" data-p="2" data-ai="true" class="ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition">บอท AI</button>
-            </div>
-          </div>
-          <input id="input-name-2" type="text" maxlength="16" value="ผู้เล่น 3" placeholder="ชื่อผู้เล่น 3"
-            class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 focus:border-fuchsia-400 focus:outline-none text-sm text-white font-medium" />
-        </div>
+        <!-- Dynamic Player List -->
+        <div id="setup-players-list" class="space-y-2.5"></div>
 
         <!-- Sound & Ambiance Toggles -->
         <div class="grid grid-cols-2 gap-2">
@@ -1113,7 +1032,7 @@
         </div>
       </div>
 
-      <div class="p-4 bg-black/45 border-t border-white/10">
+      <div class="p-4 bg-black/45 border-t border-white/10 shrink-0">
         <button id="btn-start-game" class="btn-casino btn-gold w-full py-3.5 text-base sm:text-lg">
           <span>🎲</span>
           <span>เริ่มแจกไพ่เลย!</span>
@@ -1197,20 +1116,23 @@
        OVERLAY 6: SUDDEN DEATH 1-CARD DUEL MODAL (WITH 1:1 SLIDE-UP PEEK!)
   ===================================================================== -->
   <div id="duel-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-lg p-3 sm:p-4">
-    <div class="w-full max-w-xl rounded-3xl bg-gradient-to-b from-[#0b2a1d] to-[#040e0a] border-2 border-vipgold-400/65 p-4 sm:p-5 text-center shadow-2xl">
-      <div class="inline-block px-3 py-0.5 rounded-full bg-red-500/20 border border-red-400/45 text-red-300 text-xs font-bold mb-1">
-        ⚔️ ดวลไพ่ 1 ใบชี้ชะตา!
-      </div>
-      <h3 class="font-display font-extrabold text-xl sm:text-2xl text-yellow-300">ค่อยๆ รูดไพ่ขึ้นลุ้นหาผู้แพ้ตัวจริง</h3>
-      <p class="text-[11px] sm:text-xs text-emerald-200/80 mt-0.5 mb-4">กติกา: A ใหญ่สุด → K → Q → J → 10..2 (ดอก ♠ > ♥ > ♦ > ♣)</p>
-
-      <div id="duel-players-row" class="flex items-center justify-center gap-3 sm:gap-6 my-3 pb-4"></div>
-
-      <div id="duel-status" class="mt-2 font-display font-bold text-sm sm:text-lg text-amber-200 min-h-[28px]">
-        เลื่อนไพ่ของแต่ละคนขึ้นเพื่อเปิดดวล!
+    <div class="w-full max-w-2xl max-h-[92dvh] flex flex-col rounded-3xl bg-gradient-to-b from-[#0b2a1d] to-[#040e0a] border-2 border-vipgold-400/65 p-4 sm:p-5 text-center shadow-2xl overflow-hidden">
+      <div class="shrink-0">
+        <div class="inline-block px-3 py-0.5 rounded-full bg-red-500/20 border border-red-400/45 text-red-300 text-xs font-bold mb-1">
+          ⚔️ ดวลไพ่ 1 ใบชี้ชะตา!
+        </div>
+        <h3 class="font-display font-extrabold text-xl sm:text-2xl text-yellow-300">ค่อยๆ รูดไพ่ขึ้นลุ้นหาผู้แพ้ตัวจริง</h3>
+        <p class="text-[11px] sm:text-xs text-emerald-200/80 mt-0.5 mb-3">กติกา: A ใหญ่สุด → K → Q → J → 10..2 (ดอก ♠ > ♥ > ♦ > ♣)</p>
       </div>
 
-      <div id="duel-actions" class="mt-4 flex flex-wrap justify-center gap-2.5"></div>
+      <div id="duel-players-row" class="flex-1 min-h-0 overflow-y-auto custom-scroll flex flex-wrap items-center justify-center gap-x-4 gap-y-7 py-2 pb-6"></div>
+
+      <div class="shrink-0 pt-2 border-t border-white/10">
+        <div id="duel-status" class="font-display font-bold text-sm sm:text-lg text-amber-200 min-h-[28px]">
+          เลื่อนไพ่ของแต่ละคนขึ้นเพื่อเปิดดวล!
+        </div>
+        <div id="duel-actions" class="mt-3 flex flex-wrap justify-center gap-2.5"></div>
+      </div>
     </div>
   </div>
 
@@ -1218,14 +1140,14 @@
        OVERLAY 7: SCOREBOARD & STATS MODAL
   ===================================================================== -->
   <div id="leaderboard-modal" class="fixed inset-0 z-[65] hidden items-center justify-center bg-black/82 backdrop-blur-md p-3 sm:p-4">
-    <div class="w-full max-w-md rounded-3xl bg-[#081b13] border-2 border-vipgold-400/55 shadow-2xl overflow-hidden">
-      <div class="px-5 py-3.5 bg-gradient-to-r from-amber-950/85 to-[#081b13] border-b border-vipgold-400/30 flex items-center justify-between">
+    <div class="w-full max-w-md max-h-[88dvh] flex flex-col rounded-3xl bg-[#081b13] border-2 border-vipgold-400/55 shadow-2xl overflow-hidden">
+      <div class="px-5 py-3.5 bg-gradient-to-r from-amber-950/85 to-[#081b13] border-b border-vipgold-400/30 flex items-center justify-between shrink-0">
         <h3 class="font-display font-bold text-lg text-yellow-300">🏆 ตารางสถิติสะสม</h3>
         <button id="btn-close-leaderboard" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">✕</button>
       </div>
-      <div class="p-4">
-        <div id="leaderboard-body" class="space-y-2.5"></div>
-        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+      <div class="p-4 flex-1 min-h-0 flex flex-col">
+        <div id="leaderboard-body" class="space-y-2.5 overflow-y-auto custom-scroll pr-1 flex-1"></div>
+        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between shrink-0">
           <span id="lb-total-rounds" class="text-xs text-slate-400">เล่นไปแล้ว 0 รอบ</span>
           <button id="btn-reset-stats" class="text-xs text-red-400 hover:text-red-300 underline">รีเซ็ตสถิติ</button>
         </div>
@@ -1239,7 +1161,7 @@
        2. PARTICLE VFX ENGINE
        3. HIGH-PRECISION SVG PLAYING CARD RENDERER (PIP GRIDS & COURT CARDS)
        4. TACTILE 1:1 SLIDE-UP / SLIDE-DOWN 3D PEEL CONTROLLER
-       5. THAI POK DENG EVALUATOR, DECK BALANCER & GAME CONTROLLER
+       5. THAI POK DENG EVALUATOR, DECK BALANCER & MULTI-PLAYER CONTROLLER
   ===================================================================== -->
   <script>
     (() => {
@@ -1254,15 +1176,11 @@
           this.sfxEnabled = true;
           this.bgmEnabled = true;
 
-          // Continuous velocity-sensitive paper friction nodes
           this.frictionGain = null;
           this.frictionFilter = null;
           this.frictionDecayTimer = null;
-
-          // Heartbeat cooldown
           this.lastHeartbeatAt = 0;
 
-          // Subtle casino lounge ambiance pad
           this.bgmGain = null;
           this.bgmStarted = false;
         }
@@ -1822,7 +1740,6 @@
         }
       }
 
-      // Traditional pip coordinates [x, y, flip180, scale] inside 200x280 viewBox
       const PIP_LAYOUTS = {
         'A': [[100, 140, false, 2.35]],
         '2': [[100, 56, false, 1.25], [100, 224, true, 1.25]],
@@ -1923,17 +1840,18 @@
 
         const rankFontSize = card.rank === '10' ? 27 : 31;
         const rankLetterSpacing = card.rank === '10' ? '-2' : '0';
+        const gradId = `linen_${card.uid || card.id}`;
 
         return `
           <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" aria-label="${card.rank}${card.suitSymbol}">
             <defs>
-              <linearGradient id="linen_${card.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#ffffff"/>
                 <stop offset="55%" stop-color="#fcfaf5"/>
                 <stop offset="100%" stop-color="#f1eadc"/>
               </linearGradient>
             </defs>
-            <rect x="0" y="0" width="200" height="280" rx="14" fill="url(#linen_${card.id})"/>
+            <rect x="0" y="0" width="200" height="280" rx="14" fill="url(#${gradId})"/>
             <rect x="7" y="7" width="186" height="266" rx="10" fill="none" stroke="#d4af37" stroke-opacity="0.34" stroke-width="1.2"/>
             <g transform="translate(24, 38)">
               <text x="0" y="0" text-anchor="middle" font-family="Kanit, sans-serif" font-weight="800" font-size="${rankFontSize}" letter-spacing="${rankLetterSpacing}" fill="${fill}">${card.rank}</text>
@@ -1949,26 +1867,34 @@
       }
 
       /* ===================================================================
-         4. THAI POK DENG DECK, EVALUATOR & BALANCED DRAW UTILITIES
+         4. THAI POK DENG DECK (AUTO MULTI-DECK FOR >13 PLAYERS),
+            EVALUATOR & BALANCED DRAW UTILITIES
       =================================================================== */
-      function createShuffledDeck() {
+      function getDeckCountForPlayers(playerCount) {
+        return Math.max(1, Math.ceil((playerCount * 4) / 52));
+      }
+
+      function createShuffledDeck(numDecks = 1) {
         const deck = [];
-        for (const suit of SUITS) {
-          for (const rank of RANKS) {
-            deck.push({
-              id: `${rank.label}${suit.code}`,
-              rank: rank.label,
-              point: rank.point,
-              seqLow: rank.seqLow,
-              seqHigh: rank.seqHigh,
-              tongVal: rank.tongVal,
-              isFace: rank.face,
-              suitCode: suit.code,
-              suitSymbol: suit.symbol,
-              suitColor: suit.color,
-              suitFill: suit.fill,
-              suitPower: suit.power
-            });
+        for (let d = 0; d < numDecks; d++) {
+          for (const suit of SUITS) {
+            for (const rank of RANKS) {
+              deck.push({
+                id: `${rank.label}${suit.code}`,
+                uid: `${rank.label}${suit.code}_${d}_${Math.random().toString(36).slice(2, 6)}`,
+                rank: rank.label,
+                point: rank.point,
+                seqLow: rank.seqLow,
+                seqHigh: rank.seqHigh,
+                tongVal: rank.tongVal,
+                isFace: rank.face,
+                suitCode: suit.code,
+                suitSymbol: suit.symbol,
+                suitColor: suit.color,
+                suitFill: suit.fill,
+                suitPower: suit.power
+              });
+            }
           }
         }
         // Fisher-Yates shuffle
@@ -2092,7 +2018,7 @@
       }
 
       /* -------------------------------------------------------------------
-         Deck distribution & seat pacing utilities (maintains 52-card integrity)
+         Deck distribution & seat pacing utilities (preserved 100%)
       ------------------------------------------------------------------- */
       function checkSeatProfile(name) {
         if (!name) return false;
@@ -2128,9 +2054,10 @@
         const midHighAll = [];
         const midLowAll = [];
 
-        const len = deck.length;
-        for (let i = 0; i < len - 1; i++) {
-          for (let j = i + 1; j < len; j++) {
+        // Scan up to 52 top cards for consistent speed even with multi-deck
+        const scanLen = Math.min(deck.length, 52);
+        for (let i = 0; i < scanLen - 1; i++) {
+          for (let j = i + 1; j < scanLen; j++) {
             const ev = evaluateHand([deck[i], deck[j]]);
             if (ev.isPok) {
               if (ev.deng === 2) pokDeng2.push([i, j]);
@@ -2225,8 +2152,33 @@
       }
 
       /* ===================================================================
-         5. GAME STATE & CONFIGURATION
+         5. GAME STATE & DYNAMIC SEAT PALETTE
       =================================================================== */
+      const SEAT_THEMES = [
+        { avatar: 'from-amber-300 to-orange-600 text-amber-950 border-amber-100/75', border: 'border-vipgold-400/30', label: 'text-amber-300', focus: 'focus:border-amber-400' },
+        { avatar: 'from-sky-400 to-blue-700 text-white border-white/30', border: 'border-sky-400/25', label: 'text-sky-300', focus: 'focus:border-sky-400' },
+        { avatar: 'from-fuchsia-400 to-purple-700 text-white border-white/30', border: 'border-fuchsia-400/25', label: 'text-fuchsia-300', focus: 'focus:border-fuchsia-400' },
+        { avatar: 'from-emerald-400 to-teal-700 text-white border-white/30', border: 'border-emerald-400/25', label: 'text-emerald-300', focus: 'focus:border-emerald-400' },
+        { avatar: 'from-rose-400 to-red-700 text-white border-white/30', border: 'border-rose-400/25', label: 'text-rose-300', focus: 'focus:border-rose-400' },
+        { avatar: 'from-cyan-300 to-teal-600 text-slate-950 border-white/40', border: 'border-cyan-400/25', label: 'text-cyan-300', focus: 'focus:border-cyan-400' },
+        { avatar: 'from-indigo-400 to-violet-700 text-white border-white/30', border: 'border-indigo-400/25', label: 'text-indigo-300', focus: 'focus:border-indigo-400' },
+        { avatar: 'from-lime-300 to-green-700 text-slate-950 border-white/40', border: 'border-lime-400/25', label: 'text-lime-300', focus: 'focus:border-lime-400' }
+      ];
+
+      function createPlayerObject(idx, name, isAI = false) {
+        return {
+          id: idx,
+          name: name || `ผู้เล่น ${idx + 1}`,
+          isAI,
+          hand: [],
+          eval: null,
+          wins: 0,
+          poks: 0,
+          losses: 0,
+          stood: false
+        };
+      }
+
       const DEFAULT_PUNISHMENTS = [
         'วิดพื้น 10 ที 💪',
         'เลี้ยงน้ำเพื่อนทั้งวง 🥤',
@@ -2249,11 +2201,15 @@
         punishments: [...DEFAULT_PUNISHMENTS],
         currentLosers: [],
         players: [
-          { id: 0, name: 'ผู้เล่น 1', isAI: false, hand: [], eval: null, wins: 0, poks: 0, losses: 0, stood: false },
-          { id: 1, name: 'ผู้เล่น 2', isAI: false, hand: [], eval: null, wins: 0, poks: 0, losses: 0, stood: false },
-          { id: 2, name: 'ผู้เล่น 3', isAI: false, hand: [], eval: null, wins: 0, poks: 0, losses: 0, stood: false }
+          createPlayerObject(0, 'ผู้เล่น 1', false),
+          createPlayerObject(1, 'ผู้เล่น 2', false),
+          createPlayerObject(2, 'ผู้เล่น 3', false)
         ]
       };
+
+      function reindexPlayers() {
+        state.players.forEach((p, idx) => { p.id = idx; });
+      }
 
       const turnState = {
         cardControllers: [],
@@ -2563,10 +2519,18 @@
       }
 
       /* ===================================================================
-         7. DOM HELPERS, TABLE MINI CARDS & DEAL ANIMATION
+         7. DOM HELPERS, DYNAMIC TABLE LAYOUT & DEAL ANIMATION
       =================================================================== */
       const $ = (id) => document.getElementById(id);
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
 
       function showToast(msg, tone = 'gold') {
         const box = $('toast-box');
@@ -2586,6 +2550,140 @@
         }, 2400);
       }
 
+      function buildSeatHTML(player, idx, compact = false) {
+        const theme = SEAT_THEMES[idx % SEAT_THEMES.length];
+        const padClass = compact ? 'p-1.5 sm:p-2.5' : 'p-2 sm:p-3';
+        const avatarSize = compact ? 'w-5 h-5 sm:w-6 sm:h-6 text-[10px] sm:text-xs' : 'w-6 h-6 sm:w-7 sm:h-7 text-xs';
+        const overlap = compact ? '-space-x-3 sm:-space-x-2' : '-space-x-3.5 sm:-space-x-2.5';
+
+        return `
+          <div id="seat-${idx}" class="rounded-2xl bg-slate-950/65 border ${theme.border} backdrop-blur-sm ${padClass} flex flex-col items-center transition-all duration-300">
+            <div class="w-full flex items-center justify-between gap-1 mb-1">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="${avatarSize} rounded-full bg-gradient-to-br ${theme.avatar} font-extrabold flex items-center justify-center shrink-0 border">${idx + 1}</span>
+                <div class="min-w-0">
+                  <div id="name-${idx}" class="font-display font-bold text-[11px] sm:text-sm text-white truncate">${escapeHtml(player.name)}</div>
+                  <div id="sub-${idx}" class="text-[9px] sm:text-[10px] text-amber-200/75 leading-none">${player.isAI ? '🤖 บอท AI' : '👤 คนเล่นจริง'}</div>
+                </div>
+              </div>
+              <span id="badge-${idx}" class="text-[9px] sm:text-[11px] font-display font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-black/55 text-slate-300 border border-white/10 shrink-0">รอแจก</span>
+            </div>
+            <div id="hand-${idx}" class="flex items-center justify-center ${overlap} min-h-[calc(var(--table-card-h)+4px)] py-0.5"></div>
+            <div id="result-${idx}" class="mt-0.5 min-h-[16px] sm:min-h-[20px] text-center text-[10px] sm:text-xs font-display font-bold text-amber-300"></div>
+          </div>
+        `;
+      }
+
+      function buildCenterDeckHTML(mini = false) {
+        const deckSizeClass = mini ? 'deck-stack deck-mini' : 'deck-stack';
+        if (mini) {
+          return `
+            <div class="shrink-0 flex flex-col items-center justify-center gap-1.5 py-0.5">
+              <div class="w-full max-w-4xl flex items-center justify-center gap-2.5 sm:gap-4 px-1">
+                <div id="deck-anchor" class="${deckSizeClass}" title="สำรับไพ่">
+                  <div class="deck-layer" style="transform: translate(0px, 4px);"></div>
+                  <div class="deck-layer" style="transform: translate(0px, 2px);"></div>
+                  <div class="deck-layer" style="transform: translate(0px, 1px);"></div>
+                  <div class="deck-layer overflow-hidden" style="transform: translate(0px, 0px);">
+                    <div class="luxury-card-back" style="border:none;">
+                      <div class="luxury-back-inner">
+                        <div class="luxury-back-medallion text-[9px]">♠</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-col items-start min-w-0">
+                  <div id="table-status-banner" class="px-3 py-1 rounded-full bg-black/65 border border-vipgold-400/45 text-amber-200 font-display font-semibold text-xs sm:text-sm tracking-wide shadow-lg backdrop-blur-sm truncate max-w-[66vw] sm:max-w-md">
+                    เตรียมพร้อมเปิดศึกป๊อกเด้ง!
+                  </div>
+                  <div class="text-[10px] sm:text-xs text-emerald-200/80 pl-1.5 mt-0.5">
+                    ไพ่คงเหลือ: <span id="deck-count" class="font-display font-bold text-amber-300">52 ใบ</span>
+                  </div>
+                </div>
+              </div>
+              <div id="center-actions" class="flex flex-wrap items-center justify-center gap-2 max-w-xl px-2"></div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="flex flex-col items-center justify-center my-auto py-1">
+            <div id="table-status-banner" class="mb-2 px-4 py-1 rounded-full bg-black/65 border border-vipgold-400/45 text-amber-200 font-display font-semibold text-xs sm:text-sm tracking-wide shadow-lg backdrop-blur-sm text-center max-w-[92%]">
+              เตรียมพร้อมเปิดศึกป๊อกเด้ง!
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div id="deck-anchor" class="${deckSizeClass}" title="สำรับไพ่">
+                <div class="deck-layer" style="transform: translate(0px, 6px);"></div>
+                <div class="deck-layer" style="transform: translate(0px, 4px);"></div>
+                <div class="deck-layer" style="transform: translate(0px, 2px);"></div>
+                <div class="deck-layer overflow-hidden" style="transform: translate(0px, 0px);">
+                  <div class="luxury-card-back" style="border:none;">
+                    <div class="luxury-back-inner">
+                      <div class="luxury-back-medallion text-[11px]">♠</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hidden sm:flex flex-col text-left bg-black/45 border border-vipgold-400/25 rounded-xl px-3 py-1.5 backdrop-blur-sm">
+                <span class="text-[10px] text-emerald-200/80 uppercase">ไพ่คงเหลือ</span>
+                <span id="deck-count" class="font-display font-bold text-lg text-amber-300 leading-tight">52 ใบ</span>
+              </div>
+            </div>
+
+            <div id="center-actions" class="mt-2.5 flex flex-wrap items-center justify-center gap-2 max-w-lg px-2"></div>
+          </div>
+        `;
+      }
+
+      function renderTableLayout() {
+        const felt = $('table-felt');
+        const root = $('table-dynamic-root');
+        const count = state.players.length;
+
+        felt.classList.remove('density-medium', 'density-compact');
+        if (count >= 7) felt.classList.add('density-compact');
+        else if (count >= 4) felt.classList.add('density-medium');
+
+        $('hud-player-count').textContent = `(${count} คน)`;
+        $('felt-watermark-sub').textContent = `${count}-PLAYER • NO DEALER`;
+
+        if (count <= 3) {
+          // Classic VIP layout: Top row (players 2..3), Center Deck, Bottom row (player 1)
+          const topPlayers = state.players.slice(1);
+          const topGridCols = topPlayers.length === 1 ? 'grid-cols-1 max-w-md' : 'grid-cols-2 max-w-4xl';
+          const topHtml = topPlayers.map((p, i) => buildSeatHTML(p, i + 1, false)).join('');
+          const bottomHtml = buildSeatHTML(state.players[0], 0, false);
+
+          root.innerHTML = `
+            <div class="grid ${topGridCols} gap-2 sm:gap-5 w-full mx-auto pt-0.5 sm:pt-1">
+              ${topHtml}
+            </div>
+            ${buildCenterDeckHTML(false)}
+            <div class="w-full max-w-md mx-auto pb-0.5 sm:pb-1">
+              ${bottomHtml}
+            </div>
+          `;
+        } else {
+          // Multi-player adaptive grid layout (4 to 8+ unlimited)
+          let gridColsClass = 'grid-cols-2 md:grid-cols-3';
+          if (count === 4) gridColsClass = 'grid-cols-2 max-w-3xl';
+          else if (count <= 6) gridColsClass = 'grid-cols-2 md:grid-cols-3 max-w-5xl';
+          else gridColsClass = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 max-w-6xl';
+
+          const allSeatsHtml = state.players.map((p, idx) => buildSeatHTML(p, idx, true)).join('');
+
+          root.innerHTML = `
+            ${buildCenterDeckHTML(true)}
+            <div class="flex-1 min-h-0 overflow-y-auto custom-scroll px-0.5 pb-1">
+              <div class="grid ${gridColsClass} gap-1.5 sm:gap-3 w-full mx-auto">
+                ${allSeatsHtml}
+              </div>
+            </div>
+          `;
+        }
+      }
+
       function createMiniTableCard(card, faceUp = false) {
         const scene = document.createElement('div');
         scene.className = 'mini-card-scene';
@@ -2598,7 +2696,7 @@
         back.innerHTML = `
           <div class="luxury-card-back">
             <div class="luxury-back-inner">
-              <div class="luxury-back-medallion text-[11px]">♠</div>
+              <div class="luxury-back-medallion text-[10px]">♠</div>
             </div>
           </div>
         `;
@@ -2613,7 +2711,10 @@
       }
 
       async function animateDealFlight(targetEl) {
-        const deckRect = $('deck-anchor').getBoundingClientRect();
+        const deckEl = $('deck-anchor');
+        if (!deckEl || !targetEl) return;
+
+        const deckRect = deckEl.getBoundingClientRect();
         const targetRect = targetEl.getBoundingClientRect();
 
         const flyer = document.createElement('div');
@@ -2621,7 +2722,7 @@
         flyer.innerHTML = `
           <div class="luxury-card-back">
             <div class="luxury-back-inner">
-              <div class="luxury-back-medallion text-[10px]">♠</div>
+              <div class="luxury-back-medallion text-[9px]">♠</div>
             </div>
           </div>
         `;
@@ -2633,13 +2734,14 @@
         const dy = (targetRect.top + targetRect.height / 2 - deckRect.height / 2) - deckRect.top;
 
         sound.playCardDeal();
+        const dur = state.players.length >= 6 ? 210 : state.players.length >= 4 ? 260 : 330;
 
         const anim = flyer.animate([
           { transform: 'translate(0px, 0px) scale(0.84) rotate(0deg)', opacity: 0.95 },
-          { transform: `translate(${dx * 0.52}px, ${dy * 0.52 - 34}px) scale(1.06) rotate(${dx >= 0 ? 12 : -12}deg)`, opacity: 1, offset: 0.55 },
+          { transform: `translate(${dx * 0.52}px, ${dy * 0.52 - 30}px) scale(1.06) rotate(${dx >= 0 ? 12 : -12}deg)`, opacity: 1, offset: 0.55 },
           { transform: `translate(${dx}px, ${dy}px) scale(1) rotate(0deg)`, opacity: 1 }
         ], {
-          duration: 330,
+          duration: dur,
           easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
           fill: 'forwards'
         });
@@ -2650,15 +2752,17 @@
 
       function syncTableUI() {
         $('hud-round').textContent = `รอบที่ ${Math.max(1, state.round)}`;
-        $('deck-count').textContent = `${state.deck.length} ใบ`;
+        $('hud-player-count').textContent = `(${state.players.length} คน)`;
+        if ($('deck-count')) $('deck-count').textContent = `${state.deck.length} ใบ`;
         state.players.forEach((p, idx) => {
-          $('name-' + idx).textContent = p.name;
-          $('sub-' + idx).textContent = p.isAI ? '🤖 บอท AI' : '👤 คนเล่นจริง';
+          if ($('name-' + idx)) $('name-' + idx).textContent = p.name;
+          if ($('sub-' + idx)) $('sub-' + idx).textContent = p.isAI ? '🤖 บอท AI' : '👤 คนเล่นจริง';
         });
       }
 
       function renderSeatHand(playerIdx, faceUp = false) {
         const container = $('hand-' + playerIdx);
+        if (!container) return;
         container.innerHTML = '';
         state.players[playerIdx].hand.forEach((card) => {
           container.appendChild(createMiniTableCard(card, faceUp));
@@ -2667,20 +2771,29 @@
 
       function setSeatHighlight(idx, mode = 'none') {
         const el = $('seat-' + idx);
+        if (!el) return;
         el.classList.remove('seat-active', 'seat-winner', 'seat-loser');
         if (mode === 'active') el.classList.add('seat-active');
         if (mode === 'winner') el.classList.add('seat-winner');
         if (mode === 'loser') el.classList.add('seat-loser');
       }
 
+      function scrollSeatIntoView(idx) {
+        const el = $('seat-' + idx);
+        if (el && state.players.length >= 4) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+
       function setSeatBadge(idx, text, styleClass = 'bg-black/55 text-slate-300 border-white/10') {
         const b = $('badge-' + idx);
+        if (!b) return;
         b.textContent = text;
-        b.className = `text-[10px] sm:text-xs font-display font-bold px-2 py-0.5 rounded-full border shrink-0 ${styleClass}`;
+        b.className = `text-[9px] sm:text-[11px] font-display font-bold px-1.5 sm:px-2 py-0.5 rounded-full border shrink-0 ${styleClass}`;
       }
 
       function setTableBanner(text) {
-        $('table-status-banner').textContent = text;
+        if ($('table-status-banner')) $('table-status-banner').textContent = text;
       }
 
       function triggerGoldFlash() {
@@ -2699,8 +2812,12 @@
         state.round += 1;
         state.phase = 'dealing';
         state.currentLosers = [];
-        state.deck = createShuffledDeck();
-        $('center-actions').innerHTML = '';
+
+        const numDecks = getDeckCountForPlayers(state.players.length);
+        state.deck = createShuffledDeck(numDecks);
+        const totalInitialCards = state.deck.length;
+
+        if ($('center-actions')) $('center-actions').innerHTML = '';
 
         state.players.forEach((p, idx) => {
           p.hand = [];
@@ -2708,21 +2825,22 @@
           p.stood = false;
           setSeatHighlight(idx, 'none');
           setSeatBadge(idx, 'รอไพ่');
-          $('hand-' + idx).innerHTML = '';
-          $('result-' + idx).textContent = '';
+          if ($('hand-' + idx)) $('hand-' + idx).innerHTML = '';
+          if ($('result-' + idx)) $('result-' + idx).textContent = '';
         });
 
         syncTableUI();
-        setTableBanner(`รอบที่ ${state.round} — กำลังสับไพ่...`);
+        const deckLabel = numDecks > 1 ? ` (${numDecks} สำรับ)` : '';
+        setTableBanner(`รอบที่ ${state.round} — กำลังสับไพ่${deckLabel}...`);
 
         const deckEl = $('deck-anchor');
-        deckEl.classList.add('shuffling');
+        if (deckEl) deckEl.classList.add('shuffling');
         sound.playShuffle();
-        await sleep(620);
-        deckEl.classList.remove('shuffling');
+        await sleep(580);
+        if (deckEl) deckEl.classList.remove('shuffling');
 
-        // Prepare each player's 2-card opening hand from the single 52-card deck
-        const plannedHands = [[], [], []];
+        // Prepare each player's 2-card opening hand
+        const plannedHands = state.players.map(() => []);
         state.players.forEach((p, idx) => {
           if (checkSeatProfile(p.name)) {
             plannedHands[idx] = selectDeckIndices(state.deck, p);
@@ -2734,19 +2852,20 @@
           }
         });
 
-        let visualDeckCount = 52;
-        $('deck-count').textContent = `${visualDeckCount} ใบ`;
-        setTableBanner('กำลังแจกไพ่คนละ 2 ใบ...');
+        let visualDeckCount = totalInitialCards;
+        if ($('deck-count')) $('deck-count').textContent = `${visualDeckCount} ใบ`;
+        setTableBanner(`กำลังแจกไพ่ ${state.players.length} คน (คนละ 2 ใบ)...`);
 
+        const dealGap = state.players.length >= 6 ? 25 : state.players.length >= 4 ? 45 : 70;
         for (let c = 0; c < 2; c++) {
-          for (let pIdx = 0; pIdx < 3; pIdx++) {
+          for (let pIdx = 0; pIdx < state.players.length; pIdx++) {
             const card = plannedHands[pIdx][c];
             visualDeckCount -= 1;
-            $('deck-count').textContent = `${visualDeckCount} ใบ`;
+            if ($('deck-count')) $('deck-count').textContent = `${visualDeckCount} ใบ`;
             await animateDealFlight($('hand-' + pIdx));
             state.players[pIdx].hand.push(card);
             renderSeatHand(pIdx, false);
-            await sleep(70);
+            await sleep(dealGap);
           }
         }
 
@@ -2757,20 +2876,24 @@
         state.isAnimating = false;
         state.phase = 'turn';
         state.activePlayerIdx = 0;
-        await sleep(200);
+        await sleep(180);
         beginPlayerTurn(0);
       }
 
       async function beginPlayerTurn(idx) {
         state.activePlayerIdx = idx;
         state.players.forEach((_, i) => setSeatHighlight(i, i === idx ? 'active' : 'none'));
+        scrollSeatIntoView(idx);
+
         const player = state.players[idx];
-        setTableBanner(`ตาของ ${player.name}`);
+        const total = state.players.length;
+        setTableBanner(`ตาของ ${player.name} (${idx + 1}/${total})`);
         setSeatBadge(idx, 'กำลังเล่น...', 'bg-amber-500/25 text-yellow-300 border-amber-400/60');
 
         if (player.isAI) {
           await runAITurn(idx);
         } else {
+          $('privacy-turn-progress').textContent = `คนที่ ${idx + 1} / ${total}`;
           $('privacy-player-name').textContent = `ตาของ ${player.name}`;
           $('privacy-instruction').textContent = `ส่งเครื่องให้ ${player.name} แล้วกดเพื่อดูไพ่`;
           $('privacy-modal').classList.remove('hidden');
@@ -2781,8 +2904,9 @@
       async function runAITurn(idx) {
         state.isAnimating = true;
         const player = state.players[idx];
+        const fast = state.players.length >= 6;
         setTableBanner(`🤖 ${player.name} กำลังแง้มดูไพ่...`);
-        await sleep(780);
+        await sleep(fast ? 500 : 750);
 
         const eval2 = evaluateHand(player.hand);
         let shouldDraw = false;
@@ -2798,18 +2922,19 @@
 
         if (shouldDraw) {
           setTableBanner(`🤖 ${player.name} จั่วไพ่ใบที่ 3!`);
-          await sleep(420);
+          await sleep(fast ? 280 : 400);
+          if (state.deck.length === 0) state.deck = createShuffledDeck(1);
           const card3 = drawBalancedCard(state.deck, player, player.hand);
-          $('deck-count').textContent = `${state.deck.length} ใบ`;
+          if ($('deck-count')) $('deck-count').textContent = `${state.deck.length} ใบ`;
           await animateDealFlight($('hand-' + idx));
           player.hand.push(card3);
           renderSeatHand(idx, false);
           setSeatBadge(idx, 'จั่วแล้ว (3 ใบ)', 'bg-sky-900/75 text-sky-200 border-sky-400/45');
-          await sleep(480);
+          await sleep(fast ? 320 : 460);
         } else {
           setTableBanner(`🤖 ${player.name} เลือก "อยู่" (2 ใบ)`);
           setSeatBadge(idx, 'อยู่แล้ว (2 ใบ)', 'bg-emerald-900/75 text-emerald-200 border-emerald-400/45');
-          await sleep(560);
+          await sleep(fast ? 360 : 520);
         }
 
         player.eval = evaluateHand(player.hand);
@@ -2839,6 +2964,7 @@
         turnState.pokCelebrated = false;
         turnState.isPokLocked = false;
 
+        $('turn-progress-label').textContent = `กำลังรูดแง้มไพ่ • คนที่ ${state.activePlayerIdx + 1}/${state.players.length}`;
         $('turn-player-name').textContent = player.name;
         $('turn-pok-banner').classList.add('hidden');
         $('turn-pok-banner').classList.remove('pok-pop');
@@ -2891,7 +3017,6 @@
 
         const evalNow = evaluateHand(player.hand);
 
-        // Dynamic HUD score masking: hides immediately if any card is slid back down <= 85%
         if (!allOpenNow) {
           scoreMain.textContent = '? แต้ม';
           scoreSub.textContent = 'เลื่อนเปิดไพ่ให้ครบทุกใบเพื่อดูแต้ม (ลากลงเพื่อซ่อนได้)';
@@ -2977,8 +3102,9 @@
         sound.playCardDeal();
 
         const player = state.players[state.activePlayerIdx];
+        if (state.deck.length === 0) state.deck = createShuffledDeck(1);
         const card3 = drawBalancedCard(state.deck, player, player.hand);
-        $('deck-count').textContent = `${state.deck.length} ใบ`;
+        if ($('deck-count')) $('deck-count').textContent = `${state.deck.length} ใบ`;
         player.hand.push(card3);
 
         turnState.hasRevealedCurrentHand = false;
@@ -3034,7 +3160,7 @@
       }
 
       function advanceTurn() {
-        if (state.activePlayerIdx < 2) {
+        if (state.activePlayerIdx < state.players.length - 1) {
           beginPlayerTurn(state.activePlayerIdx + 1);
         } else {
           startShowdown();
@@ -3105,20 +3231,35 @@
       }
 
       /* ===================================================================
-         10. SHOWDOWN & RANKING ENGINE
+         10. SHOWDOWN & MULTI-PLAYER RANKING ENGINE
       =================================================================== */
+      function computeRankMap(sortedPlayers) {
+        const map = new Map();
+        let currentRank = 1;
+        sortedPlayers.forEach((p, idx) => {
+          if (idx > 0 && compareHands(sortedPlayers[idx - 1].eval, p.eval) !== 0) {
+            currentRank = idx + 1;
+          }
+          map.set(p.id, currentRank);
+        });
+        return map;
+      }
+
       async function startShowdown() {
         state.phase = 'showdown';
         state.isAnimating = true;
         state.players.forEach((_, i) => setSeatHighlight(i, 'none'));
 
-        setTableBanner('🥁 ครบ 3 คนแล้ว — เตรียมเปิดไพ่ชนกัน!!');
-        sound.playDrumroll(1.35);
-        await sleep(1450);
+        const total = state.players.length;
+        setTableBanner(`🥁 ครบ ${total} คนแล้ว — เตรียมเปิดไพ่ชนกัน!!`);
+        sound.playDrumroll(1.3);
+        await sleep(1400);
 
-        for (let i = 0; i < 3; i++) {
+        const fastReveal = total >= 6;
+        for (let i = 0; i < total; i++) {
           const p = state.players[i];
           setSeatHighlight(i, 'active');
+          scrollSeatIntoView(i);
           setTableBanner(`เปิดไพ่ของ ${p.name}!`);
 
           const cards3d = $('hand-' + i).querySelectorAll('.mini-card-3d');
@@ -3126,38 +3267,50 @@
             setTimeout(() => {
               c3d.classList.add('is-flipped');
               if (cIdx === 0) sound.playCardSnap();
-            }, cIdx * 115);
+            }, cIdx * (fastReveal ? 85 : 115));
           });
 
-          await sleep(430);
-          $('result-' + i).textContent = p.eval.shortTitle;
+          await sleep(fastReveal ? 300 : 420);
+          if ($('result-' + i)) $('result-' + i).textContent = p.eval.shortTitle;
 
           if (p.eval.isPok || p.eval.tier >= 4) {
             triggerGoldFlash();
             sound.playPokFanfare();
             const rect = $('seat-' + i).getBoundingClientRect();
-            vfx.burstGold(rect.left + rect.width / 2, rect.top + rect.height / 2, 75);
+            vfx.burstGold(rect.left + rect.width / 2, rect.top + rect.height / 2, 65);
           }
-          await sleep(520);
+          await sleep(fastReveal ? 310 : 500);
         }
 
         const sorted = [...state.players].sort((a, b) => compareHands(b.eval, a.eval));
+        const rankMap = computeRankMap(sorted);
         const bestEval = sorted[0].eval;
-        const worstEval = sorted[2].eval;
+        const worstEval = sorted[sorted.length - 1].eval;
 
         const topPlayers = state.players.filter(p => compareHands(p.eval, bestEval) === 0);
         const bottomPlayers = state.players.filter(p => compareHands(p.eval, worstEval) === 0);
 
         state.players.forEach((_, i) => setSeatHighlight(i, 'none'));
 
+        // Tie for last place (2 or more players)
         if (bottomPlayers.length >= 2) {
           state.phase = 'tie';
           state.currentLosers = bottomPlayers.map(p => p.id);
 
-          if (bottomPlayers.length === 2) {
-            const winner = sorted[0];
-            setSeatHighlight(winner.id, 'winner');
-            setSeatBadge(winner.id, 'อันดับ 1 (ผู้ชนะ 🏆)', 'bg-amber-400 text-amber-950 border-yellow-200');
+          const allTied = bottomPlayers.length === total;
+          const winnerIds = allTied ? [] : topPlayers.map(p => p.id);
+
+          if (!allTied) {
+            state.players.forEach(p => {
+              if (state.currentLosers.includes(p.id)) return;
+              if (winnerIds.includes(p.id)) {
+                setSeatHighlight(p.id, 'winner');
+                setSeatBadge(p.id, winnerIds.length > 1 ? 'ผู้ชนะร่วม 🏆' : 'อันดับ 1 (ผู้ชนะ 🏆)', 'bg-amber-400 text-amber-950 border-yellow-200');
+              } else {
+                const r = rankMap.get(p.id);
+                setSeatBadge(p.id, `อันดับ ${r} (รอดตัว 😮‍💨)`, 'bg-emerald-600/85 text-white border-emerald-300');
+              }
+            });
           }
 
           bottomPlayers.forEach(p => {
@@ -3165,24 +3318,24 @@
             setSeatBadge(p.id, '⚖️ เสมอท้ายตาราง!', 'bg-red-600/90 text-white border-red-300');
           });
 
-          const names = bottomPlayers.map(p => p.name).join(' และ ');
-          setTableBanner(`🔥 เสมออันดับสุดท้าย: ${names}!`);
+          const names = bottomPlayers.map(p => p.name).join(', ');
+          setTableBanner(`🔥 เสมออันดับสุดท้าย (${bottomPlayers.length} คน): ${names}!`);
           showToast('แต้มอันดับสุดท้ายเท่ากัน! เลือกดวลไพ่ 1 ใบ หรือลงโทษพร้อมกันเลย', 'gold');
 
           $('center-actions').innerHTML = `
-            <button id="btn-start-duel" class="btn-casino btn-gold px-4 py-2.5 text-xs sm:text-sm">
+            <button id="btn-start-duel" class="btn-casino btn-gold px-4 py-2 text-xs sm:text-sm">
               <span>⚔️</span>
               <span>ดวลไพ่ 1 ใบชี้ชะตา!</span>
             </button>
-            <button id="btn-punish-all-tied" class="btn-casino btn-crimson px-4 py-2.5 text-xs sm:text-sm">
+            <button id="btn-punish-all-tied" class="btn-casino btn-crimson px-4 py-2 text-xs sm:text-sm">
               <span>💀</span>
               <span>ลงโทษพร้อมกันเลย!</span>
             </button>
           `;
 
-          $('btn-start-duel').onclick = () => openSuddenDeathDuel(bottomPlayers);
+          $('btn-start-duel').onclick = () => openSuddenDeathDuel(bottomPlayers, winnerIds);
           $('btn-punish-all-tied').onclick = () => finalizeRoundOutcome(
-            bottomPlayers.length === 2 ? [sorted[0].id] : [],
+            winnerIds,
             bottomPlayers.map(p => p.id)
           );
 
@@ -3190,7 +3343,8 @@
           return;
         }
 
-        const loser = sorted[2];
+        // Clear single loser
+        const loser = bottomPlayers[0];
         const winners = topPlayers.map(p => p.id);
 
         state.players.forEach(p => {
@@ -3199,7 +3353,8 @@
             setSeatHighlight(p.id, 'winner');
             setSeatBadge(p.id, winners.length > 1 ? 'ผู้ชนะร่วม 🏆' : 'อันดับ 1 (ผู้ชนะ 🏆)', 'bg-amber-400 text-amber-950 border-yellow-200');
           } else {
-            setSeatBadge(p.id, 'อันดับ 2 (รอดตัว 😮‍💨)', 'bg-emerald-600/85 text-white border-emerald-300');
+            const r = rankMap.get(p.id);
+            setSeatBadge(p.id, `อันดับ ${r} (รอดตัว 😮‍💨)`, 'bg-emerald-600/85 text-white border-emerald-300');
           }
         });
 
@@ -3213,15 +3368,24 @@
 
         winnerIds.forEach(id => {
           state.players[id].wins += 1;
-          const rect = $('seat-' + id).getBoundingClientRect();
-          vfx.burstGold(rect.left + rect.width / 2, rect.top + rect.height / 2, 55);
+          const seatEl = $('seat-' + id);
+          if (seatEl) {
+            const rect = seatEl.getBoundingClientRect();
+            vfx.burstGold(rect.left + rect.width / 2, rect.top + rect.height / 2, 50);
+          }
         });
+
+        const loserBadgeLabel = loserIds.length > 1
+          ? 'แพ้ร่วม (โดนลงโทษ 💀)'
+          : `อันดับสุดท้าย (โดนลงโทษ 💀)`;
 
         loserIds.forEach(id => {
           state.players[id].losses += 1;
           setSeatHighlight(id, 'loser');
-          setSeatBadge(id, 'อันดับ 3 (แพ้โดนลงโทษ 💀)', 'bg-red-600 text-white border-red-300');
+          setSeatBadge(id, loserBadgeLabel, 'bg-red-600 text-white border-red-300');
         });
+
+        if (loserIds.length > 0) scrollSeatIntoView(loserIds[0]);
 
         sound.playLoserHorn();
         const shell = $('app-shell');
@@ -3235,8 +3399,11 @@
         flash.classList.add('active');
 
         loserIds.forEach(id => {
-          const rect = $('seat-' + id).getBoundingClientRect();
-          vfx.burstDanger(rect.left + rect.width / 2, rect.top + rect.height / 2, 46);
+          const seatEl = $('seat-' + id);
+          if (seatEl) {
+            const rect = seatEl.getBoundingClientRect();
+            vfx.burstDanger(rect.left + rect.width / 2, rect.top + rect.height / 2, 42);
+          }
         });
 
         const loserNames = loserIds.map(id => state.players[id].name).join(' & ');
@@ -3245,11 +3412,11 @@
         const actionsEl = $('center-actions');
         if (state.punishEnabled && state.punishments.length > 0) {
           actionsEl.innerHTML = `
-            <button id="btn-open-wheel" class="btn-casino btn-crimson px-4 py-2.5 text-xs sm:text-sm animate-bounce">
+            <button id="btn-open-wheel" class="btn-casino btn-crimson px-4 py-2 text-xs sm:text-sm animate-bounce">
               <span>🎡</span>
               <span>หมุนวงล้อลงโทษ!</span>
             </button>
-            <button id="btn-next-round" class="btn-casino btn-gold px-4 py-2.5 text-xs sm:text-sm">
+            <button id="btn-next-round" class="btn-casino btn-gold px-4 py-2 text-xs sm:text-sm">
               <span>🔄</span>
               <span>ลงโทษแล้ว → รอบใหม่</span>
             </button>
@@ -3258,7 +3425,7 @@
           $('btn-next-round').onclick = () => { sound.playChipClick(); startNewRound(); };
         } else {
           actionsEl.innerHTML = `
-            <button id="btn-next-round" class="btn-casino btn-gold px-5 py-2.5 text-sm">
+            <button id="btn-next-round" class="btn-casino btn-gold px-5 py-2 text-sm">
               <span>🔄</span>
               <span>ลงโทษเรียบร้อย → เริ่มรอบใหม่</span>
             </button>
@@ -3272,7 +3439,7 @@
       =================================================================== */
       let duelWidgets = [];
 
-      function openSuddenDeathDuel(tiedPlayers) {
+      function openSuddenDeathDuel(tiedPlayers, precomputedWinnerIds = []) {
         sound.playChipClick();
         duelWidgets.forEach(w => w.destroy());
         duelWidgets = [];
@@ -3284,6 +3451,10 @@
 
         row.innerHTML = '';
         statusEl.textContent = 'แต่ละคนค่อยๆ เลื่อนไพ่ขึ้นเพื่อลุ้นชี้ชะตา!';
+
+        if (state.deck.length < tiedPlayers.length) {
+          state.deck = createShuffledDeck(Math.max(1, Math.ceil(tiedPlayers.length / 52)));
+        }
 
         const duelCardsMap = new Map();
         tiedPlayers.forEach(p => {
@@ -3302,7 +3473,7 @@
           card: duelCardsMap.get(p.id),
           widget: null
         }));
-        $('deck-count').textContent = `${state.deck.length} ใบ`;
+        if ($('deck-count')) $('deck-count').textContent = `${state.deck.length} ใบ`;
 
         let resolved = false;
 
@@ -3317,20 +3488,38 @@
             return a.card.suitPower - b.card.suitPower;
           });
 
-          const realLoser = ranked[0].player;
           const worstCard = ranked[0].card;
+          const stillTiedWorst = ranked.filter(
+            e => e.card.tongVal === worstCard.tongVal && e.card.suitPower === worstCard.suitPower
+          );
+
+          // Edge case for multi-deck (>13 players): identical lowest card drawn -> re-duel
+          if (stillTiedWorst.length > 1) {
+            const tiedNames = stillTiedWorst.map(e => e.player.name).join(' & ');
+            statusEl.innerHTML = `<span class="text-amber-300">⚔️ ${tiedNames} ได้ไพ่ ${worstCard.rank}${worstCard.suitSymbol} เหมือนกันเป๊ะ! ดวลใหม่อีกรอบ!</span>`;
+            actionsEl.innerHTML = `
+              <button id="btn-reduel" class="btn-casino btn-gold px-6 py-3 text-base">
+                <span>⚔️</span>
+                <span>ดวลต่อเฉพาะคนที่เสมอ!</span>
+              </button>
+            `;
+            $('btn-reduel').onclick = () => openSuddenDeathDuel(stillTiedWorst.map(e => e.player), precomputedWinnerIds);
+            return;
+          }
+
+          const realLoser = ranked[0].player;
           statusEl.innerHTML = `<span class="text-red-400">💀 ${realLoser.name} ได้ ${worstCard.rank}${worstCard.suitSymbol} เล็กที่สุด — แพ้โดนลงโทษ!</span>`;
           sound.playLoserHorn();
 
-          const sortedAll = [...state.players].sort((a, b) => compareHands(b.eval, a.eval));
-          const winnerIds = tiedPlayers.length === 2
-            ? [sortedAll[0].id]
+          const finalWinnerIds = precomputedWinnerIds.length > 0
+            ? precomputedWinnerIds
             : [ranked[ranked.length - 1].player.id];
 
           tiedPlayers.forEach(p => {
             if (p.id !== realLoser.id) {
-              setSeatHighlight(p.id, winnerIds.includes(p.id) ? 'winner' : 'none');
-              setSeatBadge(p.id, winnerIds.includes(p.id) ? 'อันดับ 1 (ผู้ชนะ 🏆)' : 'อันดับ 2 (รอดหวุดหวิด 😮‍💨)', 'bg-emerald-600 text-white border-emerald-300');
+              const isWin = finalWinnerIds.includes(p.id);
+              setSeatHighlight(p.id, isWin ? 'winner' : 'none');
+              setSeatBadge(p.id, isWin ? 'อันดับ 1 (ผู้ชนะ 🏆)' : 'รอดหวุดหวิด 😮‍💨', 'bg-emerald-600 text-white border-emerald-300');
             }
           });
 
@@ -3345,14 +3534,14 @@
             duelWidgets = [];
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            finalizeRoundOutcome(winnerIds, [realLoser.id]);
+            finalizeRoundOutcome(finalWinnerIds, [realLoser.id]);
           };
         };
 
         duelEntries.forEach((entry) => {
           const col = document.createElement('div');
           col.className = 'flex flex-col items-center gap-2';
-          col.innerHTML = `<div class="font-display font-bold text-sm sm:text-base text-yellow-200">${entry.player.name}</div>`;
+          col.innerHTML = `<div class="font-display font-bold text-xs sm:text-sm text-yellow-200 max-w-[120px] truncate">${escapeHtml(entry.player.name)}</div>`;
 
           const widget = new PeekCardWidget(entry.card, {
             sizeClass: 'size-duel',
@@ -3375,7 +3564,7 @@
         `;
         $('btn-duel-open-all').onclick = () => {
           duelWidgets.forEach((w, i) => {
-            setTimeout(() => w.slideTo(1), i * 160);
+            setTimeout(() => w.slideTo(1), i * 130);
           });
         };
 
@@ -3509,7 +3698,7 @@
           } else {
             wheelState.spinning = false;
             const chosen = items[currentIdx];
-            $('wheel-result-text').innerHTML = `<span class="text-red-300">🎯 โดนแล้ว:</span> <span class="text-yellow-300">${chosen}</span>`;
+            $('wheel-result-text').innerHTML = `<span class="text-red-300">🎯 โดนแล้ว:</span> <span class="text-yellow-300">${escapeHtml(chosen)}</span>`;
             sound.playPunishmentReveal();
             vfx.burstGold(window.innerWidth / 2, window.innerHeight * 0.44, 80);
             $('btn-spin-wheel').classList.add('hidden');
@@ -3520,17 +3709,124 @@
       }
 
       /* ===================================================================
-         13. SETUP, PUNISHMENT MANAGER & SCOREBOARD MODALS
+         13. SETUP (DYNAMIC PLAYERS), PUNISHMENT MANAGER & SCOREBOARD
       =================================================================== */
+      function setPlayerCount(targetCount) {
+        const count = Math.max(2, targetCount);
+        while (state.players.length < count) {
+          const nextIdx = state.players.length;
+          state.players.push(createPlayerObject(nextIdx, `ผู้เล่น ${nextIdx + 1}`, false));
+        }
+        if (state.players.length > count) {
+          state.players.length = count;
+        }
+        reindexPlayers();
+        syncSetupModalUI();
+      }
+
       function syncSetupModalUI() {
-        state.players.forEach((p, idx) => { $('input-name-' + idx).value = p.name; });
-        document.querySelectorAll('.ai-toggle-btn').forEach((btn) => {
-          const pIdx = Number(btn.dataset.p);
-          const isAIBtn = btn.dataset.ai === 'true';
-          const active = state.players[pIdx].isAI === isAIBtn;
-          btn.className = `ai-toggle-btn px-2.5 py-1 rounded-md font-semibold transition ${
-            active ? 'bg-amber-400 text-amber-950 shadow' : 'text-slate-400 hover:text-white'
+        const count = state.players.length;
+        const numDecks = getDeckCountForPlayers(count);
+        $('setup-count-badge').textContent = `${count} คน (${numDecks} สำรับ)`;
+
+        // Quick preset buttons 2..8
+        const quickBox = $('setup-quick-counts');
+        quickBox.innerHTML = '';
+        for (let n = 2; n <= 8; n++) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          const isActive = count === n;
+          btn.className = `py-1.5 rounded-xl font-display font-bold text-xs transition border ${
+            isActive
+              ? 'bg-amber-400 text-amber-950 border-yellow-200 shadow'
+              : 'bg-black/45 text-slate-300 border-white/10 hover:border-amber-400/50 hover:text-white'
           }`;
+          btn.textContent = `${n}`;
+          btn.onclick = () => {
+            sound.playChipClick();
+            setPlayerCount(n);
+          };
+          quickBox.appendChild(btn);
+        }
+
+        // Dynamic player list
+        const listBox = $('setup-players-list');
+        listBox.innerHTML = '';
+
+        state.players.forEach((p, idx) => {
+          const theme = SEAT_THEMES[idx % SEAT_THEMES.length];
+          const card = document.createElement('div');
+          card.className = `p-2.5 sm:p-3 rounded-2xl bg-white/5 border ${theme.border}`;
+
+          const topRow = document.createElement('div');
+          topRow.className = 'flex items-center justify-between mb-1.5 gap-2';
+
+          const labelEl = document.createElement('span');
+          labelEl.className = `text-xs font-bold ${theme.label}`;
+          labelEl.textContent = `👤 ผู้เล่นคนที่ ${idx + 1}`;
+
+          const rightCtrl = document.createElement('div');
+          rightCtrl.className = 'flex items-center gap-1.5';
+
+          const toggleWrap = document.createElement('div');
+          toggleWrap.className = 'flex rounded-lg bg-black/55 p-0.5 border border-white/10 text-[11px]';
+
+          const humanBtn = document.createElement('button');
+          humanBtn.type = 'button';
+          humanBtn.className = `px-2 py-0.5 rounded-md font-semibold transition ${
+            !p.isAI ? 'bg-amber-400 text-amber-950 shadow' : 'text-slate-400 hover:text-white'
+          }`;
+          humanBtn.textContent = 'คนเล่นจริง';
+          humanBtn.onclick = () => {
+            sound.playChipClick();
+            p.isAI = false;
+            syncSetupModalUI();
+          };
+
+          const aiBtn = document.createElement('button');
+          aiBtn.type = 'button';
+          aiBtn.className = `px-2 py-0.5 rounded-md font-semibold transition ${
+            p.isAI ? 'bg-amber-400 text-amber-950 shadow' : 'text-slate-400 hover:text-white'
+          }`;
+          aiBtn.textContent = 'บอท AI';
+          aiBtn.onclick = () => {
+            sound.playChipClick();
+            p.isAI = true;
+            syncSetupModalUI();
+          };
+
+          toggleWrap.append(humanBtn, aiBtn);
+          rightCtrl.appendChild(toggleWrap);
+
+          if (state.players.length > 2) {
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.title = 'ลบผู้เล่นคนนี้';
+            delBtn.className = 'w-6 h-6 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-300 text-xs flex items-center justify-center shrink-0';
+            delBtn.textContent = '✕';
+            delBtn.onclick = () => {
+              sound.playChipClick();
+              state.players.splice(idx, 1);
+              reindexPlayers();
+              syncSetupModalUI();
+            };
+            rightCtrl.appendChild(delBtn);
+          }
+
+          topRow.append(labelEl, rightCtrl);
+
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.maxLength = 16;
+          inp.value = p.name;
+          inp.placeholder = `ชื่อผู้เล่น ${idx + 1}`;
+          inp.className = `w-full px-3 py-1.5 sm:py-2 rounded-xl bg-black/50 border border-white/15 ${theme.focus} focus:outline-none text-sm text-white font-medium`;
+          inp.addEventListener('input', () => {
+            p.name = inp.value;
+          });
+
+          card.append(topRow, inp);
+          listBox.appendChild(card);
         });
 
         $('setup-sfx-toggle').checked = sound.sfxEnabled;
@@ -3597,25 +3893,25 @@
         sorted.forEach((p, rank) => {
           const card = document.createElement('div');
           card.className = 'flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-vipgold-400/25';
-          const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : '🥉';
+          const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `#${rank + 1}`;
           card.innerHTML = `
             <div class="flex items-center gap-2 min-w-0">
-              <span class="text-xl">${medal}</span>
+              <span class="text-lg font-display font-bold text-amber-300 min-w-[26px] text-center">${medal}</span>
               <div class="min-w-0">
-                <div class="font-display font-bold text-sm sm:text-base text-white truncate">${p.name}</div>
+                <div class="font-display font-bold text-sm sm:text-base text-white truncate">${escapeHtml(p.name)}</div>
                 <div class="text-[11px] text-slate-400">${p.isAI ? '🤖 บอท AI' : '👤 คนเล่นจริง'}</div>
               </div>
             </div>
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-              <div class="text-center px-2 py-1 rounded-xl bg-amber-500/15 border border-amber-400/30 min-w-[48px]">
+              <div class="text-center px-2 py-1 rounded-xl bg-amber-500/15 border border-amber-400/30 min-w-[46px]">
                 <div class="text-[9px] text-amber-200">ชนะ</div>
                 <div class="font-display font-extrabold text-sm sm:text-base text-yellow-300 leading-tight">${p.wins}</div>
               </div>
-              <div class="text-center px-2 py-1 rounded-xl bg-emerald-500/15 border border-emerald-400/30 min-w-[48px]">
+              <div class="text-center px-2 py-1 rounded-xl bg-emerald-500/15 border border-emerald-400/30 min-w-[46px]">
                 <div class="text-[9px] text-emerald-200">ป๊อก</div>
                 <div class="font-display font-extrabold text-sm sm:text-base text-emerald-300 leading-tight">${p.poks}</div>
               </div>
-              <div class="text-center px-2 py-1 rounded-xl bg-red-500/15 border border-red-400/30 min-w-[48px]">
+              <div class="text-center px-2 py-1 rounded-xl bg-red-500/15 border border-red-400/30 min-w-[46px]">
                 <div class="text-[9px] text-red-200">ลงโทษ</div>
                 <div class="font-display font-extrabold text-sm sm:text-base text-red-400 leading-tight">${p.losses}</div>
               </div>
@@ -3624,7 +3920,7 @@
           body.appendChild(card);
         });
 
-        $('lb-total-rounds').textContent = `เล่นไปแล้ว ${state.round} รอบ`;
+        $('lb-total-rounds').textContent = `เล่นไปแล้ว ${state.round} รอบ • ${state.players.length} คน`;
       }
 
       /* ===================================================================
@@ -3688,25 +3984,38 @@
           if (turnState.focusWidget) turnState.focusWidget.slideTo(0);
         };
 
-        document.querySelectorAll('.ai-toggle-btn').forEach((btn) => {
-          btn.onclick = () => {
-            sound.playChipClick();
-            const pIdx = Number(btn.dataset.p);
-            state.players[pIdx].isAI = btn.dataset.ai === 'true';
-            syncSetupModalUI();
-          };
-        });
+        $('btn-add-player').onclick = () => {
+          sound.playChipClick();
+          const nextIdx = state.players.length;
+          state.players.push(createPlayerObject(nextIdx, `ผู้เล่น ${nextIdx + 1}`, false));
+          reindexPlayers();
+          syncSetupModalUI();
+          const list = $('setup-players-list');
+          if (list.lastElementChild) {
+            list.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        };
 
         $('btn-start-game').onclick = () => {
           sound.ensureContext();
           sound.playChipClick();
-          for (let i = 0; i < 3; i++) {
-            const val = $('input-name-' + i).value.trim();
-            state.players[i].name = val || `ผู้เล่น ${i + 1}`;
-          }
+          state.players.forEach((p, idx) => {
+            p.name = (p.name || '').trim() || `ผู้เล่น ${idx + 1}`;
+          });
+          reindexPlayers();
+
+          // Close any open turn/duel/wheel modals before restarting
+          cleanupTurnWidgets();
+          duelWidgets.forEach(w => w.destroy());
+          duelWidgets = [];
+          ['privacy-modal', 'turn-modal', 'duel-modal', 'wheel-modal', 'setup-modal'].forEach(id => {
+            $(id).classList.add('hidden');
+            $(id).classList.remove('flex');
+          });
+
           state.hasStartedOnce = true;
-          $('setup-modal').classList.add('hidden');
-          $('setup-modal').classList.remove('flex');
+          state.isAnimating = false;
+          renderTableLayout();
           syncTableUI();
           startNewRound();
         };
@@ -3800,6 +4109,7 @@
         bindEvents();
         syncAudioButtons();
         syncSetupModalUI();
+        renderTableLayout();
         syncTableUI();
       };
     })();
